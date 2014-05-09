@@ -610,14 +610,15 @@ Enumerable.prototype.intersect = function () {
 Enumerable.prototype.difference = function () {
     var e = new Enumerable(arguments[0]);
     var j;
-    var z = this.toImmutableArray();
+    var z = new Enumerable(this.toImmutableArray());
+    z.m = false;
     for (var i = 0; i < e.a.length; i++) {
-        j = this.indexOf(e.a[i]);
+        j = z.indexOf(e.a[i]);
         if (j >= 0) {
-            z.splice(j, 1);
+            z.a.splice(j, 1);
         }
     }
-    return new Enumerable(z);
+    return z;
 };
 
 Enumerable.prototype.reverse = function () {
@@ -902,7 +903,9 @@ Enumerable.prototype.interpolate = function () {
                     z[i] += h[j];
                 } else {
                     t = this.a[i][h[j].n];
-                    if (t !== undefined && t !== null) {
+                    if (typeof t === 'function') {
+                        z[i] += t.call().toString();
+                    } else if (t !== undefined && t !== null) {
                         z[i] += t.toString();
                     }
                 }
