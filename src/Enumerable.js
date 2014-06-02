@@ -2,23 +2,32 @@
 // Last modified on 8th May 2014
 var Enumerable = function Enumerable() {
     var a = arguments[0];
-    if (typeof a==='object') {
+    var i = 0;
+    if (typeof a === 'object') {
         if (a instanceof Array) {
             this.a = a;
             this.m = true;
         } else if (a.constructor !== undefined && a.constructor.name === 'Enumerable' || a instanceof Enumerable) {
             this.a = a.a;
             this.m = true;
+        } else if (typeof a.length === 'number' && !isNaN(a.length) && a[a.length - 1] !== undefined) {
+            this.a = new Array(a.length);
+            while (i < this.a.length) {
+                this.a[i] = a[i];
+                i++;
+            }
+            this.m = false;
         } else {
             this.a = [];
             for (var n in a) {
-                this.a.push({ name: n, value: a[n] });
+                if (a[n] !== undefined && typeof a[n] !== 'function' && n.charAt(0) !== '_') {
+                    this.a.push({ name: n, value: a[n] });
+                }
             }
             this.m = false;
         }
     } else if (typeof a === 'string') {
         this.a = new Array(a.length);
-        var i = 0;
         while (i < this.a.length) {
             this.a[i] = a.charAt(i);
             i++;
@@ -53,6 +62,24 @@ Enumerable.prototype.toImmutableArray = function () {
     } else {
         return this.a;
     }
+};
+
+Enumerable.prototype.create = function () {
+    var c = arguments[0];
+    var o = arguments[1];
+    if (o === undefined) {
+        o = null;
+    }
+    var z;
+    if (c === undefined || isNaN(c) || c <= 0) {
+        z = [];
+    } else {
+        z = new Array(c);
+        for (var i = 0; i < c; i++) {
+            z[i] = o;
+        }
+    }
+    return new Enumerable(z);
 };
 
 Enumerable.prototype.where = function () {
@@ -431,12 +458,15 @@ Enumerable.prototype.firstOrNull = function () {
 Enumerable.prototype.first = function () {
     if (this.a.length === 0) {
         throw 'array was empty';
-    }
-    var i = this.indexOf(arguments[0]);
-    if (i >= 0) {
-        return this.a[i];
+    } else if (arguments.length === 0) {
+        return this.a[0];
     } else {
-        throw 'no element was matched';
+        var i = this.indexOf(arguments[0]);
+        if (i >= 0) {
+            return this.a[i];
+        } else {
+            throw 'no element was matched';
+        }
     }
 };
 
@@ -457,12 +487,15 @@ Enumerable.prototype.lastOrNull = function () {
 Enumerable.prototype.last = function () {
     if (this.a.length === 0) {
         throw 'array was empty';
-    }
-    var i = this.lastIndexOf(arguments[0]);
-    if (i >= 0) {
-        return this.a[i];
+    } else if (arguments.length === 0) {
+        return this.a[this.a.length];
     } else {
-        throw 'no element was matched';
+        var i = this.lastIndexOf(arguments[0]);
+        if (i >= 0) {
+            return this.a[i];
+        } else {
+            throw 'no element was matched';
+        }
     }
 };
 
@@ -521,7 +554,9 @@ Enumerable.prototype.distinct = function () {
 
 Enumerable.prototype.add = function () {
     if (arguments[1] === undefined) {
-        this.a = this.toImmutableArray().push(arguments[0]);
+        var z = this.toImmutableArray();
+        z.push(arguments[0]);
+        this.a = z;
         return this;
     } else {
         return this.addRange([arguments[0]], arguments[1]);
