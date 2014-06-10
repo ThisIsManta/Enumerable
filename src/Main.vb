@@ -71,6 +71,7 @@
     Loop
 
     File.Copy("..\..\Enumerable.js", "Enumerable.js", True)
+    File.Copy("..\..\Test.js", "Test.js", True)
     Using Output As New StreamWriter("Enumerable-compressed.js", False, System.Text.Encoding.ASCII)
       Output.Write(Buffer)
       Output.Write("var Enumerable=_;")
@@ -82,7 +83,8 @@
       Output.WriteLine("<head>")
       Output.WriteLine("<meta charset=""utf-8"" />")
       Output.WriteLine("<title></title>")
-      Output.WriteLine("<script type=""text/javascript"" src=""Enumerable-compressed.js""></script>")
+      Output.WriteLine("<script type=""text/javascript"" src=""Enumerable.js""></script>")
+      Output.WriteLine("<script type=""text/javascript"" src=""Test.js""></script>")
       Output.WriteLine("</head>")
       Output.WriteLine("<body>")
       Output.WriteLine("</body>")
