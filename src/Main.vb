@@ -90,6 +90,8 @@
       Output.WriteLine("</body>")
       Output.WriteLine("</html>")
     End Using
+
+    Process.Start("chrome", "Main.html")
   End Sub
 
 End Module

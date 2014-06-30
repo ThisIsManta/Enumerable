@@ -46,7 +46,7 @@ var Enumerable = function Enumerable() {
 			this.m = false;
 		}
 	} else if (typeof w === 'string') {
-		this.a = w.split('');
+		this.a = w.split(arguments[1] || '');
 		this.m = false;
 	} else if (typeof w === 'undefined') {
 		this.a = [];
@@ -92,7 +92,7 @@ Enumerable.prototype.create = function () {
 		w = null;
 	}
 	if (x === undefined || isNaN(x) || x <= 0) {
-		z = [];
+		z = [w];
 	} else {
 		z = new Array(x);
 		while (++i < x) {
@@ -113,6 +113,7 @@ Enumerable.prototype.where = function () {
 	var w = arguments[0];
 	var i = -1;
 	var b = this.a.length;
+	var c;
 	var t;
 	var z = [];
 	if (typeof w === 'function') {
@@ -124,19 +125,20 @@ Enumerable.prototype.where = function () {
 		}
 	} else if (typeof w === 'object') {
 		while (++i < b) {
-			t = true;
+			c = 1;
+			t = this.a[i];
 			for (var j in w) {
-				t &= (this.a[i][j] === w[j]);
-				if (t === false) {
+				c &= (t[j] === w[j]);
+				if (!c) {
 					break;
 				}
 			}
-			if (t === true) {
-				z.push(this.a[i]);
+			if (c) {
+				z.push(t);
 			}
 		}
 	} else {
-		throw 'no input was given';
+		throw 'input was not valid';
 	}
 	return new Enumerable(z);
 };
@@ -152,14 +154,15 @@ Enumerable.prototype.select = function () {
 	var z = new Array(b);
 	if (typeof w === 'function') {
 		while (++i < b) {
-			z[i] = p(w[i], i);
+			z[i] = w(this.a[i], i);
 		}
 	} else if (typeof w === 'string') {
-		if (w.length === 0) {
+		if (w.length > 0) {
+			while (++i < b) {
+				z[i] = this.a[i][w];
+			}
+		} else {
 			throw 'name was empty';
-		}
-		while (++i < b) {
-			z[i] = this.a[i][n];
 		}
 	} else {
 		throw 'no input was given';
@@ -292,11 +295,14 @@ Enumerable.prototype.take = function () {
 			throw 'stop index was out of range';
 		} else if (w > x) {
 			throw 'start index was greater than stop index';
+		} else {
+			j = w - 1;
+			k = x;
 		}
 	} else {
 		throw 'input was not valid';
 	}
-	while (++j < t) {
+	while (++j < k) {
 		z.push(this.a[j]);
 	}
 	return new Enumerable(z);
@@ -1084,6 +1090,9 @@ Enumerable.prototype.interpolate = function () {
 					}
 				}
 			}
+			if (t === false) {
+				return z[0];
+			}
 		}
 	} else {
 		throw 'input was not valid';
@@ -1110,3 +1119,12 @@ Enumerable.prototype.combo = function () {
 		this.q = [];
 	}
 };
+
+//Enumerable.prototype.norm = function () {
+//	var i = -1;
+//	var b = this.a.length;
+//	var z = this.toImmutableArray();
+//	while (++i < b) {
+
+//	}
+//};
