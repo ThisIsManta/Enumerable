@@ -148,6 +148,146 @@
 			var e = new Enumerable(a).take(1, 2);
 			return e.a.length === 1 && e.a[0] === 2;
 		},
+		function () {
+			var a = [[1, 2, 3], [4, 5, [6, 7]]];
+			var e = new Enumerable(a).flatten();
+			return e.a.length === 6 && e.a[0] === 1 && e.a[5][0] === 6;
+		},
+		function () {
+			var a = [[1, 2, 3], [4, 5, [6, 7]]];
+			var e = new Enumerable(a).flatten(true);
+			return e.a.length === 7 && e.a[0] === 1 && e.a[5] === 6;
+		},
+		function () {
+			var a = [1, 2, 3];
+			var e = new Enumerable(a).any();
+			return e === true;
+		},
+		function () {
+			var a = [];
+			var e = new Enumerable(a).any();
+			return e === false;
+		},
+		function () {
+			var a = [1, 2, 3];
+			var e = new Enumerable(a).any(function (x) { return x === 2; });
+			return e === true;
+		},
+		function () {
+			var a = [1, 2, 3];
+			var e = new Enumerable(a).any(function (x) { return x === 4; });
+			return e === false;
+		},
+		function () {
+			var a = [1, 2, 3];
+			var e = new Enumerable(a).any(2);
+			return e === true;
+		},
+		function () {
+			var a = [1, 2, 3];
+			var e = new Enumerable(a).any(4);
+			return e === false;
+		},
+		function () {
+			var a = [1, 2, 3];
+			var e = new Enumerable(a).all(1);
+			return e === false;
+		},
+		function () {
+			var a = [1, 1, 1];
+			var e = new Enumerable(a).all(1);
+			return e === true;
+		},
+		function () {
+			var a = [1, 2, 3];
+			var e = new Enumerable(a).all(function (x) { return typeof x === 'string'; });
+			return e === false;
+		},
+		function () {
+			var a = [1, 2, 3];
+			var e = new Enumerable(a).all(function (x) { return typeof x === 'number'; });
+			return e === true;
+		},
+		function () {
+			var a = [1, 2, 3];
+			var e = new Enumerable(a).subsetOf([1, 3]);
+			return e === true;
+		},
+		function () {
+			var a = [1, 2, 3];
+			var e = new Enumerable(a).subsetOf([1, 4]);
+			return e === false;
+		},
+		function () {
+			var a = [1, 2, 3];
+			var e = new Enumerable(a).equivalent([2, 3, 1]);
+			return e === true;
+		},
+		function () {
+			var a = [1, 2, 3];
+			var e = new Enumerable(a).equivalent([2, 3, 4]);
+			return e === false;
+		},
+		function () {
+			var a = [1, 2, 3];
+			var e = new Enumerable(a).indexOf(2);
+			return e === 1;
+		},
+		function () {
+			var a = [1, 2, 3];
+			var e = new Enumerable(a).indexOf(4);
+			return e === -1;
+		},
+		function () {
+			var a = [1, 2, 3];
+			var e = new Enumerable(a).indexOf(2, 1);
+			return e === 1;
+		},
+		function () {
+			var a = [1, 2, 3];
+			var e = new Enumerable(a).indexOf(1, 2);
+			return e === -1;
+		},
+		function () {
+			var a = [1, 2, 3];
+			var e = new Enumerable(a).indexOf(function (x) { return x % 2 === 0; });
+			return e === 1;
+		},
+		function () {
+			var a = [1, 3, 5];
+			var e = new Enumerable(a).indexOf(function (x) { return x % 2 === 0; });
+			return e === -1;
+		},
+		function () {
+			var a = [1, 2, 3];
+			var e = new Enumerable(a).lastIndexOf(2);
+			return e === 1;
+		},
+		function () {
+			var a = [1, 2, 3];
+			var e = new Enumerable(a).lastIndexOf(4);
+			return e === -1;
+		},
+		function () {
+			var a = [1, 2, 3];
+			var e = new Enumerable(a).lastIndexOf(2, 1);
+			return e === 1;
+		},
+		function () {
+			var a = [1, 2, 3];
+			var e = new Enumerable(a).lastIndexOf(1, 2);
+			return e === -1;
+		},
+		function () {
+			var a = [1, 2, 3];
+			var e = new Enumerable(a).lastIndexOf(function (x) { return x % 2 === 0; });
+			return e === 1;
+		},
+		function () {
+			var a = [1, 3, 5];
+			var e = new Enumerable(a).lastIndexOf(function (x) { return x % 2 === 0; });
+			return e === -1;
+		},
 	]
 
 };
