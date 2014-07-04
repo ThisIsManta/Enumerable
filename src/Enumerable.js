@@ -101,12 +101,17 @@ Enumerable.prototype.toImmutableArray = function () {
 };
 
 Enumerable.prototype.toString = function () {
-	var ar0 = arguments[0] || '';
-	if (typeof ar0 === 'string') {
-		return this._a.join(ar0);
+	if (typeof this._o === 'string') {
+		return this._o;
 
 	} else {
-		throw 'input was not valid';
+		var ar0 = arguments[0] || '';
+		if (typeof ar0 === 'string') {
+			return this._a.join(ar0);
+
+		} else {
+			throw 'input was not valid';
+		}
 	}
 };
 
@@ -1381,11 +1386,12 @@ Enumerable.prototype.interpolate = function () {
 				}
 			}
 		}
+		this._o = out;
 
 	} else {
 		throw 'input was not valid';
 	}
-	return out;
+	return this;
 };
 
 /*
