@@ -1,9 +1,8 @@
-﻿// LINQ lookalike by Manta (anantachai.saothong@thomsonreuters.com)
-// Last modified on June 7th, 2014
+﻿// A JavaScript library provides useful and handy query functions.
+// Initiated by Manta (anantachai.saothong@thomsonreuters.com)
+// Last modified on July 7th, 2014
 
 /*
-	This creates an immutable collection from a given parameter.
-
 	The parameters can be the following:
 		()
 			This creates a new empty collection.

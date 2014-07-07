@@ -83,7 +83,11 @@
       Output.WriteLine("<head>")
       Output.WriteLine("<meta charset=""utf-8"" />")
       Output.WriteLine("<title></title>")
-      Output.WriteLine("<script type=""text/javascript"" src=""Enumerable.js""></script>")
+      If System.Environment.GetCommandLineArgs.Contains("-debug") Then
+        Output.WriteLine("<script type=""text/javascript"" src=""Enumerable.js""></script>")
+      Else
+        Output.WriteLine("<script type=""text/javascript"" src=""Enumerable-compressed.js""></script>")
+      End If
       Output.WriteLine("<script type=""text/javascript"" src=""Test.js""></script>")
       Output.WriteLine("</head>")
       Output.WriteLine("<body>")
