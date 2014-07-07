@@ -31,7 +31,7 @@ var Enumerable = function Enumerable() {
 			this._m = true;
 
 		} else if (ar0.constructor !== undefined && ar0.constructor.name === 'Enumerable' || ar0 instanceof Enumerable) {
-			this._a = ar0.a;
+			this._a = ar0._a;
 			this._m = true;
 
 		} else if (typeof (bnd = ar0.length) === 'number' && bnd >= 0) {
@@ -71,7 +71,7 @@ var Enumerable = function Enumerable() {
 		this._a = ar0.split(ar1 || '');
 		this._m = false;
 
-	} else if (typeof w === 'undefined') {
+	} else if (typeof ar0 === 'undefined') {
 		this._a = [];
 		this._m = false;
 
@@ -101,17 +101,15 @@ Enumerable.prototype.toImmutableArray = function () {
 };
 
 Enumerable.prototype.toString = function () {
-	if (typeof this._o === 'string') {
-		return this._o;
+	var ar0 = arguments[0];
+	if (ar0 === undefined) {
+		return this._a.join('');
+
+	} else if (typeof ar0 === 'string') {
+		return this._a.join(ar0);
 
 	} else {
-		var ar0 = arguments[0] || '';
-		if (typeof ar0 === 'string') {
-			return this._a.join(ar0);
-
-		} else {
-			throw 'input was not valid';
-		}
+		throw 'input was not valid';
 	}
 };
 
@@ -124,6 +122,11 @@ Enumerable.prototype.toObject = function () {
 	if (ar0 === undefined) {
 		while (++idx < bnd) {
 			out[idx.toString()] = this._a[idx];
+		}
+
+	} else if (typeof ar0 === 'string') {
+		while (++idx < bnd) {
+			out[ar0 + idx.toString()] = this._a[idx];
 		}
 
 	} else if (typeof ar0 === 'function') {
@@ -179,7 +182,7 @@ Enumerable.prototype.create = function () {
 };
 
 /*
-  This returns a new immutable collection containing all elements in base collection that match the constraints.
+  This returns a new collection containing all elements in base collection that match the constraints.
 
   The parameters can be following:
 	(function)
@@ -214,9 +217,9 @@ Enumerable.prototype.where = function () {
 	} else if (typeof ar0 === 'object') {
 		while (++idx < bnd) {
 			chk = 1;
-			tmp = this._a[i];
+			tmp = this._a[idx];
 			for (nam in ar0) {
-				chk &= (tmp[nam] === ar0[nam]);
+				chk &= tmp[nam] === ar0[nam];
 				if (!chk) {
 					break;
 				}
@@ -237,6 +240,18 @@ Enumerable.prototype.where = function () {
 		(string)
 */
 Enumerable.prototype.select = function () {
+	if (arguments.length === 1) {
+		return this.selectAll.apply(this, arguments);
+
+	} else if (arguments.length === 2) {
+		return this.selectSome.apply(this, arguments);
+
+	} else {
+		throw 'input was not valid';
+	}
+};
+
+Enumerable.prototype.selectAll = function () {
 	var ar0 = arguments[0];
 	var idx = -1;
 	var bnd = this._a.length;
@@ -254,25 +269,134 @@ Enumerable.prototype.select = function () {
 		}
 
 	} else if (typeof ar0 === 'string') {
-		if (ar0.length > 0) {
-			while (++idx < bnd) {
-				out[idx] = this._a[idx][ar0];
-			}
-
-		} else {
+		if (ar0.length === 0) {
 			throw 'name was empty';
+		}
+		while (++idx < bnd) {
+			out[idx] = this._a[idx][ar0];
 		}
 
 	} else {
-		throw 'no input was given';
+		throw 'input was not valid';
+	}
+	return new Enumerable(out, this._s);
+};
+
+Enumerable.prototype.selectSome = function () {
+	var ar0 = arguments[0];
+	var ar1 = arguments[1];
+	var idx = -1;
+	var bnd = this._a.length;
+	var chk;
+	var tmp;
+	var nam;
+	var out = [];
+	if (typeof ar0 === 'function') {
+		if (typeof ar1 === 'function') {
+			if (this._s) {
+				while (++idx < bnd) {
+					tmp = this._a[idx];
+					if (ar0.call(this._s, tmp, idx)) {
+						out.push(ar1.call(this._s, tmp, idx));
+					}
+				}
+
+			} else {
+				while (++idx < bnd) {
+					tmp = this._a[idx];
+					if (ar0(tmp, idx)) {
+						out.push(ar1(tmp, idx));
+					}
+				}
+			}
+
+		} else if (typeof ar1 === 'string') {
+			if (ar1.length === 0) {
+				throw 'name was empty';
+			}
+			if (this._s) {
+				while (++idx < bnd) {
+					tmp = this._a[idx];
+					if (ar0.call(this._s, tmp, idx)) {
+						out.push(tmp[ar1]);
+					}
+				}
+
+			} else {
+				while (++idx < bnd) {
+					tmp = this._a[idx];
+					if (ar0(tmp, idx)) {
+						out.push(tmp[ar1]);
+					}
+				}
+			}
+
+		} else {
+			throw 'input was not valid';
+		}
+
+	} else if (typeof ar0 === 'object') {
+		if (typeof ar1 === 'function') {
+			if (this._s) {
+				while (++idx < bnd) {
+					chk = 1;
+					tmp = this._a[idx];
+					for (nam in ar0) {
+						chk &= tmp[nam] === ar0[nam];
+						if (!chk) {
+							break;
+						}
+					}
+					if (chk) {
+						out.push(ar1.call(this._s, tmp, idx));
+					}
+				}
+
+			} else {
+				while (++idx < bnd) {
+					chk = 1;
+					tmp = this._a[idx];
+					for (nam in ar0) {
+						chk &= tmp[nam] === ar0[nam];
+						if (!chk) {
+							break;
+						}
+					}
+					if (chk) {
+						out.push(ar1(tmp, idx));
+					}
+				}
+			}
+
+		} else if (typeof ar1 === 'string') {
+			while (++idx < bnd) {
+				chk = 1;
+				tmp = this._a[idx];
+				for (nam in ar0) {
+					chk &= tmp[nam] === ar0[nam];
+					if (!chk) {
+						break;
+					}
+				}
+				if (chk) {
+					out.push(tmp[ar1]);
+				}
+			}
+
+		} else {
+			throw 'input was not valid';
+		}
+
+	} else {
+		throw 'input was not valid';
 	}
 	return new Enumerable(out, this._s);
 };
 
 /*
-		(any, any)
+		(anything, anything)
 			This replaces all occurrences of first parameter with second parameter.
-		(any, any, number)
+		(anything, anything, number)
 			This replaces some occurrences of first parameter with second parameter by third parameter times.
 */
 Enumerable.prototype.replace = function () {
@@ -315,6 +439,24 @@ Enumerable.prototype.replace = function () {
 		}
 	}
 	return new Enumerable(out, this._s);
+};
+
+Enumerable.prototype.replaceAll = function () {
+	if (arguments.length === 2) {
+		return this.replace.call(this, arguments[0], arguments[1], Infinity);
+
+	} else {
+		throw 'input was not valid';
+	}
+};
+
+Enumerable.prototype.replaceSome = function () {
+	if (arguments.length === 3 && typeof arguments[2] === 'number' && isFinite(arguments[2])) {
+		return this.replace.apply(this, arguments);
+
+	} else {
+		throw 'input was not valid';
+	}
 };
 
 /*
@@ -363,7 +505,7 @@ Enumerable.prototype.skip = function () {
 		tmp = bnd;
 		if (this._s) {
 			while (++idx < bnd) {
-				if (ar0(this._a[idx], idx) === false) {
+				if (ar0.call(this._s, this._a[idx], idx) === false) {
 					tmp = idx;
 					break;
 				}
@@ -371,7 +513,7 @@ Enumerable.prototype.skip = function () {
 
 		} else {
 			while (++idx < bnd) {
-				if (ar0.call(this._s, this._a[idx], idx) === false) {
+				if (ar0(this._a[idx], idx) === false) {
 					tmp = idx;
 					break;
 				}
@@ -399,6 +541,7 @@ Enumerable.prototype.skip = function () {
 		throw 'input was not valid';
 	}
 };
+
 /*
 		(function)
 		(number)
@@ -414,10 +557,20 @@ Enumerable.prototype.take = function () {
 	var out = [];
 	if (typeof ar0 === 'function') {
 		kdx = bnd;
-		while (++idx < bnd) {
-			if (ar0(this._a[idx], idx) === false) {
-				kdx = idx;
-				break;
+		if (this._s) {
+			while (++idx < bnd) {
+				if (ar0.call(this._s, this._a[idx], idx) === false) {
+					kdx = idx;
+					break;
+				}
+			}
+
+		} else {
+			while (++idx < bnd) {
+				if (ar0(this._a[idx], idx) === false) {
+					kdx = idx;
+					break;
+				}
 			}
 		}
 
@@ -425,9 +578,9 @@ Enumerable.prototype.take = function () {
 		kdx = Math.min(ar0, bnd);
 
 	} else if (!isNaN(ar0) && !isNaN(ar1)) {
-		if (ar0 < 0 || ar0 > b) {
+		if (ar0 < 0 || ar0 > bnd) {
 			throw 'start index was out of range';
-		} else if (ar1 < 0 || ar1 > b) {
+		} else if (ar1 < 0 || ar1 > bnd) {
 			throw 'stop index was out of range';
 		} else if (ar0 > ar1) {
 			throw 'start index was greater than stop index';
@@ -560,8 +713,8 @@ Enumerable.prototype.all = function () {
 	}
 };
 
-Enumerable.prototype.subsetOf = function () {
-	var arr = new Enumerable(arguments[0]).a;
+Enumerable.prototype.isSubsetOf = function () {
+	var arr = new Enumerable(arguments[0])._a;
 	var idx = -1;
 	var bnd = arr.length;
 	while (++idx < bnd) {
@@ -572,24 +725,24 @@ Enumerable.prototype.subsetOf = function () {
 	return true;
 };
 
-Enumerable.prototype.equivalent = function () {
+Enumerable.prototype.isEquivalentTo = function () {
 	var arr = new Enumerable(arguments[0]);
 	var idx = -1;
 	var bnd = this._a.length;
 	var tmp;
-	if (bnd !== arr.a.length) {
+	if (bnd !== arr._a.length) {
 		return false;
 
 	} else {
 		while (++idx < bnd) {
 			tmp = arr.indexOf(this._a[idx]);
-			if (tmp < 0 || arr.a.length === 0) {
+			if (tmp < 0 || arr._a.length === 0) {
 				return false;
 			} else {
 				arr.removeAt(tmp);
 			}
 		}
-		return arr.a.length === 0;
+		return arr._a.length === 0;
 	}
 };
 
@@ -604,38 +757,38 @@ Enumerable.prototype.indexOf = function () {
 	var ar1 = arguments[1];
 	var idx = -1;
 	var bnd = this._a.length;
-	if (!isNaN(ar1) && (ar1 < 0 || ar1 > b)) {
-		throw 'index was out of range';
-	} else {
-		ar1 = 0;
+	if (typeof ar1 === 'number') {
+		if (ar1 >= 0 || ar1 <= bnd) {
+			idx = ar1 - 1;
+		} else {
+			throw 'index was out of range';
+		}
 	}
-	if (ar1 < bnd) {
-		if (typeof ar0 === 'function') {
-			if (this._s) {
-				while (++idx < bnd) {
-					if (ar0.call(this._s, this._a[idx], idx) === true) {
-						return idx;
-					}
-				}
-
-			} else {
-				while (++idx < bnd) {
-					if (ar0(this._a[idx], idx) === true) {
-						return idx;
-					}
-				}
-			}
-
-		} else if (ar0 !== undefined && ar0 !== null) {
+	if (typeof ar0 === 'function') {
+		if (this._s) {
 			while (++idx < bnd) {
-				if (this._a[idx] === ar0) {
+				if (ar0.call(this._s, this._a[idx], idx) === true) {
 					return idx;
 				}
 			}
 
 		} else {
-			throw 'input was not valid';
+			while (++idx < bnd) {
+				if (ar0(this._a[idx], idx) === true) {
+					return idx;
+				}
+			}
 		}
+
+	} else if (ar0 !== undefined && ar0 !== null) {
+		while (++idx < bnd) {
+			if (this._a[idx] === ar0) {
+				return idx;
+			}
+		}
+
+	} else {
+		throw 'input was not valid';
 	}
 	return -1;
 };
@@ -643,40 +796,39 @@ Enumerable.prototype.indexOf = function () {
 Enumerable.prototype.lastIndexOf = function () {
 	var ar0 = arguments[0];
 	var ar1 = arguments[1];
-	var idx = this._a.length + 1;
-	var bnd = this._a.length;
-	if (!isNaN(ar1) && (ar1 < 0 || ar1 > b)) {
-		throw 'index was out of range';
-	} else {
-		ar1 = 0;
+	var idx = this._a.length;
+	if (typeof ar1 === 'number') {
+		if (ar1 >= 0 || ar1 <= idx) {
+			idx = ar1;
+		} else {
+			throw 'index was out of range';
+		}
 	}
-	if (ar1 < bnd) {
-		if (typeof ar0 === 'function') {
-			if (this._s) {
-				while (--idx >= ar1) {
-					if (ar0.call(this._s, this._a[idx], idx) === true) {
-						return idx;
-					}
-				}
-
-			} else {
-				while (--idx >= ar1) {
-					if (ar0(this._a[idx], idx) === true) {
-						return idx;
-					}
-				}
-			}
-
-		} else if (ar0 !== undefined && ar0 !== null) {
-			while (--idx >= ar1) {
-				if (this._a[idx] === ar0) {
+	if (typeof ar0 === 'function') {
+		if (this._s) {
+			while (--idx >= 0) {
+				if (ar0.call(this._s, this._a[idx], idx) === true) {
 					return idx;
 				}
 			}
 
 		} else {
-			throw 'input was not valid';
+			while (--idx >= 0) {
+				if (ar0(this._a[idx], idx) === true) {
+					return idx;
+				}
+			}
 		}
+
+	} else if (ar0 !== undefined && ar0 !== null) {
+		while (--idx >= 0) {
+			if (this._a[idx] === ar0) {
+				return idx;
+			}
+		}
+
+	} else {
+		throw 'input was not valid';
 	}
 	return -1;
 };
@@ -757,37 +909,70 @@ Enumerable.prototype.last = function () {
 Enumerable.prototype.singleOrNull = function () {
 	if (this._a.length === 0) {
 		return null;
-	}
-	var idx = this.indexOf.apply(this, arguments);
-	if (idx >= 0 && idx === this.lastIndexOf.apply(this, arguments)) {
-		return this._a[idx];
+
+	} else if (arguments.length === 0) {
+		if (this._a.length === 1) {
+			return this._a[0];
+
+		} else {
+			return null;
+		}
+
+	} else if (arguments.length === 1) {
+		var idx = this.indexOf.call(this, arguments[0]);
+		if (idx >= 0) {
+			if (idx === this.lastIndexOf.call(this, arguments[0])) {
+				return this._a[idx];
+
+			} else {
+				return null;
+			}
+
+		} else {
+			return null;
+		}
 
 	} else {
-		return null;
+		throw 'index was not supported';
 	}
 };
 
 Enumerable.prototype.single = function () {
 	if (this._a.length === 0) {
 		throw 'array was empty';
-	}
-	var idx = this.indexOf.apply(this, arguments);
-	if (idx >= 0) {
-		if (idx === this.lastIndexOf.apply(this, arguments)) {
-			return this._a[idx];
+
+	} else if (arguments.length === 0) {
+		if (this._a.length === 1) {
+			return this._a[0];
 
 		} else {
-			throw 'more than one element were matched';
+			throw 'array was contained more than one element';
+		}
+
+	} else if (arguments.length === 1) {
+		var idx = this.indexOf.call(this, arguments[0]);
+		if (idx >= 0) {
+			if (idx === this.lastIndexOf.call(this, arguments[0])) {
+				return this._a[idx];
+
+			} else {
+				throw 'more than one element were matched';
+			}
+
+		} else {
+			throw 'no element was matched';
 		}
 
 	} else {
-		throw 'no element was matched';
+		throw 'index was not supported';
 	}
 };
 
 /*
 		(string)
 		(function)
+
+		This function treats undefined and null values as the same thing.
 */
 Enumerable.prototype.distinct = function () {
 	var ar0 = arguments[0];
@@ -795,46 +980,73 @@ Enumerable.prototype.distinct = function () {
 	var idx = -1;
 	var bnd = this._a.length;
 	var nam;
-	var val;
 	var tmp;
 	var nil = false;
 	var out = [];
 	if (ar0 === undefined) {
-		ar0 = function (obj) { return obj; };
+		while (++idx < bnd) {
+			tmp = this._a[idx];
+			if (tmp === undefined || tmp === null) {
+				if (nil === false) {
+					nil = true;
+					out.push(tmp);
+				}
+
+			} else if (hsh[(tmp = tmp.toString())] === undefined) {
+				hsh[tmp] = true;
+				out.push(this._a[idx]);
+			}
+		}
 
 	} else if (typeof ar0 === 'string' && ar0.length > 0) {
-		nam = ar0;
-		ar0 = function (obj) { return obj[nam]; };
+		while (++idx < bnd) {
+			tmp = this._a[idx][ar0];
+			if (tmp === undefined || tmp === null) {
+				if (nil === false) {
+					nil = true;
+					out.push(tmp);
+				}
 
-	} else if (typeof ar0 !== 'function') {
-		throw 'input was not valid';
-	}
-	if (this._s) {
-		while (++idx < bnd) {
-			val = this._a[idx];
-			if (val === undefined || val === null) {
-				if (nil === false) {
-					out.push(null);
-					nil = true;
-				}
-			} else if (!hsh[(tmp = ar0.call(this._s, val, idx).toString())]) {
+			} else if (hsh[(tmp = tmp.toString())] === undefined) {
 				hsh[tmp] = true;
-				out.push(val);
+				out.push(this._a[idx]);
 			}
 		}
+
+	} else if (typeof ar0 === 'function') {
+		if (this._s) {
+			while (++idx < bnd) {
+				tmp = ar0.call(this._s, this._a[idx], idx);
+				if (tmp === undefined || tmp === null) {
+					if (nil === false) {
+						nil = true;
+						out.push(null);
+					}
+
+				} else if (hsh[(tmp = tmp.toString())] === undefined) {
+					hsh[tmp] = true;
+					out.push(this._a[idx]);
+				}
+			}
+
+		} else {
+			while (++idx < bnd) {
+				tmp = ar0(this._a[idx], idx);
+				if (tmp === undefined || tmp === null) {
+					if (nil === false) {
+						nil = true;
+						out.push(null);
+					}
+
+				} else if (hsh[(tmp = tmp.toString())] === undefined) {
+					hsh[tmp] = true;
+					out.push(this._a[idx]);
+				}
+			}
+		}
+
 	} else {
-		while (++idx < bnd) {
-			val = this._a[idx];
-			if (val === undefined || val === null) {
-				if (nil === false) {
-					out.push(null);
-					nil = true;
-				}
-			} else if (!hsh[(tmp = ar0(val, idx).toString())]) {
-				hsh[tmp] = true;
-				out.push(val);
-			}
-		}
+		throw 'input was not valid';
 	}
 	return new Enumerable(out, this._s);
 };
@@ -846,34 +1058,40 @@ Enumerable.prototype.add = function () {
 	if (ar1 === undefined) {
 		out.push(ar0);
 		this._a = out;
-	} else if (typeof ar1 === 'number' && ar1 >= 0 && ar1 <= this._a.length) {
-		out.splice(ar1, 0, ar0);
-		this._a = out;
+
+	} else if (typeof ar1 === 'number') {
+		if (!isNaN(ar1) && ar1 >= 0 && ar1 <= this._a.length) {
+			out.splice(ar1, 0, ar0);
+			this._a = out;
+
+		} else {
+			throw 'index was out of range';
+		}
 	}
 	return this;
 };
 
 Enumerable.prototype.addRange = function () {
-	var arr = new Enumerable(arguments[0]).a;
+	var ar0 = new Enumerable(arguments[0])._a;
 	var ar1 = arguments[1];
 	var idx = -1;
-	var bnd = arr.length;
+	var bnd = ar0.length;
 	var out = this.toImmutableArray();
 	if (ar1 === undefined) {
-		out = out.concat(arr);
+		out = out.concat(ar0);
 
-	} else if (typeof ar1 !== 'number' || !isFinite(ar1) || ar1 < 0 || ar1 > this._a.length) {
+	} else if (typeof ar1 !== 'number' || isNaN(ar1) || ar1 < 0 || ar1 > this._a.length) {
 		throw 'index was out of range';
 
 	} else if (bnd === 1) {
-		out.splice(ar1, 0, arr[0]);
+		out.splice(ar1, 0, ar0[0]);
 
 	} else if (bnd > 0) {
 		while (++idx < bnd) {
-			out.splice(ar1 + idx, 0, arr[idx]);
+			out.splice(ar1 + idx, 0, ar0[idx]);
 		}
 	}
-	this.a = out;
+	this._a = out;
 	return this;
 };
 
@@ -908,50 +1126,50 @@ Enumerable.prototype.removeAt = function () {
 };
 
 Enumerable.prototype.removeRange = function () {
-	var arr = new Enumerable(arguments[0])._a;
+	var ar0 = new Enumerable(arguments[0])._a;
 	var idx = -1;
-	var bnd = arr.length;
+	var bnd = ar0.length;
 	while (++idx < bnd) {
-		this.remove(arr[idx]);
+		this.remove(ar0[idx]);
 	}
 	return this;
 };
 
 Enumerable.prototype.union = function () {
-	var arr = new Enumerable(arguments[0])._a;
+	var ar0 = new Enumerable(arguments[0])._a;
 	var idx = -1;
-	var bnd = e.a.length;
+	var bnd = ar0.length;
 	var out = this.toImmutableArray();
 	while (++idx < bnd) {
-		if (!this.contains(arr[idx])) {
-			out.push(arr[idx]);
+		if (!this.contains(ar0[idx])) {
+			out.push(ar0[idx]);
 		}
 	}
 	return new Enumerable(out, this._s);
 };
 
 Enumerable.prototype.intersect = function () {
-	var arr = new Enumerable(arguments[0])._a;
+	var ar0 = new Enumerable(arguments[0])._a;
 	var idx = -1;
-	var bnd = e.a.length;
+	var bnd = ar0.length;
 	var out = [];
 	while (++idx < bnd) {
-		if (this.contains(arr[idx])) {
-			out.push(arr[idx]);
+		if (this.contains(ar0[idx])) {
+			out.push(ar0[idx]);
 		}
 	}
 	return new Enumerable(out, this._s);
 };
 
 Enumerable.prototype.difference = function () {
-	var arr = new Enumerable(arguments[0])._a;
+	var ar0 = new Enumerable(arguments[0])._a;
 	var idx = -1;
 	var jdx;
-	var bnd = arr.length;
+	var bnd = ar0.length;
 	var out = new Enumerable(this.toImmutableArray());
 	out._m = false;
 	while (++idx < bnd) {
-		jdx = out.indexOf(arr[idx]);
+		jdx = out.indexOf(ar0[idx]);
 		if (jdx >= 0) {
 			out._a.splice(jdx, 1);
 		}
@@ -961,21 +1179,26 @@ Enumerable.prototype.difference = function () {
 
 Enumerable.prototype.reverse = function () {
 	var arr = this._a;
-	var idx = 0;
+	var idx = -1;
 	var bnd = this._a.length;
 	var out = new Array(bnd);
 	while (++idx < bnd) {
-		out[idx] = arr[bnd - idx];
+		out[idx] = arr[bnd - idx - 1];
 	}
 	this._m = false;
 	return new Enumerable(out, this._s);
 };
 
 Enumerable.prototype.sort = function () {
-	return this.orderBy();
+	if (arguments.length === 0) {
+		return this.sortBy();
+
+	} else {
+		throw 'input was not valid';
+	}
 };
 
-Enumerable.prototype.orderBy = function () {
+Enumerable.prototype.sortBy = function () {
 	var ar0 = arguments[0];
 	var out;
 	if (ar0 !== undefined && ar0 !== null) {
@@ -1024,45 +1247,41 @@ Enumerable.prototype.groupBy = function () {
 	var tmp;
 	var nam;
 	var out = {};
-	if (ar0 !== undefined && ar0 !== null) {
-		if (typeof ar0 === 'string') {
-			if (ar0.length === 0) {
-				throw 'name was empty';
+	if (typeof ar0 === 'string') {
+		if (ar0.length === 0) {
+			throw 'name was empty';
 
-			} else {
-				nam = ar0;
-				ar0 = function (val) { return val[nam]; };
-			}
+		} else {
+			nam = ar0;
+			ar0 = function (val) { return val[nam]; };
 		}
-		if (typeof ar0 === 'function') {
-			if (this._s) {
-				while (++idx < bnd) {
-					tmp = ar0.call(this._s, this._a[idx], idx).toString();
-					if (out[tmp] === undefined) {
-						out[tmp] = [this._a[idx]];
-					} else {
-						out[tmp].push(this._a[idx]);
-					}
+	}
+	if (typeof ar0 === 'function') {
+		if (this._s) {
+			while (++idx < bnd) {
+				tmp = ar0.call(this._s, this._a[idx], idx).toString();
+				if (out[tmp] === undefined) {
+					out[tmp] = [this._a[idx]];
+				} else {
+					out[tmp].push(this._a[idx]);
 				}
-
-			} else {
-				while (++idx < bnd) {
-					tmp = ar0(this._a[idx], idx).toString();
-					if (out[tmp] === undefined) {
-						out[tmp] = [this._a[idx]];
-					} else {
-						out[tmp].push(this._a[idx]);
-					}
-				}
-			}
-			for (tmp in out) {
-				out[tmp] = new Enumerable(out[tmp]);
-				out[tmp]._m = false;
 			}
 
 		} else {
-			throw 'input was not valid';
+			while (++idx < bnd) {
+				tmp = ar0(this._a[idx], idx).toString();
+				if (out[tmp] === undefined) {
+					out[tmp] = [this._a[idx]];
+				} else {
+					out[tmp].push(this._a[idx]);
+				}
+			}
 		}
+		for (tmp in out) {
+			out[tmp] = new Enumerable(out[tmp]);
+			out[tmp]._m = false;
+		}
+
 	} else {
 		throw 'input was not valid';
 	}
@@ -1070,69 +1289,91 @@ Enumerable.prototype.groupBy = function () {
 };
 
 /*
-		(collection, string, +boolean)
-		(collection, function, +boolean)
+		(collection, string, +function, +boolean)
+		(collection, function, +function, +boolean)
 */
 Enumerable.prototype.joinBy = function () {
-	var arr = new Enumerable(arguments[0]);
+	var arr = this._a;
+	var ar0 = new Enumerable(arguments[0]);
 	var ar1 = arguments[1];
-	var ar2 = arguments[2];
+	var ar2 = typeof arguments[2] === 'function' ? arguments[2] : undefined;
+	var ovr = typeof arguments[2] === 'boolean' ? arguments[2] : false;
 	var idx = -1;
 	var bnd = this._a.length;
 	var tmp;
 	var nam;
-	if (this.any(function (obj) { return typeof obj !== 'object'; }) || w.any(function (obj) { return typeof obj !== 'object'; })) {
+	if (this.any(function (obj) { return typeof obj !== 'object'; }) || ar0.any(function (obj) { return typeof obj !== 'object'; })) {
 		throw 'one or more element was not an object';
-	}
-	if (typeof ar1 === 'string') {
+
+	} else if (typeof ar1 === 'string') {
 		if (ar1.length === 0) {
 			throw 'name was empty';
-		}
-		ar1 = function (obj) { return obj[ar1] === arr.a[ar1]; };
-	}
-	if (typeof ar1 === 'function') {
-		if (ar2 === true) {
-			if (this._s) {
-				while (++idx < bnd) {
-					tmp = arr.firstOrNull(ar1.call(this._s, this._a[idx]));
-					if (tmp !== null) {
+
+		} else {
+			while (++idx < bnd) {
+				tmp = ar0.firstOrNull(function (obj) { return obj[ar1] === arr[idx][ar1]; });
+				if (tmp !== null) {
+					if (ar2) {
+						if (this._s) {
+							arr.call(this._s, arr[idx], tmp);
+						} else {
+							arr(arr[idx], tmp);
+						}
+
+					} else {
 						for (nam in tmp) {
-							this._a[idx][nam] = tmp[nam];
+							if (ovr === true) {
+								arr[idx][nam] = tmp[nam];
+							} else if (arr[idx][nam] === undefined) {
+								arr[idx][nam] = tmp[nam];
+							}
 						}
 					}
 				}
+			}
+		}
 
-			} else {
-				while (++idx < bnd) {
-					tmp = arr.firstOrNull(ar1(this._a[idx]));
-					if (tmp !== null) {
+	} else if (typeof ar1 === 'function') {
+		if (this._s) {
+			while (++idx < bnd) {
+				tmp = ar0.firstOrNull(function (obj) { return ar1.call(this._s, obj) === ar1.call(this._s, arr[idx]); });
+				if (tmp !== null) {
+					if (ar2) {
+						if (this._s) {
+							arr.call(this._s, arr[idx], tmp);
+						} else {
+							arr(arr[idx], tmp);
+						}
+
+					} else {
 						for (nam in tmp) {
-							this._a[idx][nam] = tmp[nam];
+							if (ovr === true) {
+								arr[idx][nam] = tmp[nam];
+							} else if (arr[idx][nam] === undefined) {
+								arr[idx][nam] = tmp[nam];
+							}
 						}
 					}
 				}
 			}
 
 		} else {
-			if (this._s) {
-				while (++idx < bnd) {
-					tmp = arr.firstOrNull(ar1(this._a[idx]));
-					if (tmp !== null) {
-						for (nam in tmp) {
-							if (this._a[idx][nam] === undefined) {
-								this._a[idx][nam] = tmp[nam];
-							}
+			while (++idx < bnd) {
+				tmp = ar0.firstOrNull(function (obj) { return ar1(obj) === ar1(arr[idx]); });
+				if (tmp !== null) {
+					if (ar2) {
+						if (this._s) {
+							arr.call(this._s, arr[idx], tmp);
+						} else {
+							arr(arr[idx], tmp);
 						}
-					}
-				}
 
-			} else {
-				while (++idx < bnd) {
-					tmp = arr.firstOrNull(ar1.call(this._s, this._a[idx]));
-					if (tmp !== null) {
+					} else {
 						for (nam in tmp) {
-							if (this._a[idx][nam] === undefined) {
-								this._a[idx][nam] = tmp[nam];
+							if (ovr === true) {
+								arr[idx][nam] = tmp[nam];
+							} else if (arr[idx][nam] === undefined) {
+								arr[idx][nam] = tmp[nam];
 							}
 						}
 					}
@@ -1147,6 +1388,15 @@ Enumerable.prototype.joinBy = function () {
 };
 
 Enumerable.prototype.count = function () {
+	if (arguments.length === 0) {
+		return this._a.length;
+
+	} else {
+		throw 'input was not valid';
+	}
+};
+
+Enumerable.prototype.countBy = function () {
 	var ar0 = arguments[0];
 	var idx = -1;
 	var bnd = this._a.length;
@@ -1183,112 +1433,209 @@ Enumerable.prototype.count = function () {
 Enumerable.prototype.min = function () {
 	var ar0 = arguments[0];
 	var idx = -1;
+	var jdx = -1;
 	var bnd = this._a.length;
 	var tmp;
-	var out = Number.MAX_VALUE;
-	if (ar0 === undefined) {
-		while (++idx < bnd) {
-			tmp = this._a[idx];
-			if (!isNaN(tmp) && isFinite(tmp) && tmp < out) {
-				out = tmp;
-			}
-		}
+	var val = Number.MAX_VALUE;
+	if (bnd === 0) {
+		return null;
 
-	} else if (typeof ar0 === 'function') {
-		if (this._s) {
+	} else if (bnd === 1) {
+		return this._a[0];
+
+	} else {
+		if (ar0 === undefined) {
 			while (++idx < bnd) {
-				tmp = ar0.call(this._s, this._a[idx], idx);
-				if (!isNaN(tmp) && isFinite(tmp) && tmp < out) {
-					out = tmp;
+				tmp = this._a[idx];
+				if (tmp < val) {
+					jdx = idx;
+					val = tmp;
+				}
+			}
+
+		} else if (typeof ar0 === 'string') {
+			if (ar0.length === 0) {
+				throw 'name was empty';
+			}
+			while (++idx < bnd) {
+				tmp = this._a[idx][ar0];
+				if (tmp < val) {
+					jdx = idx;
+					val = tmp;
+				}
+			}
+
+		} else if (typeof ar0 === 'function') {
+			if (this._s) {
+				while (++idx < bnd) {
+					tmp = ar0.call(this._s, this._a[idx], idx);
+					if (tmp < val) {
+						jdx = idx;
+						val = tmp;
+					}
+				}
+
+			} else {
+				while (++idx < bnd) {
+					tmp = ar0(this._a[idx], idx);
+					if (tmp < val) {
+						jdx = idx;
+						val = tmp;
+					}
 				}
 			}
 
 		} else {
-			while (++idx < bnd) {
-				tmp = ar0(this._a[idx], idx);
-				if (!isNaN(tmp) && isFinite(tmp) && tmp < out) {
-					out = tmp;
-				}
-			}
+			throw 'input was not valid';
 		}
+		if (jdx >= 0) {
+			return this._a[jdx];
 
-	} else if (typeof ar0 === 'string') {
-		if (ar0.length === 0) {
-			throw 'name was empty';
+		} else {
+			return null;
 		}
-		while (++idx < bnd) {
-			tmp = this._a[idx][ar0];
-			if (!isNaN(tmp) && isFinite(tmp) && tmp < out) {
-				out = tmp;
-			}
-		}
-
-	} else {
-		throw 'input was not valid';
 	}
-	return out;
 };
 
 Enumerable.prototype.max = function () {
 	var ar0 = arguments[0];
 	var idx = -1;
+	var jdx = -1;
 	var bnd = this._a.length;
 	var tmp;
-	var out = Number.MIN_VALUE;
-	if (ar0 === undefined) {
-		while (++idx < bnd) {
-			tmp = this._a[idx];
-			if (!isNaN(tmp) && isFinite(tmp) && tmp > out) {
-				out = tmp;
-			}
-		}
+	var val = Number.MIN_VALUE;
+	if (bnd === 0) {
+		return null;
 
-	} else if (typeof ar0 === 'function') {
-		if (this._s) {
+	} else if (bnd === 1) {
+		return this._a[0];
+
+	} else {
+		if (ar0 === undefined) {
 			while (++idx < bnd) {
-				tmp = ar0.call(this._s, this._a[idx], idx);
-				if (!isNaN(tmp) && isFinite(tmp) && tmp > out) {
-					out = tmp;
+				tmp = this._a[idx];
+				if (tmp > val) {
+					jdx = idx;
+					val = tmp;
+				}
+			}
+
+		} else if (typeof ar0 === 'string') {
+			if (ar0.length === 0) {
+				throw 'name was empty';
+			}
+			while (++idx < bnd) {
+				tmp = this._a[idx][ar0];
+				if (tmp > val) {
+					jdx = idx;
+					val = tmp;
+				}
+			}
+
+		} else if (typeof ar0 === 'function') {
+			if (this._s) {
+				while (++idx < bnd) {
+					tmp = ar0.call(this._s, this._a[idx], idx);
+					if (tmp > val) {
+						jdx = idx;
+						val = tmp;
+					}
+				}
+
+			} else {
+				while (++idx < bnd) {
+					tmp = ar0(this._a[idx], idx);
+					if (tmp > val) {
+						jdx = idx;
+						val = tmp;
+					}
 				}
 			}
 
 		} else {
-			while (++idx < bnd) {
-				tmp = ar0(this._a[idx], idx);
-				if (!isNaN(tmp) && isFinite(tmp) && tmp > out) {
-					out = tmp;
-				}
-			}
+			throw 'input was not valid';
 		}
+		if (jdx >= 0) {
+			return this._a[jdx];
 
-	} else if (typeof ar0 === 'string') {
-		if (ar0.length === 0) {
-			throw 'name was empty';
+		} else {
+			return null;
 		}
-		while (++idx < bnd) {
-			tmp = this._a[idx][ar0];
-			if (!isNaN(tmp) && isFinite(tmp) && tmp > out) {
-				out = tmp;
-			}
-		}
-
-	} else {
-		throw 'input was not valid';
 	}
-	return out;
 };
 
-Enumerable.prototype.mid = function () {
-	return this._a[Math.floor(this._a.length / 2)];
+Enumerable.prototype.mod = function () {
+	var ar0 = arguments[0];
+	var hsh = {};
+	var idx = -1;
+	var jdx = -1;
+	var bnd = this._a.length;
+	var tmp;
+	if (bnd === 0) {
+		return null;
+
+	} else if (bnd === 1) {
+		return this._a[0];
+
+	} else {
+		if (ar0 === undefined) {
+			while (++idx < bnd) {
+				tmp = this._a[idx].toString();
+				if (hsh[tmp]) {
+					hsh[tmp].c += 1;
+				} else {
+					hsh[tmp] = { i: idx, c: 1 };
+				}
+			}
+
+		} else if (typeof ar0 === 'string') {
+			if (ar0.length === 0) {
+				throw 'name was empty';
+			}
+			while (++idx < bnd) {
+				tmp = this._a[idx][ar0].toString();
+				if (hsh[tmp]) {
+					hsh[tmp].c += 1;
+				} else {
+					hsh[tmp] = { i: idx, c: 1 };
+				}
+			}
+
+		} else if (typeof ar0 === 'function') {
+			if (this._s) {
+				while (++idx < bnd) {
+					tmp = ar0.call(this._s, this._a[idx], idx).toString();
+					if (hsh[tmp]) {
+						hsh[tmp].c += 1;
+					} else {
+						hsh[tmp] = { i: idx, c: 1 };
+					}
+				}
+
+			} else {
+				while (++idx < bnd) {
+					tmp = ar0(this._a[idx], idx).toString();
+					if (hsh[tmp]) {
+						hsh[tmp].c += 1;
+					} else {
+						hsh[tmp] = { i: idx, c: 1 };
+					}
+				}
+			}
+
+		} else {
+			throw 'input was not valid';
+		}
+		return this._a[new Enumerable(hsh).max(function (obj) { return obj.value.c; }).value.i];
+	}
 };
 
 Enumerable.prototype.sum = function () {
-	var ar0 = arguments[0];
 	var idx = -1;
 	var bnd = this._a.length;
 	var tmp;
 	var out = 0;
-	if (ar0 === undefined) {
+	if (arguments.length === 0) {
 		while (++idx < bnd) {
 			tmp = this._a[idx];
 			if (!isNaN(tmp) && isFinite(tmp)) {
@@ -1296,74 +1643,58 @@ Enumerable.prototype.sum = function () {
 			}
 		}
 
-	} else if (typeof ar0 === 'function') {
-		if (this._s) {
-			while (++idx < bnd) {
-				tmp = ar0.call(this._s, this._a[idx], idx);
-				if (!isNaN(tmp) && isFinite(tmp)) {
-					out += tmp;
-				}
-			}
-
-		} else {
-			while (++idx < bnd) {
-				tmp = ar0(this._a[idx], idx);
-				if (!isNaN(tmp) && isFinite(tmp)) {
-					out += tmp;
-				}
-			}
-		}
-
-	} else if (typeof n === 'string') {
-		if (n.length === 0) {
-			throw 'name was empty';
-		}
-		while (++i < b) {
-			t = this._a[i][n];
-			if (!isNaN(t) && isFinite(t)) {
-				z += t;
-			}
-		}
-
 	} else {
-
+		throw 'input was not valid';
 	}
-	return z;
+	return out;
 };
 
-Enumerable.prototype.average = function () {
-	return this.sum(arguments[0]) / this._a.length;
+Enumerable.prototype.avg = function () {
+	if (arguments.length === 0) {
+		return this.sum() / this._a.length;
+
+	} else {
+		throw 'input was not valid';
+	}
 };
 
 Enumerable.prototype.interpolate = function () {
 	var ar0 = arguments[0];
+	var ar1 = arguments[1];
 	var hsh = [];
 	var idx = 0;
 	var jdx;
 	var kdx;
+	var tmp;
+	var prm = 'var ';
 	var out = '';
-	if (typeof ar0 === 'string') {
-		if (this._i && this._i[ar0]) {
-			hsh = this._i[ar0];
-
-		} else {
-			while (idx < ar0.length) {
-				jdx = ar0.indexOf('<%=', idx);
-				if (jdx >= 0) {
-					hsh.push(ar0.substring(idx, jdx));
-					kdx = ar0.indexOf('%>', jdx);
-					if (kdx === -1) {
-						throw 'template was not valid';
-					}
-					hsh.push({ n: ar0.substring(jdx + 3, kdx).trim() });
-					idx = kdx + 2;
-				} else {
-					hsh.push(ar0.substring(idx));
-					idx = ar0.length;
+	if (typeof ar0 === 'string' && typeof ar1 === 'object') {
+		while (idx < ar0.length) {
+			jdx = ar0.indexOf('<%=', idx);
+			if (jdx >= 0) {
+				hsh.push(ar0.substring(idx, jdx));
+				kdx = ar0.indexOf('%>', jdx);
+				if (kdx === -1) {
+					throw 'template was not valid';
 				}
+				tmp = ar0.substring(jdx + 3, kdx).trim();
+				if (tmp.length > 0) {
+					hsh.push({ e: tmp });
+					idx = kdx + 2;
+				}
+
+			} else {
+				hsh.push(ar0.substring(idx));
+				idx = ar0.length;
 			}
-			this._i = {};
-			this._i[ar0] = hsh;
+		}
+		for (tmp in ar1) {
+			prm += tmp + '=' + JSON.stringify(typeof ar1[tmp] === 'function' ? ar1[tmp].apply(ar1, this._a) : ar1[tmp]) + ',';
+		}
+		if (prm === 'var ') {
+			prm = '';
+		} else {
+			prm = prm.substring(0, prm.length - 1) + ';';
 		}
 		jdx = -1;
 		kdx = hsh.length;
@@ -1371,26 +1702,58 @@ Enumerable.prototype.interpolate = function () {
 			if (typeof hsh[jdx] === 'string') {
 				out += hsh[jdx];
 
-			} else if (hsh[jdx].n !== '') {
-				ar0 = this._a[hsh[jdx].n];
-				if (typeof ar0 === 'function') {
-					if (this._s) {
-						out += ar0.call(this._s).toString();
-
-					} else {
-						out += ar0().toString();
-					}
-
-				} else if (ar0 !== undefined && ar0 !== null) {
-					out += ar0.toString();
-				}
+			} else if ((tmp = hsh[jdx].e) !== undefined) {
+				out += eval(prm + tmp).toString();
 			}
 		}
-		this._o = out;
 
 	} else {
 		throw 'input was not valid';
 	}
+	return out;
+};
+
+/*
+	This function removes undefined, null, empty string, only white space string, not a number, infinity elements from the original array.
+*/
+Enumerable.prototype.norm = function () {
+	var ar0 = arguments[0];
+	var hsh = {};
+	var idx = -1;
+	var bnd = this._a.length;
+	var tmp;
+	var out = [];
+	if (arguments.length === 0) {
+		while (++idx < bnd) {
+			tmp = this._a[idx];
+			if (tmp && (typeof tmp !== 'string' || tmp.trim() > 0) && (typeof tmp !== 'number' || isFinite(tmp))) {
+				out.push(tmp);
+			}
+		}
+
+	} else if (typeof ar0 === 'function') {
+		if (this._s) {
+			while (++idx < bnd) {
+				tmp = ar0.call(this._s, this._a[idx], idx);
+				if (tmp && (typeof tmp !== 'string' || tmp.trim() > 0) && (typeof tmp !== 'number' || isFinite(tmp))) {
+					out.push(this._a[idx]);
+				}
+			}
+
+		} else {
+			while (++idx < bnd) {
+				tmp = ar0(this._a[idx], idx);
+				if (tmp && (typeof tmp !== 'string' || tmp.trim() > 0) && (typeof tmp !== 'number' || isFinite(tmp))) {
+					out.push(this._a[idx]);
+				}
+			}
+		}
+
+	} else {
+		throw 'input was not valid';
+	}
+	this._a = out;
+	this._m = false;
 	return this;
 };
 
@@ -1407,23 +1770,5 @@ Enumerable.prototype.define = function () {
 	} else {
 		throw 'input was not valid';
 	}
-};
-
-Enumerable.prototype.combo = function () {
-	if (this.q === undefined) {
-		this.q = [];
-	}
-};
-
-Enumerable.prototype.norm = function () {
-	var idx = this._a.length;
-	var tmp;
-	var out = this.toImmutableArray();
-	while (--idx >= 0) {
-		tmp = out[idx];
-		if (tmp === undefined || tmp === null || typeof tmp === 'string' && tmp.trim() === 0 || typeof tmp === 'number' && (isNaN(tmp) || isFinite(tmp))) {
-			out.splice(idx, 1);
-		}
-	}
-	return new Enumerable(out, this._s);
+	return this;
 };
