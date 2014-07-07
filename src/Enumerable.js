@@ -181,11 +181,11 @@ Enumerable.prototype.create = function () {
 };
 
 /*
-  This returns a new collection containing all elements in base collection that match the constraints.
+	This returns a new collection containing all elements in base collection that match the constraints.
 
-  The parameters can be following:
-	(function)
-	(plain object)
+	The parameters can be following:
+		(function)
+		(plain object)
 */
 Enumerable.prototype.where = function () {
 	var ar0 = arguments[0];
@@ -1298,7 +1298,9 @@ Enumerable.prototype.joinBy = function () {
 	var ar2 = typeof arguments[2] === 'function' ? arguments[2] : undefined;
 	var ovr = typeof arguments[2] === 'boolean' ? arguments[2] : false;
 	var idx = -1;
+	var jdx;
 	var bnd = this._a.length;
+	var cnd = ar0._a.length;
 	var tmp;
 	var nam;
 	if (this.any(function (obj) { return typeof obj !== 'object'; }) || ar0.any(function (obj) { return typeof obj !== 'object'; })) {
@@ -1310,7 +1312,14 @@ Enumerable.prototype.joinBy = function () {
 
 		} else {
 			while (++idx < bnd) {
-				tmp = ar0.firstOrNull(function (obj) { return obj[ar1] === arr[idx][ar1]; });
+				jdx = -1;
+				tmp = null;
+				while (++jdx < cnd) {
+					if (ar0._a[jdx][ar1] === arr[idx][ar1]) {
+						tmp = ar0._a[jdx];
+						break;
+					}
+				}
 				if (tmp !== null) {
 					if (ar2) {
 						if (this._s) {
@@ -1335,7 +1344,14 @@ Enumerable.prototype.joinBy = function () {
 	} else if (typeof ar1 === 'function') {
 		if (this._s) {
 			while (++idx < bnd) {
-				tmp = ar0.firstOrNull(function (obj) { return ar1.call(this._s, obj) === ar1.call(this._s, arr[idx]); });
+				jdx = -1;
+				tmp = null;
+				while (++jdx < cnd) {
+					if (ar1.call(this._s, ar0._a[jdx]) === ar1.call(this._s, arr[idx])) {
+						tmp = ar0._a[jdx];
+						break;
+					}
+				}
 				if (tmp !== null) {
 					if (ar2) {
 						if (this._s) {
@@ -1358,7 +1374,14 @@ Enumerable.prototype.joinBy = function () {
 
 		} else {
 			while (++idx < bnd) {
-				tmp = ar0.firstOrNull(function (obj) { return ar1(obj) === ar1(arr[idx]); });
+				jdx = -1;
+				tmp = null;
+				while (++jdx < cnd) {
+					if (ar1(ar0._a[jdx]) === ar1(arr[idx])) {
+						tmp = ar0._a[jdx];
+						break;
+					}
+				}
 				if (tmp !== null) {
 					if (ar2) {
 						if (this._s) {

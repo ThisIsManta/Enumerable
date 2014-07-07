@@ -5,16 +5,19 @@
   Sub Main()
     Dim Input As New StreamReader("..\..\Enumerable.js", True)
 
-    Dim Buffer As New StringBuilder
+    Dim DebugBuffer As New StringBuilder
+    Dim CompressedBuffer As New StringBuilder
     Dim PreviousLineHasDeclaration As Boolean = False
     Dim FirstContiguousComment As Boolean = True
     Do Until Input.EndOfStream
-      Dim Line As String = Input.ReadLine.Trim
+      Dim Line As String = Input.ReadLine
+      DebugBuffer.AppendLine(vbTab & Line)
+      Line = Line.Trim
 
       If Line.Length > 0 Then
         If Line.StartsWith("//") Then
           If FirstContiguousComment Then
-            Buffer.AppendLine(Line)
+            CompressedBuffer.AppendLine(Line)
           End If
 
         Else
@@ -49,19 +52,19 @@
           Dim CurrentLineHasDeclaration As Boolean = Line.StartsWith("var ") AndAlso Line.EndsWith(";")
           If PreviousLineHasDeclaration AndAlso CurrentLineHasDeclaration Then
             Line = "," & Line.Substring(4, Line.Length - 4)
-            Buffer.Remove(Buffer.Length - 1, 1)
+            CompressedBuffer.Remove(CompressedBuffer.Length - 1, 1)
           End If
 
-          Buffer.Append(Line.Chars(0))
+          CompressedBuffer.Append(Line.Chars(0))
           For i As Integer = 1 To Line.Length - 1
             Dim c As Char = Line.Chars(i)
             If Marks.Contains(c) Then
-              If Char.IsWhiteSpace(Buffer.Chars(Buffer.Length - 1)) Then
-                Buffer.Remove(Buffer.Length - 1, 1)
+              If Char.IsWhiteSpace(CompressedBuffer.Chars(CompressedBuffer.Length - 1)) Then
+                CompressedBuffer.Remove(CompressedBuffer.Length - 1, 1)
               End If
             End If
             If Not Char.IsWhiteSpace(c) OrElse i = 0 OrElse Not Marks.Contains(Line.Chars(i - 1)) Then
-              Buffer.Append(c)
+              CompressedBuffer.Append(c)
             End If
           Next
 
@@ -70,10 +73,20 @@
       End If
     Loop
 
+    Using Output As New StreamWriter("Enumerable-requirejs.js", False, System.Text.Encoding.ASCII)
+      Output.WriteLine("define([], function () {")
+      Output.WriteLine(DebugBuffer)
+      Output.WriteLine(vbTab & "return Enumerable;")
+      Output.WriteLine("});")
+    End Using
+    If Directory.Exists("D:\Economic-Monitor\public\js") Then
+      File.Copy("Enumerable-requirejs.js", "D:\Economic-Monitor\public\js\Enumerable.js", True)
+    End If
+
     File.Copy("..\..\Enumerable.js", "Enumerable.js", True)
     File.Copy("..\..\Test.js", "Test.js", True)
     Using Output As New StreamWriter("Enumerable-compressed.js", False, System.Text.Encoding.ASCII)
-      Output.Write(Buffer)
+      Output.Write(CompressedBuffer)
       Output.Write("var Enumerable=_;")
     End Using
 
