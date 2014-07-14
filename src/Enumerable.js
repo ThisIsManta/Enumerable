@@ -652,14 +652,14 @@ Enumerable.prototype.any = function () {
 	} else if (typeof ar0 === 'function') {
 		if (this._s) {
 			while (++idx < bnd) {
-				if (ar0.call(this._s, this._a[idx], idx) === true) {
+				if (ar0.call(this._s, this._a[idx], idx)) {
 					return true;
 				}
 			}
 
 		} else {
 			while (++idx < bnd) {
-				if (ar0(this._a[idx], idx) === true) {
+				if (ar0(this._a[idx], idx)) {
 					return true;
 				}
 			}
@@ -689,13 +689,13 @@ Enumerable.prototype.all = function () {
 	} else if (typeof ar0 === 'function') {
 		if (this._s) {
 			while (++idx < bnd) {
-				if (ar0.call(this._s, this._a[idx], idx) === false) {
+				if (!ar0.call(this._s, this._a[idx], idx)) {
 					return false;
 				}
 			}
 		} else {
 			while (++idx < bnd) {
-				if (ar0(this._a[idx], idx) === false) {
+				if (!ar0(this._a[idx], idx)) {
 					return false;
 				}
 			}
