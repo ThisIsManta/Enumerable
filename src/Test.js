@@ -16,7 +16,7 @@
 				console.debug(Test.cases[i]);
 			}
 		}
-		console.log('done' + (c > 0 ? ' with ' + c + 'error' + (c > 1 ? 's' : '') : ' without any error'));
+		console.log('done' + (c > 0 ? ' with ' + c + ' error' + (c > 1 ? 's' : '') : ' without any error'));
 	},
 	cases: [
 		function () {
@@ -153,6 +153,16 @@
 		},
 		function () {
 			var a = [1, 2, 3];
+			var e = new Enumerable(a).skip(Infinity);
+			return e._a.length === 0;
+		},
+		function () {
+			var a = [1, 2, 3];
+			var e = new Enumerable(a).skip(Number.MAX_VALUE);
+			return e._a.length === 0;
+		},
+		function () {
+			var a = [1, 2, 3];
 			var e = new Enumerable(a).skip(1);
 			return e._a.length === 2 && e._a[0] === 2 && e._a[1] === 3;
 		},
@@ -165,6 +175,16 @@
 			var a = [1, 2, 3];
 			var e = new Enumerable(a).take(function (x) { return x >= 2; });
 			return e._a.length === 0;
+		},
+		function () {
+			var a = [1, 2, 3];
+			var e = new Enumerable(a).take(Infinity);
+			return e._a.length === 3 && e._a[0] === 1 && e._a[1] === 2 && e._a[2] === 3;
+		},
+		function () {
+			var a = [1, 2, 3];
+			var e = new Enumerable(a).take(Number.MAX_VALUE);
+			return e._a.length === 3 && e._a[0] === 1 && e._a[1] === 2 && e._a[2] === 3;
 		},
 		function () {
 			var a = [1, 2, 3];
@@ -254,6 +274,16 @@
 		function () {
 			var a = [1, 2, 3];
 			var e = new Enumerable(a).isEquivalentTo([2, 3, 4]);
+			return e === false;
+		},
+		function () {
+			var a = [{ v: 1 }, { v: 2 }, { v: 3 }];
+			var e = new Enumerable(a).isEquivalentTo([{ v: 3 }, { v: 1 }, { v: 2 }], function (x, y) { return x.v === y.v; });
+			return e === true;
+		},
+		function () {
+			var a = [{ v: 1 }, { v: 2 }, { v: 3 }];
+			var e = new Enumerable(a).isEquivalentTo([{ v: 1 }, { v: 1 }, { v: 2 }], function (x, y) { return x.v === y.v; });
 			return e === false;
 		},
 		function () {

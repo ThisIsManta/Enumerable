@@ -114,6 +114,7 @@ Enumerable.prototype.toString = function () {
 
 Enumerable.prototype.toObject = function () {
 	var ar0 = arguments[0];
+	var ar1 = arguments[1];
 	var idx = -1;
 	var bnd = this._a.length;
 	var tmp;
@@ -128,7 +129,7 @@ Enumerable.prototype.toObject = function () {
 			out[ar0 + idx.toString()] = this._a[idx];
 		}
 
-	} else if (typeof ar0 === 'function') {
+	} else if (typeof ar0 === 'function') { // Name generator function
 		if (this._s) {
 			while (++idx < bnd) {
 				tmp = ar0.call(this._s, this._a[idx], idx).toString();
@@ -520,6 +521,9 @@ Enumerable.prototype.skip = function () {
 		}
 		return this.take.call(this, tmp, bnd);
 
+	} else if (!isFinite(ar0) || ar0 === Number.MAX_VALUE) {
+		return new Enumerable([], this._s);
+
 	} else if (!isNaN(ar0) && isNaN(ar1)) {
 		return this.take.call(this, ar0, bnd);
 
@@ -572,6 +576,9 @@ Enumerable.prototype.take = function () {
 				}
 			}
 		}
+
+	} else if (!isFinite(ar0) || ar0 === Number.MAX_VALUE) {
+		return new Enumerable(this.toImmutableArray(), this._s);
 
 	} else if (!isNaN(ar0) && isNaN(ar1)) {
 		kdx = Math.min(ar0, bnd);
@@ -724,24 +731,63 @@ Enumerable.prototype.isSubsetOf = function () {
 	return true;
 };
 
+/*
+		(array)
+		(array, function)
+		(array-like object)
+		(array-like object, function)
+*/
 Enumerable.prototype.isEquivalentTo = function () {
 	var arr = new Enumerable(arguments[0]);
+	var ar1 = arguments[1];
 	var idx = -1;
+	var jdx;
 	var bnd = this._a.length;
+	var cnd;
 	var tmp;
-	if (bnd !== arr._a.length) {
+	if (bnd !== arr._a.length || ((bnd === 0) !== (arr._a.length === 0))) {
 		return false;
 
-	} else {
+	} else if (ar1 === undefined) {
 		while (++idx < bnd) {
 			tmp = arr.indexOf(this._a[idx]);
-			if (tmp < 0 || arr._a.length === 0) {
+			if (tmp < 0) {
 				return false;
 			} else {
 				arr.removeAt(tmp);
 			}
 		}
 		return arr._a.length === 0;
+
+	} else if (typeof ar1 === 'function') {
+		while (++idx < bnd) {
+			tmp = this._a[idx];
+			jdx = -1;
+			cnd = arr._a.length;
+			if (this._s) {
+				while (++jdx < cnd) {
+					if (ar1.call(this._s, tmp, arr._a[jdx])) {
+						break;
+					}
+				}
+
+			} else {
+				while (++jdx < cnd) {
+					if (ar1(tmp, arr._a[jdx])) {
+						break;
+					}
+				}
+			}
+			if (jdx === cnd) {
+				return false;
+			} else {
+				arr.removeAt(jdx);
+			}
+		}
+		return arr._a.length === 0;
+
+	} else {
+		throw 'input was not valid';
 	}
 };
 
@@ -1165,7 +1211,7 @@ Enumerable.prototype.difference = function () {
 	var idx = -1;
 	var jdx;
 	var bnd = ar0.length;
-	var out = new Enumerable(this.toImmutableArray());
+	var out = new Enumerable(this.toImmutableArray(), this._s);
 	out._m = false;
 	while (++idx < bnd) {
 		jdx = out.indexOf(ar0[idx]);
