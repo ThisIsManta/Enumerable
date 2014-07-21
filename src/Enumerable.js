@@ -23,6 +23,7 @@ var Enumerable = function Enumerable() {
 	var bnd;
 	var nam;
 	var tmp;
+	var ifn;
 	var out;
 	if (typeof ar0 === 'object') {
 		if (ar0 instanceof Array) {
@@ -42,12 +43,13 @@ var Enumerable = function Enumerable() {
 
 		} else {
 			out = [];
+			ifn = arguments[1] === true || arguments[2] === true || arguments[3] === true;
 			if (typeof ar1 === 'string') {
 				if (ar2 === undefined || typeof ar2 !== 'string') {
 					ar2 = 'value';
 				}
 				for (nam in ar0) {
-					if (ar0[nam] !== undefined && typeof ar0[nam] !== 'function' && nam.charAt(0) !== '_') {
+					if (ar0[nam] !== undefined && (ifn || typeof ar0[nam] !== 'function' && nam.charAt(0) !== '_')) {
 						tmp = {};
 						tmp[ar1] = nam;
 						tmp[ar2] = ar0[nam];
@@ -57,7 +59,7 @@ var Enumerable = function Enumerable() {
 
 			} else {
 				for (nam in ar0) {
-					if (ar0[nam] !== undefined && typeof ar0[nam] !== 'function' && nam.charAt(0) !== '_') {
+					if (ar0[nam] !== undefined && (ifn || typeof ar0[nam] !== 'function' && nam.charAt(0) !== '_')) {
 						out.push({ name: nam, value: ar0[nam] });
 					}
 				}
@@ -129,17 +131,33 @@ Enumerable.prototype.toObject = function () {
 			out[ar0 + idx.toString()] = this._a[idx];
 		}
 
-	} else if (typeof ar0 === 'function') { // Name generator function
-		if (this._s) {
-			while (++idx < bnd) {
-				tmp = ar0.call(this._s, this._a[idx], idx).toString();
-				out[tmp] = this._a[idx];
+	} else if (typeof ar0 === 'function') { // Name generator
+		if (typeof ar1 === 'function') { // Value generator
+			if (this._s) {
+				while (++idx < bnd) {
+					tmp = ar0.call(this._s, this._a[idx], idx).toString();
+					out[tmp] = ar1.call(this._s, this._a[idx], idx);
+				}
+
+			} else {
+				while (++idx < bnd) {
+					tmp = ar0(this._a[idx], idx).toString();
+					out[tmp] = ar1(this._a[idx], idx);
+				}
 			}
 
 		} else {
-			while (++idx < bnd) {
-				tmp = ar0(this._a[idx], idx).toString();
-				out[tmp] = this._a[idx];
+			if (this._s) {
+				while (++idx < bnd) {
+					tmp = ar0.call(this._s, this._a[idx], idx).toString();
+					out[tmp] = this._a[idx];
+				}
+
+			} else {
+				while (++idx < bnd) {
+					tmp = ar0(this._a[idx], idx).toString();
+					out[tmp] = this._a[idx];
+				}
 			}
 		}
 

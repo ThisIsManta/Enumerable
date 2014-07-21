@@ -37,6 +37,10 @@
 			return e._a.length === 1 && e._a[0].name === "0" && e._a[0].value === 1;
 		},
 		function () {
+			var e = new Enumerable({ "0": 1, "1": function () { }, "_2": 4 }, true);
+			return e._a.length === 3 && e._a[0].name === "0" && e._a[0].value === 1 && e._a[1].name === "1" && typeof e._a[1].value === 'function' && e._a[2].name === "_2" && e._a[2].value === 4;
+		},
+		function () {
 			var e = new Enumerable({ "0": 1 }, 'k');
 			return e._a.length === 1 && e._a[0].k === "0" && e._a[0].value === 1;
 		},
@@ -65,10 +69,40 @@
 			}
 		},
 		function () {
-			var a = [1, 2, 3];
-			var e = new Enumerable(a);
+			var e = new Enumerable([1, 2, 3]);
 			var z = e.toArray();
 			return typeof z === 'object' && z instanceof Array && z.length === 3 && z[0] === 1 && z[1] === 2 && z[2] === 3;
+		},
+		function () {
+			var a = ['a', 'b', 'c'];
+			var e = new Enumerable(a);
+			var z = e.toString();
+			return typeof z === 'string' && z === 'abc';
+		},
+		function () {
+			var e = new Enumerable(['a', 'b', 'c']);
+			var z = e.toString(' ');
+			return typeof z === 'string' && z === 'a b c';
+		},
+		function () {
+			var e = new Enumerable([1, 2, 3]);
+			var z = e.toObject();
+			return typeof z === 'object' && z['0'] === 1 && z['1'] === 2 && z['2'] === 3;
+		},
+		function () {
+			var e = new Enumerable([1, 2, 3]);
+			var z = e.toObject('x');
+			return typeof z === 'object' && z['x0'] === 1 && z['x1'] === 2 && z['x2'] === 3;
+		},
+		function () {
+			var e = new Enumerable([1, 2, 3]);
+			var z = e.toObject(function (x, i) { return 'x' + i; });
+			return typeof z === 'object' && z['x0'] === 1 && z['x1'] === 2 && z['x2'] === 3;
+		},
+		function () {
+			var e = new Enumerable([1, 2, 3]);
+			var z = e.toObject(function (x, i) { return 'x' + i; }, function (x) { return x * 2; });
+			return typeof z === 'object' && z['x0'] === 2 && z['x1'] === 4 && z['x2'] === 6;
 		},
 		function () {
 			var a = [1, 2, 3];
