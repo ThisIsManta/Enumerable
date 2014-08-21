@@ -62,6 +62,14 @@
 		},
 		function () {
 			try {
+				var e = new Enumerable(undefined);
+				return false;
+			} catch (ex) {
+				return true;
+			}
+		},
+		function () {
+			try {
 				var e = new Enumerable(null);
 				return false;
 			} catch (ex) {
@@ -90,13 +98,21 @@
 			return typeof z === 'object' && z['0'] === 1 && z['1'] === 2 && z['2'] === 3;
 		},
 		function () {
-			var e = new Enumerable([1, 2, 3]);
-			var z = e.toObject('x');
-			return typeof z === 'object' && z['x0'] === 1 && z['x1'] === 2 && z['x2'] === 3;
+			var a = [{ i: 1 }, { i: 2 }, { i: 3 }];
+			var e = new Enumerable(a);
+			var z = e.toObject('i');
+			return typeof z === 'object' && z['1'] === a[0] && z['2'] === a[1] && z['3'] === a[2];
 		},
 		function () {
-			var e = new Enumerable([1, 2, 3]);
+			var a = [{ i: 1 }, { i: 2 }, { i: 3 }];
+			var e = new Enumerable(a);
 			var z = e.toObject(function (x, i) { return 'x' + i; });
+			return typeof z === 'object' && z['x0'] === a[0] && z['x1'] === a[1] && z['x2'] === a[2];
+		},
+		function () {
+			var a = [{ i: 1 }, { i: 2 }, { i: 3 }];
+			var e = new Enumerable(a);
+			var z = e.toObject(function (x, i) { return 'x' + i; }, 'i');
 			return typeof z === 'object' && z['x0'] === 1 && z['x1'] === 2 && z['x2'] === 3;
 		},
 		function () {
@@ -119,8 +135,12 @@
 			return typeof z === 'object' && z instanceof Array && z[1] === 4 && a[1] === 2 && e._a[1] === 2;
 		},
 		function () {
-			var e = new Enumerable().create(1, 3);
-			return e._a.length === 3 && e._a[0] === 1 && e._a[1] === 1 && e._a[1] === 1;
+			var e = new Enumerable(3);
+			return e._a.length === 3 && e._a[0] === undefined && e._a[1] === undefined && e._a[2] === undefined;
+		},
+		function () {
+			var e = new Enumerable(3, 1);
+			return e._a.length === 3 && e._a[0] === 1 && e._a[1] === 1 && e._a[2] === 1;
 		},
 		function () {
 			var a = [1, 2, 3];
@@ -396,6 +416,11 @@
 			return e === true;
 		},
 		function () {
+			var a = [{ x: 1 }, { x: 2 }, { x: 3 }];
+			var e = new Enumerable(a).find('x', 2);
+			return e.x === 2;
+		},
+		function () {
 			var a = [];
 			var e = new Enumerable(a).firstOrNull();
 			return e === null;
@@ -652,6 +677,11 @@
 			return e === 1;
 		},
 		function () {
+			var a = [1, 1, 1];
+			var e = new Enumerable(a).min();
+			return e === 1;
+		},
+		function () {
 			var a = [1, 2, 3];
 			var e = new Enumerable(a).min();
 			return e === 1;
@@ -665,6 +695,11 @@
 			var a = [{ v: 1, t: 3 }, { v: 2, t: 1 }, { v: 3, t: NaN }];
 			var e = new Enumerable(a).min(function (x) { return x.t; });
 			return e.v === 2;
+		},
+		function () {
+			var a = [3, 3, 3];
+			var e = new Enumerable(a).max();
+			return e === 3;
 		},
 		function () {
 			var a = [1, 2, 3];
