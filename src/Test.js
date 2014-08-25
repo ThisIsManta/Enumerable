@@ -746,14 +746,14 @@
 			return e === 'a1b2c3';
 		},
 		function () {
-			var a = [undefined, 1, null, 2, NaN, 3, Infinity];
+			var a = [undefined, 1, null, 2, NaN, 3, Infinity, 'x'];
 			var e = new Enumerable(a).norm();
-			return e._a.length === 3 && e._a[0] === 1 && e._a[1] === 2 && e._a[2] === 3;
+			return e._a.length === 4 && e._a[0] === 1 && e._a[1] === 2 && e._a[2] === 3 && e._a[3] === 'x';
 		},
 		function () {
-			var a = [{}, { v: 1 }, { v: null }, { v: 2 }, { v: NaN }, { v: 3 }, { v: Infinity }];
+			var a = [{}, { v: 1 }, { v: null }, { v: 2 }, { v: NaN }, { v: 3 }, { v: Infinity }, { v: 'x' }];
 			var e = new Enumerable(a).norm(function (x) { return x.v; });
-			return e._a.length === 3 && e._a[0].v === 1 && e._a[1].v === 2 && e._a[2].v === 3;
+			return e._a.length === 4 && e._a[0].v === 1 && e._a[1].v === 2 && e._a[2].v === 3 && e._a[3].v === 'x';
 		},
 		function () {
 			var a = [1, 2, 3];

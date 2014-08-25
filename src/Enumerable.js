@@ -1884,7 +1884,7 @@ Enumerable.prototype.norm = function () {
 	if (arguments.length === 0) {
 		while (++idx < bnd) {
 			tmp = this._a[idx];
-			if (tmp && (typeof tmp !== 'string' || tmp.trim() > 0) && (typeof tmp !== 'number' || isFinite(tmp))) {
+			if (tmp && (typeof tmp !== 'string' || tmp.trim().length > 0) && (typeof tmp !== 'number' || isFinite(tmp))) {
 				out.push(tmp);
 			}
 		}
@@ -1893,7 +1893,7 @@ Enumerable.prototype.norm = function () {
 		if (this._s) {
 			while (++idx < bnd) {
 				tmp = ar0.call(this._s, this._a[idx], idx);
-				if (tmp && (typeof tmp !== 'string' || tmp.trim() > 0) && (typeof tmp !== 'number' || isFinite(tmp))) {
+				if (tmp && (typeof tmp !== 'string' || tmp.trim().length > 0) && (typeof tmp !== 'number' || isFinite(tmp))) {
 					out.push(this._a[idx]);
 				}
 			}
@@ -1901,7 +1901,7 @@ Enumerable.prototype.norm = function () {
 		} else {
 			while (++idx < bnd) {
 				tmp = ar0(this._a[idx], idx);
-				if (tmp && (typeof tmp !== 'string' || tmp.trim() > 0) && (typeof tmp !== 'number' || isFinite(tmp))) {
+				if (tmp && (typeof tmp !== 'string' || tmp.trim().length > 0) && (typeof tmp !== 'number' || isFinite(tmp))) {
 					out.push(this._a[idx]);
 				}
 			}
