@@ -1930,3 +1930,23 @@ Enumerable.prototype.define = function () {
 	}
 	return this;
 };
+
+Enumerable.prototype.chain = function () {
+	var chain = {
+		e: this.where(function (obj) { return typeof obj === 'function'; }),
+		p: new Enumerable(arguments).clone().toArray(),
+		i: 0,
+		isHandled: false
+	};
+	chain.p.splice(0, 0, chain);
+	chain.next = function () {
+		chain.i++;
+		if (chain.i < chain.e.count() && chain.isHandled !== true) {
+			chain.e._a[chain.i].apply(chain.e._s || chain.e, chain.p);
+		}
+	};
+
+	if (this.any()) {
+		chain.e.first().apply(chain.e._s || chain.e, chain.p);
+	}
+};

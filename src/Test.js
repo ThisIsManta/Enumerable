@@ -761,5 +761,17 @@
 			var f = new Enumerable([0, 1]);
 			return e.test(0) === true && f.test(1) === true;
 		},
+		function () {
+			var a = [function (c, p) { p.z += 1; c.next(); }, function (c, p) { p.z += 2; c.next(); }, function (c, p) { p.z += 3; c.next(); }];
+			var p = { z: 0 };
+			var e = new Enumerable(a).chain(p);
+			return p.z === 6;
+		},
+		function () {
+			var a = [function (c, p) { p.z += 1; c.next(); }, function (c, p) { p.z += 2; c.isHandled = true; c.next(); }, function (c, p) { p.z += 3; c.next(); }];
+			var p = { z: 0 };
+			var e = new Enumerable(a).chain(p);
+			return p.z === 3;
+		},
 	]
 };
