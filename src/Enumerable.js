@@ -923,7 +923,7 @@ Enumerable.prototype.lastIndexOf = function () {
 			}
 		}
 
-	} else if (ar0 !== undefined && ar0 !== null) {
+	} else if (ar0 !== undefined) {
 		while (--idx >= 0) {
 			if (this._a[idx] === ar0) {
 				return idx;
