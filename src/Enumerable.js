@@ -883,7 +883,7 @@ Enumerable.prototype.indexOf = function () {
 			}
 		}
 
-	} else if (ar0 !== undefined && ar0 !== null) {
+	} else if (ar0 !== undefined) {
 		while (++idx < bnd) {
 			if (this._a[idx] === ar0) {
 				return idx;
