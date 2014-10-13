@@ -74,14 +74,14 @@
     Loop
 
     Using Output As New StreamWriter("Enumerable-requirejs.js", False, System.Text.Encoding.ASCII)
-      Output.WriteLine("define([], function () {")
+      Output.WriteLine("define(function () {")
       Output.WriteLine(DebugBuffer)
       Output.WriteLine(vbTab & "return Enumerable;")
       Output.WriteLine("});")
     End Using
-    If Directory.Exists("D:\Economic-Monitor\public\js") Then
-      File.Copy("Enumerable-requirejs.js", "D:\Economic-Monitor\public\js\Enumerable.js", True)
-    End If
+    'If Directory.Exists("D:\Economic-Monitor\public\js") Then
+    'File.Copy("Enumerable-requirejs.js", "D:\Economic-Monitor\public\js\Enumerable.js", True)
+    'End If
 
     File.Copy("..\..\Enumerable.js", "Enumerable.js", True)
     File.Copy("..\..\Test.js", "Test.js", True)
