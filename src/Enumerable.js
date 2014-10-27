@@ -1775,9 +1775,6 @@ Enumerable.prototype.sum = function () {
 	if (bnd === 0) {
 		return 0;
 
-	} else if (bnd === 1) {
-		return this._a[0];
-
 	} else {
 		if (ar0 === undefined) {
 			val = this._a[0];
