@@ -460,20 +460,10 @@ Enumerable.prototype.selectSome = function () {
 			if (ar1.length === 0) {
 				throw 'name was empty';
 			}
-			if (this._s) {
-				while (++idx < bnd) {
-					tmp = this._a[idx];
-					if (tmp === ar1) {
-						out.push(tmp[ar2]);
-					}
-				}
-
-			} else {
-				while (++idx < bnd) {
-					tmp = this._a[idx];
-					if (tmp === ar1) {
-						out.push(tmp[ar2]);
-					}
+			while (++idx < bnd) {
+				tmp = this._a[idx];
+				if (tmp !== undefined && tmp !== null && tmp[ar0] === ar1) {
+					out.push(tmp[ar2]);
 				}
 			}
 
