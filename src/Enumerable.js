@@ -292,7 +292,7 @@ Enumerable.prototype.select = function () {
 	if (arguments.length === 1) {
 		return this.selectAll.apply(this, arguments);
 
-	} else if (arguments.length === 2) {
+	} else if (arguments.length >= 2 && arguments.length <= 3) {
 		return this.selectSome.apply(this, arguments);
 
 	} else {
