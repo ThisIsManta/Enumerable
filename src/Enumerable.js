@@ -618,18 +618,20 @@ Enumerable.prototype.flatten = function () {
 	var out = [];
 	while (++idx < bnd) {
 		tmp = this._a[idx];
-		if (typeof tmp === 'object' && tmp instanceof Array && tmp.length > 0) {
-			if (ar0) {
-				tmp = new Enumerable(tmp).flatten(ar0).toArray();
-			}
-			jdx = -1;
-			len = tmp.length;
-			if (len > 1) {
-				out = out.concat(tmp);
+		if (typeof tmp === 'object' && tmp instanceof Array) {
+			if (tmp.length > 0) {
+				if (ar0) {
+					tmp = new Enumerable(tmp).flatten(ar0).toArray();
+				}
+				jdx = -1;
+				len = tmp.length;
+				if (len > 1) {
+					out = out.concat(tmp);
 
-			} else {
-				while (++jdx < len) {
-					out.push(tmp[jdx]);
+				} else {
+					while (++jdx < len) {
+						out.push(tmp[jdx]);
+					}
 				}
 			}
 		} else {

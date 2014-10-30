@@ -308,12 +308,16 @@ var Test = {
 		function () {
 			var a = [[1, 2, 3], [4, 5, [6, 7]]];
 			var e = new Enumerable(a).flatten();
-			return e._a.length === 6 && e._a[0] === 1 && e._a[5][0] === 6;
+			expect(e._a.length, 6);
+			expect(e._a[0], 1);
+			expect(e._a[5][0], 6);
 		},
 		function () {
-			var a = [[1, 2, 3], [4, 5, [6, 7]]];
+			var a = [[1, 2, 3], [4, 5, [6, 7]], []];
 			var e = new Enumerable(a).flatten(true);
-			return e._a.length === 7 && e._a[0] === 1 && e._a[5] === 6;
+			expect(e._a.length, 7);
+			expect(e._a[0], 1);
+			expect(e._a[5], 6);
 		},
 		function () {
 			var a = [1, 2, 3];
