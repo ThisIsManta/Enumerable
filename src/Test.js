@@ -370,24 +370,28 @@ var Test = {
 			return e === true;
 		},
 		function () {
-			var a = [1, 2, 3];
-			var e = new Enumerable(a).subsetOf([1, 3]);
-			return e === true;
+			var e = new Enumerable([]).subsetOf([1, 2, 3]);
+			expect(e, true);
 		},
 		function () {
-			var a = [1, 2, 3];
-			var e = new Enumerable(a).subsetOf([1, 4]);
-			return e === false;
+			var e = new Enumerable([1, 3]).subsetOf([1, 2, 3]);
+			expect(e, true);
 		},
 		function () {
-			var a = [1, 2, 3];
-			var e = new Enumerable(a).equivalentTo([2, 3, 1]);
-			return e === true;
+			var e = new Enumerable([1, 4]).subsetOf([1, 2, 3]);
+			expect(e, false);
 		},
 		function () {
-			var a = [1, 2, 3];
-			var e = new Enumerable(a).equivalentTo([2, 3, 4]);
-			return e === false;
+			var e = new Enumerable([]).equivalentTo([2, 3, 1]);
+			expect(e, false);
+		},
+		function () {
+			var e = new Enumerable([1, 2, 3]).equivalentTo([2, 3, 1]);
+			expect(e, true);
+		},
+		function () {
+			var e = new Enumerable([1, 2, 3]).equivalentTo([2, 3, 4]);
+			expect(e, false);
 		},
 		function () {
 			var a = [{ v: 1 }, { v: 2 }, { v: 3 }];

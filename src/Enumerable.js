@@ -715,11 +715,11 @@ Enumerable.prototype.all = function () {
 };
 
 Enumerable.prototype.subsetOf = function () {
-	var arr = new Enumerable(arguments[0])._a;
+	var arr = new Enumerable(arguments[0]);
 	var idx = -1;
-	var bnd = arr.length;
+	var bnd = this._a.length;
 	while (++idx < bnd) {
-		if (this.indexOf(arr[idx]) < 0) {
+		if (arr.contains(this._a[idx]) === false) {
 			return false;
 		}
 	}
