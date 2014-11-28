@@ -20,7 +20,7 @@ var Enumerable = function Enumerable() {
 			this._a = ar0;
 			this._m = true;
 
-		} else if (ar0.constructor !== undefined && ar0.constructor.name === 'Enumerable' || ar0 instanceof Enumerable) {
+		} else if (ar0 !== null && ar0.constructor !== undefined && ar0.constructor.name === 'Enumerable' || ar0 instanceof Enumerable) {
 			this._a = ar0._a;
 			this._m = true;
 
