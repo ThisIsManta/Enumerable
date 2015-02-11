@@ -925,11 +925,15 @@ var Test = {
 			expect(e._a[3].v, 'x');
 		},
 		function () {
-			var a = [1, 2, 3];
-			var e = new Enumerable(a).define('test', function (x) { return this._a[x] === 1; });
-			var f = new Enumerable([0, 1]);
-			expect(e.test(0), true);
-			expect(f.test(1), true);
+			Enumerable.define('test', function (x) { return this._a[x] === 1; });
+			var e = new Enumerable([0, 1]);
+			var f = new Enumerable([1, 2, 3]);
+			expect(e.test(0), false);
+			expect(e.test(1), true);
+			expect(f.test(0), true);
+			expect(f.test(1), false);
 		}
 	]
 };
+
+console.log('Test.run();');
