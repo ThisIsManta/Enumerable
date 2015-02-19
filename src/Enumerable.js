@@ -60,7 +60,11 @@ var Enumerable = function Enumerable() {
 		}
 
 	} else if (typeof ar0 === 'string') {
-		this._a = ar0.split(ar1 || '');
+		if (typeof ar1 === 'string' || ar1 instanceof RegExp) {
+			this._a = ar0.split(ar1);
+		} else {
+			this._a = ar0.split('');
+		}
 		this._m = false;
 
 	} else if (arguments.length === 0) {
@@ -81,7 +85,7 @@ var Enumerable = function Enumerable() {
 	}
 
 	// Set the context of function
-	if (arguments.length > 1 && typeof arguments[arguments.length - 1] === 'object') {
+	if (arguments.length > 1 && typeof arguments[arguments.length - 1] === 'object' && !(arguments[arguments.length - 1] instanceof Array)) {
 		this._s = arguments[arguments.length - 1];
 	}
 };
