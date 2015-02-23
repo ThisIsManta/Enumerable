@@ -503,7 +503,7 @@ Enumerable.prototype.invoke = function () {
 	return this;
 };
 
-Enumerable.prototype.peekAt = function () {
+Enumerable.prototype.peek = function () {
 	var ar0 = arguments[0];
 	if (typeof ar0 === 'number' && !isNaN(ar0) && ar0 >= 0 && ar0 < this._a.length) {
 		return this._a[ar0];

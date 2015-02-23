@@ -1,5 +1,8 @@
-out
-obj
-bin
-/src/Compressor.v11.suo
-/src/Compressor.vbproj.user
+/bin/*.config
+/bin/*.pdb
+/bin/*.exe
+/bin/Test.js
+/bin/Main.html
+/src/obj
+/src/Enumerable.v11.suo
+/src/Enumerable.vbproj

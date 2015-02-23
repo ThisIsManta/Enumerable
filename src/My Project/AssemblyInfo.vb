@@ -8,11 +8,11 @@ Imports System.Runtime.InteropServices
 
 ' Review the values of the assembly attributes
 
-<Assembly: AssemblyTitle("Compressor")> 
+<Assembly: AssemblyTitle("Enumerable")> 
 <Assembly: AssemblyDescription("")> 
 <Assembly: AssemblyCompany("")> 
-<Assembly: AssemblyProduct("Compressor")> 
-<Assembly: AssemblyCopyright("Copyright ©  2014")> 
+<Assembly: AssemblyProduct("Enumerable")> 
+<Assembly: AssemblyCopyright("Anantachai Saothong")> 
 <Assembly: AssemblyTrademark("")> 
 
 <Assembly: ComVisible(False)>

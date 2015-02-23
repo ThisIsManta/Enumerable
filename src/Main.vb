@@ -3,7 +3,7 @@
   Dim Marks As String() = {"(", ")", "{", "}", "[", "]", "<", ">", "=", "+", "-", "*", "/", "&", "|", ",", ";", ":"}
 
   Sub Main()
-    Dim Input As New StreamReader("..\..\Enumerable.js", True)
+		Dim Input As New StreamReader("..\src\Enumerable.js", True)
 
     Dim DebugBuffer As New StringBuilder
     Dim CompressedBuffer As New StringBuilder
@@ -73,22 +73,17 @@
       End If
     Loop
 
-    Using Output As New StreamWriter("Enumerable-requirejs.js", False, System.Text.Encoding.ASCII)
-      Output.WriteLine("define(function () {")
-      Output.WriteLine(DebugBuffer)
-      Output.WriteLine(vbTab & "return Enumerable;")
-      Output.WriteLine("});")
-    End Using
-    'If Directory.Exists("D:\Economic-Monitor\public\js") Then
-    'File.Copy("Enumerable-requirejs.js", "D:\Economic-Monitor\public\js\Enumerable.js", True)
-    'End If
+		Using Output As New StreamWriter("Enumerable-req.js", False, System.Text.Encoding.ASCII)
+			Output.WriteLine("define(function () {")
+			Output.WriteLine(DebugBuffer)
+			Output.WriteLine(vbTab & "return Enumerable;")
+			Output.WriteLine("});")
+		End Using
 
-    File.Copy("..\..\Enumerable.js", "Enumerable.js", True)
-    File.Copy("..\..\Test.js", "Test.js", True)
-    Using Output As New StreamWriter("Enumerable-compressed.js", False, System.Text.Encoding.ASCII)
-      Output.Write(CompressedBuffer)
-      Output.Write("var Enumerable=_;")
-    End Using
+		Using Output As New StreamWriter("Enumerable-min.js", False, System.Text.Encoding.ASCII)
+			Output.Write(CompressedBuffer)
+			Output.Write("var Enumerable=_;")
+		End Using
 
     Using Output As New StreamWriter("Main.html", False, System.Text.Encoding.ASCII)
       Output.WriteLine("<!DOCTYPE html>")
@@ -99,11 +94,12 @@
       If System.Environment.GetCommandLineArgs.Contains("-debug") Then
         Output.WriteLine("<script type=""text/javascript"" src=""Enumerable.js""></script>")
       Else
-        Output.WriteLine("<script type=""text/javascript"" src=""Enumerable-compressed.js""></script>")
+				Output.WriteLine("<script type=""text/javascript"" src=""Enumerable-min.js""></script>")
       End If
       Output.WriteLine("<script type=""text/javascript"" src=""Test.js""></script>")
       Output.WriteLine("</head>")
-      Output.WriteLine("<body>")
+			Output.WriteLine("<body>")
+			Output.WriteLine("<script type=""text/javascript"">console.log('Test.run();'); Test.run();</script>")
       Output.WriteLine("</body>")
       Output.WriteLine("</html>")
     End Using
