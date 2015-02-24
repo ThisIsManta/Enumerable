@@ -25,7 +25,7 @@ var Test = {
 				console.debug(Test.cases[i]);
 			}
 		}
-		console.log('done' + (c > 0 ? ' with ' + c + ' error' + (c > 1 ? 's' : '') : ' without any error'));
+		console.log('Done' + (c > 0 ? ' with ' + c + ' error' + (c > 1 ? 's' : '') : ' without any error'));
 	},
 	cases: [
 		function () {
@@ -938,6 +938,13 @@ var Test = {
 			expect(e._a[3].v, 'x');
 		},
 		function () {
+			var e = new Enumerable(['a', 1, null, undefined, {}, []]);
+			expect(e.cast('string')._a[0], 'a');
+			expect(e.cast('number')._a[0], 1);
+			if (!(e.cast('array')._a[0] instanceof Array)) { unexpect(); }
+			if (!(e.cast('object')._a[0] instanceof Object)) { unexpect(); }
+		},
+		function () {
 			Enumerable.define('test', function (x) { return this._a[x] === 1; });
 			var e = new Enumerable([0, 1]);
 			var f = new Enumerable([1, 2, 3]);
@@ -950,10 +957,6 @@ var Test = {
 			Enumerable.define('test', 'count');
 			var e = new Enumerable([1, 2, 3]);
 			expect(e.test(), 3);
-		},
-		function () {
-			var e = Enumerable.interpolate('a<%=x%>b<%=x+1%>c<%=y%>', { x: 1, y: function () { return this.x + 2; } });
-			expect(e, 'a1b2c3');
 		}
 	]
 };

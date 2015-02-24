@@ -293,7 +293,7 @@ Enumerable.prototype.select = function () {
 		return this.selectAll.apply(this, arguments);
 
 	} else if (arguments.length >= 2 && arguments.length <= 3) {
-		return this.selectSome.apply(this, arguments);
+		return this.selectAny.apply(this, arguments);
 
 	} else {
 		throw 'one or more parameters were not valid';
@@ -331,7 +331,7 @@ Enumerable.prototype.selectAll = function () {
 	return new Enumerable(out, this._s);
 };
 
-Enumerable.prototype.selectSome = function () {
+Enumerable.prototype.selectAny = function () {
 	var ar0 = arguments[0];
 	var ar1 = arguments[1];
 	var ar2 = arguments[2];
@@ -1856,9 +1856,65 @@ Enumerable.prototype.norm = function () {
 	} else {
 		throw 'one or more parameters were not valid';
 	}
-	this._a = out;
-	this._m = false;
-	return this;
+	return new Enumerable(out, this._s);
+};
+
+Enumerable.prototype.cast = function () {
+	var ar0 = arguments[0];
+	var idx = -1;
+	var bnd = this._a.length;
+	var tmp;
+	var out = [];
+	if (typeof ar0 === 'string' && ar0.length > 0) {
+		ar0 = ar0.toLowerCase();
+		if (ar0 === 'string') {
+			while (++idx < bnd) {
+				tmp = this._a[idx];
+				if (tmp !== undefined && tmp !== null) {
+					out.push(tmp.toString());
+				}
+			}
+
+		} else if (ar0 === 'number') {
+			while (++idx < bnd) {
+				tmp = this._a[idx];
+				if (typeof tmp === 'number') {
+					out.push(tmp);
+
+				} else if (typeof tmp === 'string') {
+					tmp = parseFloat(tmp);
+					if (!isNaN(tmp)) {
+						out.push(tmp);
+					}
+				}
+			}
+
+		} else if (ar0 === 'array') {
+			while (++idx < bnd) {
+				tmp = this._a[idx];
+				if (tmp instanceof Array) {
+					out.push(tmp);
+				}
+			}
+
+		} else if (ar0 === 'object') {
+			while (++idx < bnd) {
+				tmp = this._a[idx];
+				if (tmp !== null && typeof tmp === 'object' && !(tmp instanceof Array)) {
+					out.push(tmp);
+				}
+			}
+
+		} else if (typeof tmp === ar0) {
+			while (++idx < bnd) {
+				out.push(this._a[idx]);
+			}
+		}
+		return new Enumerable(out, this._s);
+
+	} else {
+		throw 'one or more parameters were not valid';
+	}
 };
 
 Enumerable.define = function () {
@@ -1878,59 +1934,4 @@ Enumerable.define = function () {
 	} else {
 		throw 'one or more parameters were not valid';
 	}
-};
-
-Enumerable.interpolate = function () {
-	var ar0 = arguments[0];
-	var ar1 = arguments[1];
-	var hsh = [];
-	var idx = 0;
-	var jdx;
-	var kdx;
-	var tmp;
-	var prm = 'var ';
-	var out = '';
-	if (typeof ar0 === 'string' && typeof ar1 === 'object') {
-		while (idx < ar0.length) {
-			jdx = ar0.indexOf('<%=', idx);
-			if (jdx >= 0) {
-				hsh.push(ar0.substring(idx, jdx));
-				kdx = ar0.indexOf('%>', jdx);
-				if (kdx === -1) {
-					throw 'template was not valid';
-				}
-				tmp = ar0.substring(jdx + 3, kdx).trim();
-				if (tmp.length > 0) {
-					hsh.push({ e: tmp });
-					idx = kdx + 2;
-				}
-
-			} else {
-				hsh.push(ar0.substring(idx));
-				idx = ar0.length;
-			}
-		}
-		for (tmp in ar1) {
-			prm += tmp + '=' + JSON.stringify(typeof ar1[tmp] === 'function' ? ar1[tmp].apply(ar1, this._a) : ar1[tmp]) + ',';
-		}
-		if (prm === 'var ') {
-			prm = '';
-		} else {
-			prm = prm.substring(0, prm.length - 1) + ';';
-		}
-		jdx = -1;
-		kdx = hsh.length;
-		while (++jdx < kdx) {
-			if (typeof hsh[jdx] === 'string') {
-				out += hsh[jdx];
-
-			} else if ((tmp = hsh[jdx].e) !== undefined) {
-				out += eval(prm + tmp).toString();
-			}
-		}
-
-	} else {
-		throw 'one or more parameters were not valid';
-	}
-	return out;
 };
