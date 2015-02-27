@@ -503,7 +503,7 @@ Enumerable.prototype.invoke = function () {
 	return this;
 };
 
-Enumerable.prototype.peek = function () {
+Enumerable.prototype.peekAt = function () {
 	var ar0 = arguments[0];
 	if (typeof ar0 === 'number' && !isNaN(ar0) && ar0 >= 0 && ar0 < this._a.length) {
 		return this._a[ar0];
@@ -1223,6 +1223,13 @@ Enumerable.prototype.removeRange = function () {
 	while (++idx < bnd) {
 		this.remove(ar0[idx]);
 	}
+	return this;
+};
+
+Enumerable.prototype.removeAll = function () {
+	var out = this.toImmutableArray();
+	out.splice(0, this._a.length);
+	this._a = out;
 	return this;
 };
 

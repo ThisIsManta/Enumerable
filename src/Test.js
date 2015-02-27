@@ -265,11 +265,11 @@ var Test = {
 		},
 		function () {
 			var e = new Enumerable([1, 2, 3]);
-			expect(e.peek(0), 1);
-			expect(e.peek(1), 2);
-			expect(e.peek(2), 3);
+			expect(e.peekAt(0), 1);
+			expect(e.peekAt(1), 2);
+			expect(e.peekAt(2), 3);
 			try {
-				e.peek(-1);
+				e.peekAt(-1);
 				unexpect();
 			} catch (ex) { }
 		},
@@ -714,6 +714,12 @@ var Test = {
 			var e = new Enumerable(a).removeRange([1, 3]);
 			expect(e._a.length, 1);
 			expect(e._a[0], 2);
+		},
+		function () {
+			var a = [1, 2, 3];
+			var e = new Enumerable(a).removeAll();
+			expect(e._a.length, 0);
+			expect(a.length, 3);
 		},
 		function () {
 			var a = [1, 2, 3];

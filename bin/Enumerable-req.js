@@ -294,7 +294,7 @@ define(function () {
 			return this.selectAll.apply(this, arguments);
 	
 		} else if (arguments.length >= 2 && arguments.length <= 3) {
-			return this.selectSome.apply(this, arguments);
+			return this.selectAny.apply(this, arguments);
 	
 		} else {
 			throw 'one or more parameters were not valid';
@@ -332,7 +332,7 @@ define(function () {
 		return new Enumerable(out, this._s);
 	};
 	
-	Enumerable.prototype.selectSome = function () {
+	Enumerable.prototype.selectAny = function () {
 		var ar0 = arguments[0];
 		var ar1 = arguments[1];
 		var ar2 = arguments[2];
@@ -504,7 +504,7 @@ define(function () {
 		return this;
 	};
 	
-	Enumerable.prototype.peek = function () {
+	Enumerable.prototype.peekAt = function () {
 		var ar0 = arguments[0];
 		if (typeof ar0 === 'number' && !isNaN(ar0) && ar0 >= 0 && ar0 < this._a.length) {
 			return this._a[ar0];
@@ -1224,6 +1224,13 @@ define(function () {
 		while (++idx < bnd) {
 			this.remove(ar0[idx]);
 		}
+		return this;
+	};
+	
+	Enumerable.prototype.removeAll = function () {
+		var out = this.toImmutableArray();
+		out.splice(0, this._a.length);
+		this._a = out;
 		return this;
 	};
 	
