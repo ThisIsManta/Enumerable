@@ -220,6 +220,20 @@ Enumerable.prototype.toObject = function () {
 	return out;
 };
 
+Enumerable.prototype.peekAt = function () {
+	var ar0 = arguments[0];
+	if (typeof ar0 === 'number') {
+		if (!isNaN(ar0) && ar0 >= 0 && ar0 < this._a.length) {
+			return this._a[ar0];
+		} else {
+			throw 'an index was out of range'
+		}
+
+	} else {
+		throw 'one or more parameters were not valid';
+	}
+};
+
 Enumerable.prototype.clone = function () {
 	var arr = this._a;
 	var idx = -1;
@@ -501,16 +515,6 @@ Enumerable.prototype.invoke = function () {
 		throw 'one or more parameters were not valid';
 	}
 	return this;
-};
-
-Enumerable.prototype.peekAt = function () {
-	var ar0 = arguments[0];
-	if (typeof ar0 === 'number' && !isNaN(ar0) && ar0 >= 0 && ar0 < this._a.length) {
-		return this._a[ar0];
-
-	} else {
-		throw 'an index was out of range'
-	}
 };
 
 Enumerable.prototype.take = function () {
@@ -990,7 +994,7 @@ Enumerable.prototype.singleOrNull = function () {
 		}
 
 	} else {
-		throw 'an index was not supported';
+		throw 'one or more parameters were not valid';
 	}
 };
 
@@ -1021,7 +1025,7 @@ Enumerable.prototype.single = function () {
 		}
 
 	} else {
-		throw 'an index was not supported';
+		throw 'one or more parameters were not valid';
 	}
 };
 
@@ -1228,7 +1232,21 @@ Enumerable.prototype.removeRange = function () {
 
 Enumerable.prototype.removeAll = function () {
 	var out = this.toImmutableArray();
-	out.splice(0, this._a.length);
+	if (arguments.length === 0) {
+		out.splice(0, this._a.length);
+		
+	} else if (arguments.length === 1) {
+		var ar0 = arguments[0];
+		var idx = out.length;
+		while (--idx >= 0) {
+			if (out[idx] === ar0) {
+				out.splice(idx, 1);
+			}
+		}
+
+	} else {
+		throw 'one or more parameters were not valid';
+	}
 	this._a = out;
 	return this;
 };
@@ -1312,7 +1330,7 @@ Enumerable.prototype.sortBy = function () {
 
 		} else if (typeof ar0 === 'string') {
 			if (ar0.length === 0) {
-				throw 'name was empty';
+				throw 'a name projector was empty';
 			}
 			out = this.select(function (val, idx) { return { i: idx, v: val, r: val[ar0] }; });
 

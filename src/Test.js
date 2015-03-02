@@ -722,6 +722,14 @@ var Test = {
 			expect(a.length, 3);
 		},
 		function () {
+			var a = [1, 2, 3, 2];
+			var e = new Enumerable(a).removeAll(2);
+			expect(e._a.length, 2);
+			expect(e._a[0], 1);
+			expect(e._a[1], 3);
+			expect(a.length, 4);
+		},
+		function () {
 			var a = [1, 2, 3];
 			var e = new Enumerable(a).union([2, 3, 4]);
 			expect(e._a.length, 4);
