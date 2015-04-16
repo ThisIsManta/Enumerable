@@ -1401,6 +1401,10 @@ Enumerable.prototype.groupBy = function () {
 	} else {
 		throw 'one or more parameters were not valid';
 	}
+	var s = this._s;
+	out.asEnumerable = function () {
+		return new Enumerable(this, s);
+	};
 	return out;
 };
 
@@ -1536,20 +1540,29 @@ Enumerable.prototype.countBy = function () {
 	var idx = -1;
 	var bnd = this._a.length;
 	var out = 0;
+	var tmp;
 	if (ar0 === undefined) {
 		out = this._a.length;
 
 	} else if (typeof ar0 === 'function') {
 		if (this._s) {
 			while (++idx < bnd) {
-				if (ar0.call(this._s, this._a[idx], idx)) {
+				tmp = ar0.call(this._s, this._a[idx], idx);
+				if (typeof tmp === 'number') {
+					out += tmp;
+					
+				} else if (tmp) {
 					out += 1;
 				}
 			}
 
 		} else {
 			while (++idx < bnd) {
-				if (ar0(this._a[idx], idx)) {
+				tmp = ar0(this._a[idx], idx);
+				if (typeof tmp === 'number') {
+					out += tmp;
+					
+				} else if (tmp) {
 					out += 1;
 				}
 			}

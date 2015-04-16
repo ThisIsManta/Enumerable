@@ -1401,6 +1401,10 @@ Enumerable.prototype.groupBy = function () {
 	} else {
 		throw 'one or more parameters were not valid';
 	}
+	var s = this._s;
+	out.asEnumerable = function () {
+		return new Enumerable(this, s);
+	};
 	return out;
 };
 

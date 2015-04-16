@@ -808,6 +808,9 @@ var Test = {
 			expect(e[1]._a[1].v, 2);
 			expect(e[2]._a.length, 1);
 			expect(e[2]._a[0].v, 3);
+			expect(e.asEnumerable().count(), 2);
+			expect(e.asEnumerable().first().name, '1');
+			expect(e.asEnumerable().first().value.last(), a[1]);
 		},
 		function () {
 			var a = [{ v: 1, g: 1 }, { v: 2, g: 1 }, { v: 3, g: 2 }];
