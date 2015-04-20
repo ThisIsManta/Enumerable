@@ -235,16 +235,46 @@ define(function () {
 		}
 	};
 	
-	Enumerable.prototype.clone = function () {
+	Enumerable.prototype.clone = function (idp) {
 		var arr = this._a;
-		var idx = -1;
-		var bnd = this._a.length;
-		var out = new Array(bnd);
-		while (++idx < bnd) {
-			out[idx] = arr[idx];
-		}
 		this._m = false;
-		return new Enumerable(out, this._s);
+		if (idp === true) {
+			var dpc = function (obj) {
+				if (typeof obj === 'object') {
+					var out;
+					var idx;
+					if (obj instanceof Array) {
+						out = [];
+						idx = 0;
+						var bnd = obj.length;
+						for (; idx < bnd; idx++) {
+							out[idx] = arguments.callee(obj[idx]);
+						}
+						return out;
+						
+					} else {
+						out = {};
+						for (idx in obj) {
+							out[idx] = arguments.callee(obj[idx]);
+						}
+						return out;
+					}
+					
+				} else {
+					return obj;
+				}
+			};
+			return new Enumerable(dpc(arr), this._s);
+			
+		} else {
+			var idx = -1;
+			var bnd = this._a.length;
+			var out = new Array(bnd);
+			while (++idx < bnd) {
+				out[idx] = arr[idx];
+			}
+			return new Enumerable(out, this._s);
+		}
 	};
 	
 	Enumerable.prototype.where = function () {

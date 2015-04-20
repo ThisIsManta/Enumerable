@@ -133,8 +133,24 @@ var Test = {
 			var a = [1, 2, 3];
 			var d = new Enumerable(a);
 			var e = d.clone();
-			e._a[1] = 4;
-			return e._m === true && e._a[1] === 4 && d._a[1] === 2;
+			d._a[1] = 4;
+			expect(e._m, true);
+			expect(d._a[1], 4);
+			expect(e._a[1], 2);
+		},
+		function () {
+			var a = [1, { x: null, y: { z: [2] } }, [3]];
+			var d = new Enumerable(a);
+			var e = d.clone(true);
+			expect(e._m, true);
+			expect(d._a[1] === e._a[1], false);
+			expect(d._a[1].y === e._a[1].y, false);
+			expect(d._a[1].y[0] === e._a[1].y[0], true);
+			d._a[1].y[0] = 4;
+			expect(d._a[1].y[0] === e._a[1].y[0], false);
+			expect(d._a[2] === e._a[2], false);
+			d._a[1].x = 2;
+			expect(d._a[1].x === e._a[1].x, false);
 		},
 		function () {
 			var a = [1, 2, 3];
