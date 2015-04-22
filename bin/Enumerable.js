@@ -236,8 +236,9 @@ Enumerable.prototype.peekAt = function () {
 
 Enumerable.prototype.clone = function (idp) {
 	var arr = this._a;
+	var ar0 = arguments[0];
 	this._m = false;
-	if (idp === true) {
+	if (ar0 === true) {
 		var dpc = function (obj) {
 			if (typeof obj === 'object') {
 				var out;
@@ -250,7 +251,7 @@ Enumerable.prototype.clone = function (idp) {
 						out[idx] = arguments.callee(obj[idx]);
 					}
 					return out;
-					
+
 				} else {
 					out = {};
 					for (idx in obj) {
@@ -258,13 +259,13 @@ Enumerable.prototype.clone = function (idp) {
 					}
 					return out;
 				}
-				
+
 			} else {
 				return obj;
 			}
 		};
 		return new Enumerable(dpc(arr), this._s);
-		
+
 	} else {
 		var idx = -1;
 		var bnd = this._a.length;
@@ -1178,21 +1179,37 @@ Enumerable.prototype.replace = function () {
 	return new Enumerable(out, this._s);
 };
 
+Enumerable.prototype.replaceAt = function () {
+	var ar0 = arguments[0];
+	var ar1 = arguments[1];
+	var out = this.toImmutableArray();
+	if (arguments.length !== 2 || typeof ar0 !== 'number') {
+		throw 'one or more parameters were not valid';
+
+	} else if (ar0 < 0 || ar0 >= out.length) {
+		throw 'an index was out of range';
+
+	} else {
+		out[ar0] = ar1;
+	}
+	this._a = out;
+	return this;
+};
+
 Enumerable.prototype.add = function () {
 	var ar0 = arguments[0];
 	var ar1 = arguments[1];
 	var out = this.toImmutableArray();
 	if (ar1 === undefined) {
 		out.push(ar0);
-		this._a = out;
 
 	} else if (typeof ar1 !== 'number' || isNaN(ar1) || ar1 < 0 || ar1 > this._a.length) {
 		throw 'an index was out of range';
 
 	} else {
 		out.splice(ar1, 0, ar0);
-		this._a = out;
 	}
+	this._a = out;
 	return this;
 };
 
@@ -1264,7 +1281,7 @@ Enumerable.prototype.removeAll = function () {
 	var out = this.toImmutableArray();
 	if (arguments.length === 0) {
 		out.splice(0, this._a.length);
-		
+
 	} else if (arguments.length === 1) {
 		var ar0 = arguments[0];
 		var idx = out.length;
@@ -1580,7 +1597,7 @@ Enumerable.prototype.countBy = function () {
 				tmp = ar0.call(this._s, this._a[idx], idx);
 				if (typeof tmp === 'number') {
 					out += tmp;
-					
+
 				} else if (tmp) {
 					out += 1;
 				}
@@ -1591,7 +1608,7 @@ Enumerable.prototype.countBy = function () {
 				tmp = ar0(this._a[idx], idx);
 				if (typeof tmp === 'number') {
 					out += tmp;
-					
+
 				} else if (tmp) {
 					out += 1;
 				}

@@ -262,6 +262,13 @@ var Test = {
 		},
 		function () {
 			var a = [1, 2, 3];
+			var e = new Enumerable(a).replaceAt(1, 4);
+			expect(e._a.length, 3);
+			expect(e._a[1], 4);
+			expect(a[1], 2);
+		},
+		function () {
+			var a = [1, 2, 3];
 			var z = [];
 			var e = new Enumerable(a).invoke(function (x) { z.push(x); });
 			expect(z.length, 3);
