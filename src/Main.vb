@@ -75,7 +75,9 @@
 
 		Using Output As New StreamWriter("Enumerable-req.js", False, System.Text.Encoding.ASCII)
 			Output.WriteLine("define(function () {")
-			Output.WriteLine(DebugBuffer)
+      Output.WriteLine(DebugBuffer)
+      Output.WriteLine(vbTab & "window.top.Enumerable = window.Enumerable = Enumerable;")
+      Output.WriteLine()
 			Output.WriteLine(vbTab & "return Enumerable;")
 			Output.WriteLine("});")
 		End Using

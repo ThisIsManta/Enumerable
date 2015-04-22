@@ -2022,5 +2022,7 @@ define(function () {
 		}
 	};
 
+	window.top.Enumerable = window.Enumerable = Enumerable;
+
 	return Enumerable;
 });
