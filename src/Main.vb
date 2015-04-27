@@ -73,15 +73,6 @@
       End If
     Loop
 
-		Using Output As New StreamWriter("Enumerable-req.js", False, System.Text.Encoding.ASCII)
-			Output.WriteLine("define(function () {")
-      Output.WriteLine(DebugBuffer)
-      Output.WriteLine(vbTab & "window.top.Enumerable = window.Enumerable = Enumerable;")
-      Output.WriteLine()
-			Output.WriteLine(vbTab & "return Enumerable;")
-			Output.WriteLine("});")
-		End Using
-
 		Using Output As New StreamWriter("Enumerable-min.js", False, System.Text.Encoding.ASCII)
 			Output.Write(CompressedBuffer)
 			Output.Write("var Enumerable=_;")
