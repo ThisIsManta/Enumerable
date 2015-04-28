@@ -11,7 +11,7 @@
     Dim FirstContiguousComment As Boolean = True
     Do Until Input.EndOfStream
       Dim Line As String = Input.ReadLine
-      DebugBuffer.AppendLine(vbTab & Line)
+      DebugBuffer.AppendLine(Line)
       Line = Line.Trim
 
       If Line.Length > 0 Then
@@ -72,6 +72,11 @@
         End If
       End If
     Loop
+
+    Using Output As New StreamWriter("Enumerable-amd.js", False, System.Text.Encoding.ASCII)
+      Output.WriteLine(DebugBuffer)
+      Output.WriteLine("module.exports = window.top.Enumerable = window.Enumerable = Enumerable;")
+    End Using
 
 		Using Output As New StreamWriter("Enumerable-min.js", False, System.Text.Encoding.ASCII)
 			Output.Write(CompressedBuffer)
