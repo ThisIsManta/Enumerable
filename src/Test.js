@@ -1,6 +1,7 @@
 ﻿var expect = function (current, another) {
 	if (current !== another) {
 		console.error('Expected ' + (typeof current === 'string' ? '"' + current + '"' : current) + ' to be ' + (typeof another === 'string' ? '"' + another + '"' : another));
+		console.debug(arguments.callee.caller.toString());
 	}
 };
 
@@ -285,6 +286,46 @@ var Test = {
 			expect(z[0], 1);
 			expect(z[1], 2);
 			expect(z[2], 3);
+		},
+		function () {
+			var a = [1, 2, 3];
+			var z = [];
+			var e = new Enumerable(a).invoke(1, function (x) { z.push(x); });
+			expect(z.length, 2);
+			expect(z[0], 2);
+			expect(z[1], 3);
+		},
+		function () {
+			var a = [1, 2, 3];
+			var z = [];
+			var e = new Enumerable(a).invoke(1, 2, function (x) { z.push(x); });
+			expect(z.length, 2);
+			expect(z[0], 2);
+			expect(z[1], 3);
+		},
+		function () {
+			var a = [1, 2, 3];
+			var z = [];
+			var e = new Enumerable(a).invoke(1, 2, 1, function (x) { z.push(x); });
+			expect(z.length, 2);
+			expect(z[0], 2);
+			expect(z[1], 3);
+		},
+		function () {
+			var a = [1, 2, 3];
+			var z = [];
+			var e = new Enumerable(a).invoke(2, 1, function (x) { z.push(x); });
+			expect(z.length, 2);
+			expect(z[0], 3);
+			expect(z[1], 2);
+		},
+		function () {
+			var a = [1, 2, 3];
+			var z = [];
+			var e = new Enumerable(a).invoke(2, 1, -1, function (x) { z.push(x); });
+			expect(z.length, 2);
+			expect(z[0], 3);
+			expect(z[1], 2);
 		},
 		function () {
 			var e = new Enumerable([1, 2, 3]);

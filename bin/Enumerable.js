@@ -523,23 +523,71 @@ Enumerable.prototype.selectAny = function () {
 };
 
 Enumerable.prototype.invoke = function () {
-	var ar0 = arguments[0];
+	var fnc = arguments[0];
 	var idx = -1;
 	var bnd = this._a.length;
-	if (typeof ar0 === 'function') {
+	if (arguments.length === 1 && typeof fnc === 'function') {
 		if (this._s) {
 			while (++idx < bnd) {
-				if (ar0.call(this._s, this._a[idx], idx) === false) {
+				if (fnc.call(this._s, this._a[idx], idx) === false) {
 					break;
 				}
 			}
 
 		} else {
 			while (++idx < bnd) {
-				if (ar0(this._a[idx], idx) === false) {
+				if (fnc(this._a[idx], idx) === false) {
 					break;
 				}
 			}
+		}
+
+	} else if (arguments.length <= 4) {
+		idx = arguments[0];
+		bnd = typeof arguments[1] === 'number' ? arguments[1] : (bnd - 1);
+		fnc = typeof arguments[1] === 'function' ? arguments[1] : (typeof arguments[2] === 'function' ? arguments[2] : arguments[3]);
+		if (typeof idx !== 'number' || isNaN(idx) || isNaN(bnd) || !isFinite(idx) || !isFinite(bnd)) {
+			throw 'one or more parameters were not valid';
+
+		} else {
+			var stp = typeof arguments[2] === 'number' ? parseInt(arguments[2]) : (idx < bnd ? 1 : -1);
+			if (stp === 0 || isNaN(stp) || !isFinite(stp)) {
+				throw 'one or more parameters were not valid';
+			}
+			idx -= stp;
+			if (stp > 0) {
+				if (this._s) {
+					while ((idx += stp) <= bnd) {
+						if (fnc.call(this._s, this._a[idx], idx, bnd) === false) {
+							break;
+						}
+					}
+
+				} else {
+					while ((idx += stp) <= bnd) {
+						if (fnc(this._a[idx], idx, bnd) === false) {
+							break;
+						}
+					}
+				}
+
+			} else {
+				if (this._s) {
+					while ((idx += stp) >= bnd) {
+						if (fnc.call(this._s, this._a[idx], idx, bnd) === false) {
+							break;
+						}
+					}
+
+				} else {
+					while ((idx += stp) >= bnd) {
+						if (fnc(this._a[idx], idx, bnd) === false) {
+							break;
+						}
+					}
+				}
+			}
+
 		}
 
 	} else {
