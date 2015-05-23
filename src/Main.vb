@@ -96,7 +96,7 @@
 			End If
 			Output.WriteLine("<script type=""text/javascript"" src=""Test.js""></script>")
 			Output.WriteLine("</head>")
-			Output.WriteLine("<body>Please open the JavaScript console.")
+			Output.WriteLine("<body>")
 			Output.WriteLine("<script type=""text/javascript"">console.log('Test.run();'); Test.run();</script>")
 			Output.WriteLine("</body>")
 			Output.WriteLine("</html>")

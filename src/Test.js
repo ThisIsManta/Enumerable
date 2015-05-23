@@ -26,7 +26,9 @@ var Test = {
 				console.debug(Test.cases[i]);
 			}
 		}
-		console.log('Done' + (c > 0 ? ' with ' + c + ' error' + (c > 1 ? 's' : '') : ' without any error'));
+		var t = 'Done' + (c > 0 ? ' with ' + c + ' error' + (c > 1 ? 's' : '') : ' without any error');
+		console.log(t);
+		document.documentElement.textContent = t;
 	},
 	cases: [
 		function () {
@@ -329,6 +331,26 @@ var Test = {
 		},
 		function () {
 			var a = [1, 2, 3];
+			var z = [];
+			var e = new Enumerable(a).invoke(0, 0, function (x) { z.push(x); });
+			expect(z.length, 1);
+			expect(z[0], 1);
+		},
+		function () {
+			var a = [1, 2, 3];
+			var z = 0;
+			var e = new Enumerable(a).invoke(function (x, i) {
+				z += x;
+				if (i === 1) {
+					return false;
+				} else if (i == 2) {
+					unexpect();
+				}
+			});
+			expect(z, 3);
+		},
+		function () {
+			var a = [1, 2, 3];
 			var z = 0;
 			var e = new Enumerable(a).invokeAsync(function (x, i) {
 				z += x;
@@ -403,6 +425,16 @@ var Test = {
 		function () {
 			var a = [1, 2, 3];
 			var z = 0;
+			var e = new Enumerable(a).invokeAsync(0, 0, function (x, i) {
+				z += x;
+			});
+			expect(z, 1);
+			z *= 2;
+			expect(z, 2);
+		},
+		function () {
+			var a = [1, 2, 3];
+			var z = 0;
 			var e = new Enumerable(a).invokeAsync(2, 0, -2, function (x, i) {
 				z += x;
 				if (i === 2) {
@@ -427,6 +459,19 @@ var Test = {
 			expect(z, 4);
 			z *= 2;
 			expect(z, 8);
+		},
+		function () {
+			var a = [1, 2, 3];
+			var z = 0;
+			var e = new Enumerable(a).invokeAsync(function (x, i) {
+				z += x;
+				if (i === 1) {
+					return false;
+				} else if (i == 2) {
+					unexpect();
+				}
+			}, 3);
+			expect(z, 3);
 		},
 		function () {
 			var e = new Enumerable([1, 2, 3]);
