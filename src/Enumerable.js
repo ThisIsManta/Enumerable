@@ -1,6 +1,6 @@
 ﻿/*
 	A JavaScript library provides useful and handy query functions.
-	https://github.com/ThisIsManta/Enumerable/wiki/Documentation
+	https://github.com/ThisIsManta/Enumerable/wiki
 
 	anantachai.saothong@thomsonreuters.com
 */
