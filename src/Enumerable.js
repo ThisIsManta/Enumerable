@@ -526,19 +526,11 @@ Enumerable.prototype.invoke = function () {
 	var fnc = arguments[0];
 	var idx = -1;
 	var bnd = this._a.length;
+	var scp = this._s || this;
 	if (arguments.length === 1 && typeof fnc === 'function') {
-		if (this._s) {
-			while (++idx < bnd) {
-				if (fnc.call(this._s, this._a[idx], idx) === false) {
-					break;
-				}
-			}
-
-		} else {
-			while (++idx < bnd) {
-				if (fnc(this._a[idx], idx) === false) {
-					break;
-				}
+		while (++idx < bnd) {
+			if (fnc.call(scp, this._a[idx], idx) === false) {
+				break;
 			}
 		}
 
@@ -556,39 +548,56 @@ Enumerable.prototype.invoke = function () {
 			}
 			idx -= stp;
 			if (stp > 0) {
-				if (this._s) {
-					while ((idx += stp) <= bnd) {
-						if (fnc.call(this._s, this._a[idx], idx, bnd) === false) {
-							break;
-						}
-					}
-
-				} else {
-					while ((idx += stp) <= bnd) {
-						if (fnc(this._a[idx], idx, bnd) === false) {
-							break;
-						}
+				while ((idx += stp) <= bnd) {
+					if (fnc.call(scp, this._a[idx], idx, bnd) === false) {
+						break;
 					}
 				}
 
 			} else {
-				if (this._s) {
-					while ((idx += stp) >= bnd) {
-						if (fnc.call(this._s, this._a[idx], idx, bnd) === false) {
-							break;
-						}
-					}
-
-				} else {
-					while ((idx += stp) >= bnd) {
-						if (fnc(this._a[idx], idx, bnd) === false) {
-							break;
-						}
+				while ((idx += stp) >= bnd) {
+					if (fnc.call(scp, this._a[idx], idx, bnd) === false) {
+						break;
 					}
 				}
 			}
 
 		}
+
+	} else {
+		throw 'one or more parameters were not valid';
+	}
+	return this;
+};
+
+Enumerable.prototype.invokeAsync = function () {
+	var fnc = arguments[0];
+	var num = arguments[1];
+	var idx = -1;
+	var bnd = this._a.length;
+	var arr = this._a;
+	var scp = this._s || this;
+	if (arguments.length === 1 && typeof fnc === 'function') {
+		var hdr = function () {
+			if (++idx < bnd && fnc.call(scp, arr[idx], idx) !== false) {
+				setTimeout(hdr, 5);
+			}
+		};
+		hdr();
+
+	} else if (arguments.length === 2 && typeof fnc === 'function' && typeof num === 'number' && !isNaN(num) && isFinite(num) && num > 0) {
+		var hdr = function () {
+			var tmp = Math.min(idx + 1 + num, bnd);
+			while (++idx < tmp) {
+				if (fnc.call(scp, arr[idx], idx) === false) {
+					idx = bnd + 1;
+				}
+			}
+			if (--idx < bnd) {
+				setTimeout(hdr, 5);
+			}
+		};
+		hdr();
 
 	} else {
 		throw 'one or more parameters were not valid';
@@ -1458,6 +1467,7 @@ Enumerable.prototype.groupBy = function () {
 	var tmp;
 	var nam;
 	var out = {};
+	var scp = this._s || this;
 	if (typeof ar0 === 'string') {
 		if (ar0.length === 0) {
 			throw 'name was empty';
@@ -1468,24 +1478,12 @@ Enumerable.prototype.groupBy = function () {
 		}
 	}
 	if (typeof ar0 === 'function') {
-		if (this._s) {
-			while (++idx < bnd) {
-				tmp = ar0.call(this._s, this._a[idx], idx).toString();
-				if (out[tmp] === undefined) {
-					out[tmp] = [this._a[idx]];
-				} else {
-					out[tmp].push(this._a[idx]);
-				}
-			}
-
-		} else {
-			while (++idx < bnd) {
-				tmp = ar0(this._a[idx], idx).toString();
-				if (out[tmp] === undefined) {
-					out[tmp] = [this._a[idx]];
-				} else {
-					out[tmp].push(this._a[idx]);
-				}
+		while (++idx < bnd) {
+			tmp = ar0.call(scp, this._a[idx], idx).toString();
+			if (out[tmp] === undefined) {
+				out[tmp] = [this._a[idx]];
+			} else {
+				out[tmp].push(this._a[idx]);
 			}
 		}
 		for (tmp in out) {
@@ -1496,9 +1494,8 @@ Enumerable.prototype.groupBy = function () {
 	} else {
 		throw 'one or more parameters were not valid';
 	}
-	var s = this._s;
 	out.asEnumerable = function () {
-		return new Enumerable(this, s);
+		return new Enumerable(this, scp);
 	};
 	return out;
 };
