@@ -44,14 +44,14 @@ var Enumerable = function Enumerable() {
 						tmp = {};
 						tmp[ar1] = nam;
 						tmp[ar2] = ar0[nam];
-						out.push(tmp);
+						out[++idx] = tmp;
 					}
 				}
 
 			} else {
 				for (nam in ar0) {
 					if (ar0[nam] !== undefined && (ifn || typeof ar0[nam] !== 'function' && nam.charAt(0) !== '_')) {
-						out.push({ name: nam, value: ar0[nam] });
+						out[++idx] = { name: nam, value: ar0[nam] };
 					}
 				}
 			}
@@ -149,12 +149,12 @@ Enumerable.prototype.toObject = function () {
 			}
 
 		} else if (typeof ar1 === 'function') {
-				while (++idx < bnd) {
-					tmp = this._a[idx][ar0];
-					if (tmp !== undefined) {
-						out[tmp] = ar1.call(this._s, this._a[idx], idx);
-					}
+			while (++idx < bnd) {
+				tmp = this._a[idx][ar0];
+				if (tmp !== undefined) {
+					out[tmp] = ar1.call(this._s, this._a[idx], idx);
 				}
+			}
 
 		} else {
 			throw 'one or more parameters were not valid';
@@ -162,22 +162,22 @@ Enumerable.prototype.toObject = function () {
 
 	} else if (typeof ar0 === 'function') {
 		if (arguments.length === 1) {
-				while (++idx < bnd) {
-					tmp = ar0.call(this._s, this._a[idx], idx).toString();
-					out[tmp] = this._a[idx];
-				}
+			while (++idx < bnd) {
+				tmp = ar0.call(this._s, this._a[idx], idx).toString();
+				out[tmp] = this._a[idx];
+			}
 
 		} else if (typeof ar1 === 'string') {
-				while (++idx < bnd) {
-					tmp = ar0.call(this._s, this._a[idx], idx).toString();
-					out[tmp] = this._a[idx][ar1];
-				}
+			while (++idx < bnd) {
+				tmp = ar0.call(this._s, this._a[idx], idx).toString();
+				out[tmp] = this._a[idx][ar1];
+			}
 
 		} else if (typeof ar1 === 'function') {
-				while (++idx < bnd) {
-					tmp = ar0.call(this._s, this._a[idx], idx).toString();
-					out[tmp] = ar1.call(this._s, this._a[idx], idx);
-				}
+			while (++idx < bnd) {
+				tmp = ar0.call(this._s, this._a[idx], idx).toString();
+				out[tmp] = ar1.call(this._s, this._a[idx], idx);
+			}
 
 		} else {
 			throw 'one or more parameters were not valid';
@@ -250,18 +250,19 @@ Enumerable.prototype.where = function () {
 	var ar0 = arguments[0];
 	var ar1 = arguments[1];
 	var idx = -1;
+	var jdx = -1;
 	var bnd = this._a.length;
 	var chk;
 	var tmp;
 	var nam;
 	var out = [];
 	if (typeof ar0 === 'function' && arguments.length === 1) {
-			while (++idx < bnd) {
-				tmp = this._a[idx];
-				if (ar0.call(this._s, tmp, idx)) {
-					out.push(tmp);
-				}
+		while (++idx < bnd) {
+			tmp = this._a[idx];
+			if (ar0.call(this._s, tmp, idx)) {
+				out[++jdx] = tmp;
 			}
+		}
 
 	} else if (typeof ar0 === 'object' && arguments.length === 1) {
 		while (++idx < bnd) {
@@ -274,7 +275,7 @@ Enumerable.prototype.where = function () {
 				}
 			}
 			if (chk) {
-				out.push(tmp);
+				out[++jdx] = tmp;
 			}
 		}
 
@@ -282,7 +283,7 @@ Enumerable.prototype.where = function () {
 		while (++idx < bnd) {
 			tmp = this._a[idx];
 			if (tmp[ar0] === ar1) {
-				out.push(tmp);
+				out[++jdx] = tmp;
 			}
 		}
 
@@ -310,9 +311,9 @@ Enumerable.prototype.selectAll = function () {
 	var bnd = this._a.length;
 	var out = new Array(bnd);
 	if (typeof ar0 === 'function') {
-			while (++idx < bnd) {
-				out[idx] = ar0.call(this._s, this._a[idx], idx);
-			}
+		while (++idx < bnd) {
+			out[idx] = ar0.call(this._s, this._a[idx], idx);
+		}
 
 	} else if (typeof ar0 === 'string') {
 		if (ar0.length === 0) {
@@ -333,6 +334,7 @@ Enumerable.prototype.selectAny = function () {
 	var ar1 = arguments[1];
 	var ar2 = arguments[2];
 	var idx = -1;
+	var jdx = -1;
 	var bnd = this._a.length;
 	var chk;
 	var tmp;
@@ -340,23 +342,23 @@ Enumerable.prototype.selectAny = function () {
 	var out = [];
 	if (typeof ar0 === 'function') {
 		if (typeof ar1 === 'function') {
-				while (++idx < bnd) {
-					tmp = this._a[idx];
-					if (ar0.call(this._s, tmp, idx)) {
-						out.push(ar1.call(this._s, tmp, idx));
-					}
+			while (++idx < bnd) {
+				tmp = this._a[idx];
+				if (ar0.call(this._s, tmp, idx)) {
+					out[++jdx] = ar1.call(this._s, tmp, idx);
 				}
+			}
 
 		} else if (typeof ar1 === 'string') {
 			if (ar1.length === 0) {
 				throw 'a name projector was empty';
 			}
-				while (++idx < bnd) {
-					tmp = this._a[idx];
-					if (ar0.call(this._s, tmp, idx)) {
-						out.push(tmp[ar1]);
-					}
+			while (++idx < bnd) {
+				tmp = this._a[idx];
+				if (ar0.call(this._s, tmp, idx)) {
+					out[++jdx] = tmp[ar1];
 				}
+			}
 
 		} else {
 			throw 'one or more parameters were not valid';
@@ -364,19 +366,19 @@ Enumerable.prototype.selectAny = function () {
 
 	} else if (typeof ar0 === 'object') {
 		if (typeof ar1 === 'function') {
-				while (++idx < bnd) {
-					chk = 1;
-					tmp = this._a[idx];
-					for (nam in ar0) {
-						chk &= tmp[nam] === ar0[nam];
-						if (!chk) {
-							break;
-						}
-					}
-					if (chk) {
-						out.push(ar1.call(this._s, tmp, idx));
+			while (++idx < bnd) {
+				chk = 1;
+				tmp = this._a[idx];
+				for (nam in ar0) {
+					chk &= tmp[nam] === ar0[nam];
+					if (!chk) {
+						break;
 					}
 				}
+				if (chk) {
+					out[++jdx] = ar1.call(this._s, tmp, idx);
+				}
+			}
 
 		} else if (typeof ar1 === 'string') {
 			while (++idx < bnd) {
@@ -389,7 +391,7 @@ Enumerable.prototype.selectAny = function () {
 					}
 				}
 				if (chk) {
-					out.push(tmp[ar1]);
+					out[++jdx] = tmp[ar1];
 				}
 			}
 
@@ -399,12 +401,12 @@ Enumerable.prototype.selectAny = function () {
 
 	} else if (typeof ar0 === 'string' && arguments.length === 3) {
 		if (typeof ar2 === 'function') {
-				while (++idx < bnd) {
-					tmp = this._a[idx];
-					if (tmp[ar0] === ar1) {
-						out.push(ar2.call(this._s, tmp, idx));
-					}
+			while (++idx < bnd) {
+				tmp = this._a[idx];
+				if (tmp[ar0] === ar1) {
+					out[++jdx] = ar2.call(this._s, tmp, idx);
 				}
+			}
 
 		} else if (typeof ar2 === 'string') {
 			if (ar1.length === 0) {
@@ -413,7 +415,7 @@ Enumerable.prototype.selectAny = function () {
 			while (++idx < bnd) {
 				tmp = this._a[idx];
 				if (tmp !== undefined && tmp !== null && tmp[ar0] === ar1) {
-					out.push(tmp[ar2]);
+					out[++jdx] = tmp[ar2];
 				}
 			}
 
@@ -428,44 +430,25 @@ Enumerable.prototype.selectAny = function () {
 };
 
 Enumerable.prototype.invoke = function () {
-	var fnc = arguments[0];
-	var idx = -1;
-	var bnd = this._a.length;
-	if (arguments.length === 1 && typeof fnc === 'function') {
-		while (++idx < bnd) {
-			if (fnc.call(this._s, this._a[idx], idx) === false) {
-				break;
+	var fnc = new Enumerable(arguments).lastOrNull(function (tmp) { return typeof tmp === 'function'; });
+	var idx = arguments.length > 1 ? arguments[0] : 0;
+	var bnd = arguments.length > 2 ? arguments[1] : this._a.length - 1;
+	var stp = arguments.length > 3 ? arguments[2] : (idx <= bnd ? 1 : -1);
+	if (fnc !== null && typeof idx === 'number' && !isNaN(idx) && isFinite(idx) && typeof bnd === 'number' && !isNaN(bnd) && isFinite(bnd) && typeof stp === 'number' && !isNaN(stp) && stp !== 0 && isFinite(stp)) {
+		idx -= stp;
+		if (stp > 0) {
+			while ((idx += stp) <= bnd) {
+				if (fnc.call(this._s, this._a[idx], idx, bnd) === false) {
+					break;
+				}
 			}
-		}
-
-	} else if (arguments.length <= 4) {
-		idx = arguments[0];
-		bnd = typeof arguments[1] === 'number' ? arguments[1] : (bnd - 1);
-		fnc = typeof arguments[1] === 'function' ? arguments[1] : (typeof arguments[2] === 'function' ? arguments[2] : arguments[3]);
-		if (typeof idx !== 'number' || isNaN(idx) || isNaN(bnd) || !isFinite(idx) || !isFinite(bnd)) {
-			throw 'one or more parameters were not valid';
 
 		} else {
-			var stp = typeof arguments[2] === 'number' ? parseInt(arguments[2]) : (idx < bnd ? 1 : -1);
-			if (stp === 0 || isNaN(stp) || !isFinite(stp)) {
-				throw 'one or more parameters were not valid';
-			}
-			idx -= stp;
-			if (stp > 0) {
-				while ((idx += stp) <= bnd) {
-					if (fnc.call(this._s, this._a[idx], idx, bnd) === false) {
-						break;
-					}
-				}
-
-			} else {
-				while ((idx += stp) >= bnd) {
-					if (fnc.call(this._s, this._a[idx], idx, bnd) === false) {
-						break;
-					}
+			while ((idx += stp) >= bnd) {
+				if (fnc.call(this._s, this._a[idx], idx, bnd) === false) {
+					break;
 				}
 			}
-
 		}
 
 	} else {
@@ -475,32 +458,45 @@ Enumerable.prototype.invoke = function () {
 };
 
 Enumerable.prototype.invokeAsync = function () {
-	var fnc = arguments[0];
-	var num = arguments[1];
-	var idx = -1;
-	var bnd = this._a.length;
 	var arr = this._a;
-	if (arguments.length === 1 && typeof fnc === 'function') {
-		var hdr = function () {
-			if (++idx < bnd && fnc.call(this._s, arr[idx], idx) !== false) {
-				setTimeout(hdr, 5);
-			}
-		};
-		hdr();
-
-	} else if (arguments.length === 2 && typeof fnc === 'function' && typeof num === 'number' && !isNaN(num) && isFinite(num) && num > 0) {
-		var hdr = function () {
-			var tmp = Math.min(idx + 1 + num, bnd);
-			while (++idx < tmp) {
-				if (fnc.call(this._s, arr[idx], idx) === false) {
-					idx = bnd + 1;
+	var tmp = new Enumerable(arguments).indexOf(function (tmp) { return typeof tmp === 'function'; });
+	var fnc = arguments[tmp];
+	var idx = tmp > 0 ? arguments[0] : 0;
+	var bnd = tmp > 1 ? arguments[1] : this._a.length - 1;
+	var stp = tmp > 2 ? arguments[2] : (idx <= bnd ? 1 : -1);
+	var btc = (tmp >= 0 && tmp !== arguments.length - 1) ? arguments[arguments.length - 1] : 1;
+	var hdr;
+	if (typeof fnc === 'function' && typeof idx === 'number' && !isNaN(idx) && isFinite(idx) && typeof bnd === 'number' && !isNaN(bnd) && isFinite(bnd) && typeof stp === 'number' && !isNaN(stp) && stp !== 0 && isFinite(stp) && !isNaN(btc) && isFinite(btc) && btc > 0) {
+		if (stp > 0) {
+			hdr = function () {
+				var btx = btc;
+				while (idx <= bnd && btx-- > 0) {
+					if (fnc.call(this._s, arr[idx], idx, bnd) === false) {
+						idx = bnd;
+					}
+					idx += stp;
 				}
-			}
-			if (--idx < bnd) {
-				setTimeout(hdr, 5);
-			}
-		};
-		hdr();
+				if (idx <= bnd) {
+					setTimeout(hdr, 5);
+				}
+			};
+			hdr();
+
+		} else {
+			hdr = function () {
+				var btx = btc;
+				while (idx >= bnd && btx-- > 0) {
+					if (fnc.call(this._s, arr[idx], idx, bnd) === false) {
+						idx = 0;
+					}
+					idx += stp;
+				}
+				if (idx >= bnd) {
+					setTimeout(hdr, 5);
+				}
+			};
+			hdr();
+		}
 
 	} else {
 		throw 'one or more parameters were not valid';
@@ -514,6 +510,7 @@ Enumerable.prototype.take = function () {
 	var idx = -1;
 	var jdx = -1;
 	var kdx;
+	var ldx = -1;
 	var bnd = this._a.length;
 	var out = [];
 	if (typeof ar0 === 'function') {
@@ -550,7 +547,7 @@ Enumerable.prototype.take = function () {
 		throw 'one or more parameters were not valid';
 	}
 	while (++jdx < kdx) {
-		out.push(this._a[jdx]);
+		out[++ldx] = this._a[jdx];
 	}
 	return new Enumerable(out, this._s);
 };
@@ -600,6 +597,7 @@ Enumerable.prototype.flatten = function () {
 	var ar0 = !!arguments[0];
 	var idx = -1;
 	var jdx;
+	var kdx = -1;
 	var bnd = this._a.length;
 	var len;
 	var tmp;
@@ -618,12 +616,12 @@ Enumerable.prototype.flatten = function () {
 
 				} else {
 					while (++jdx < len) {
-						out.push(tmp[jdx]);
+						out[++kdx] = tmp[jdx];
 					}
 				}
 			}
 		} else {
-			out.push(tmp);
+			out[++kdx] = tmp;
 		}
 	}
 	return new Enumerable(out, this._s);
@@ -963,6 +961,7 @@ Enumerable.prototype.distinct = function () {
 	var ar0 = arguments[0];
 	var hsh = {};
 	var idx = -1;
+	var jdx = -1;
 	var bnd = this._a.length;
 	var nam;
 	var tmp;
@@ -974,12 +973,12 @@ Enumerable.prototype.distinct = function () {
 			if (tmp === undefined || tmp === null) {
 				if (nil === false) {
 					nil = true;
-					out.push(tmp);
+					out[++jdx] = tmp;
 				}
 
 			} else if (hsh[(tmp = tmp.toString())] === undefined) {
 				hsh[tmp] = true;
-				out.push(this._a[idx]);
+				out[++jdx] = this._a[idx];
 			}
 		}
 
@@ -989,12 +988,12 @@ Enumerable.prototype.distinct = function () {
 			if (tmp === undefined || tmp === null) {
 				if (nil === false) {
 					nil = true;
-					out.push(tmp);
+					out[++jdx] = tmp;
 				}
 
 			} else if (hsh[(tmp = tmp.toString())] === undefined) {
 				hsh[tmp] = true;
-				out.push(this._a[idx]);
+				out[++jdx] = this._a[idx];
 			}
 		}
 
@@ -1004,12 +1003,12 @@ Enumerable.prototype.distinct = function () {
 			if (tmp === undefined || tmp === null) {
 				if (nil === false) {
 					nil = true;
-					out.push(null);
+					out[++jdx] = null;
 				}
 
 			} else if (hsh[(tmp = tmp.toString())] === undefined) {
 				hsh[tmp] = true;
-				out.push(this._a[idx]);
+				out[++jdx] = this._a[idx];
 			}
 		}
 
@@ -1071,9 +1070,10 @@ Enumerable.prototype.replaceAt = function () {
 Enumerable.prototype.add = function () {
 	var ar0 = arguments[0];
 	var ar1 = arguments[1];
+	var idx = this._a.length - 1;
 	var out = this.toImmutableArray();
 	if (ar1 === undefined) {
-		out.push(ar0);
+		out[++idx] = ar0;
 
 	} else if (typeof ar1 !== 'number' || isNaN(ar1) || ar1 < 0 || ar1 > this._a.length) {
 		throw 'an index was out of range';
@@ -1173,11 +1173,12 @@ Enumerable.prototype.removeAll = function () {
 Enumerable.prototype.union = function () {
 	var ar0 = new Enumerable(arguments[0])._a;
 	var idx = -1;
+	var jdx = this._a.length - 1;
 	var bnd = ar0.length;
 	var out = this.toImmutableArray();
 	while (++idx < bnd) {
 		if (!this.contains(ar0[idx])) {
-			out.push(ar0[idx]);
+			out[++jdx] = ar0[idx];
 		}
 	}
 	return new Enumerable(out, this._s);
@@ -1186,11 +1187,12 @@ Enumerable.prototype.union = function () {
 Enumerable.prototype.intersect = function () {
 	var ar0 = new Enumerable(arguments[0])._a;
 	var idx = -1;
+	var jdx = -1;
 	var bnd = ar0.length;
 	var out = [];
 	while (++idx < bnd) {
 		if (this.contains(ar0[idx])) {
-			out.push(ar0[idx]);
+			out[++jdx] = ar0[idx];
 		}
 	}
 	return new Enumerable(out, this._s);
@@ -1656,6 +1658,7 @@ Enumerable.prototype.norm = function () {
 	var ar0 = arguments[0];
 	var hsh = {};
 	var idx = -1;
+	var jdx = -1;
 	var bnd = this._a.length;
 	var tmp;
 	var out = [];
@@ -1663,7 +1666,7 @@ Enumerable.prototype.norm = function () {
 		while (++idx < bnd) {
 			tmp = this._a[idx];
 			if (tmp && (typeof tmp !== 'string' || tmp.trim().length > 0) && (typeof tmp !== 'number' || isFinite(tmp))) {
-				out.push(tmp);
+				out[++jdx] = tmp;
 			}
 		}
 
@@ -1671,7 +1674,7 @@ Enumerable.prototype.norm = function () {
 		while (++idx < bnd) {
 			tmp = this._a[idx][ar0];
 			if (tmp && (typeof tmp !== 'string' || tmp.trim().length > 0) && (typeof tmp !== 'number' || isFinite(tmp))) {
-				out.push(this._a[idx]);
+				out[++jdx] = this._a[idx];
 			}
 		}
 
@@ -1679,7 +1682,7 @@ Enumerable.prototype.norm = function () {
 		while (++idx < bnd) {
 			tmp = ar0.call(this._s, this._a[idx], idx);
 			if (tmp && (typeof tmp !== 'string' || tmp.trim().length > 0) && (typeof tmp !== 'number' || isFinite(tmp))) {
-				out.push(this._a[idx]);
+				out[++jdx] = this._a[idx];
 			}
 		}
 
@@ -1692,6 +1695,7 @@ Enumerable.prototype.norm = function () {
 Enumerable.prototype.cast = function () {
 	var ar0 = arguments[0];
 	var idx = -1;
+	var jdx = -1;
 	var bnd = this._a.length;
 	var tmp;
 	var out = [];
@@ -1701,7 +1705,7 @@ Enumerable.prototype.cast = function () {
 			while (++idx < bnd) {
 				tmp = this._a[idx];
 				if (tmp !== undefined && tmp !== null) {
-					out.push(tmp.toString());
+					out[++jdx] = tmp.toString();
 				}
 			}
 
@@ -1709,12 +1713,12 @@ Enumerable.prototype.cast = function () {
 			while (++idx < bnd) {
 				tmp = this._a[idx];
 				if (typeof tmp === 'number') {
-					out.push(tmp);
+					out[++jdx] = tmp;
 
 				} else if (typeof tmp === 'string') {
 					tmp = parseFloat(tmp);
 					if (!isNaN(tmp)) {
-						out.push(tmp);
+						out[++jdx] = tmp;
 					}
 				}
 			}
@@ -1723,7 +1727,7 @@ Enumerable.prototype.cast = function () {
 			while (++idx < bnd) {
 				tmp = this._a[idx];
 				if (tmp instanceof Array) {
-					out.push(tmp);
+					out[++jdx] = tmp;
 				}
 			}
 
@@ -1731,13 +1735,13 @@ Enumerable.prototype.cast = function () {
 			while (++idx < bnd) {
 				tmp = this._a[idx];
 				if (tmp !== null && typeof tmp === 'object' && !(tmp instanceof Array)) {
-					out.push(tmp);
+					out[++jdx] = tmp;
 				}
 			}
 
 		} else if (typeof tmp === ar0) {
 			while (++idx < bnd) {
-				out.push(this._a[idx]);
+				out[++jdx] = this._a[idx];
 			}
 		}
 		return new Enumerable(out, this._s);

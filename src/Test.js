@@ -328,6 +328,107 @@ var Test = {
 			expect(z[1], 2);
 		},
 		function () {
+			var a = [1, 2, 3];
+			var z = 0;
+			var e = new Enumerable(a).invokeAsync(function (x, i) {
+				z += x;
+				if (i === 1) {
+					expect(z, 4);
+				} else if (i === 2) {
+					expect(z, 7);
+				}
+			});
+			expect(z, 1);
+			z *= 2;
+			expect(z, 2);
+		},
+		function () {
+			var a = [1, 2, 3];
+			var z = 0;
+			var e = new Enumerable(a).invokeAsync(function (x, i) {
+				z += x;
+				if (i === 2) {
+					expect(z, 9);
+				}
+			}, 2);
+			expect(z, 3);
+			z *= 2;
+			expect(z, 6);
+		},
+		function () {
+			var a = [1, 2, 3];
+			var z = 0;
+			var e = new Enumerable(a).invokeAsync(1, 2, function (x, i) {
+				z += x;
+				if (i === 1) {
+					expect(z, 2);
+				} else if (i === 2) {
+					expect(z, 7);
+				}
+			});
+			expect(z, 2);
+			z *= 2;
+			expect(z, 4);
+		},
+		function () {
+			var a = [1, 2, 3];
+			var z = 0;
+			var e = new Enumerable(a).invokeAsync(2, function (x, i) {
+				z += x;
+				if (i === 1) {
+					expect(z, 8);
+				} else if (i === 0) {
+					expect(z, 9);
+				}
+			});
+			expect(z, 3);
+			z *= 2;
+			expect(z, 6);
+		},
+		function () {
+			var a = [1, 2, 3];
+			var z = 0;
+			var e = new Enumerable(a).invokeAsync(2, 1, function (x, i) {
+				z += x;
+				if (i === 2) {
+					expect(z, 3);
+				} else if (i === 1) {
+					expect(z, 8);
+				}
+			});
+			expect(z, 3);
+			z *= 2;
+			expect(z, 6);
+		},
+		function () {
+			var a = [1, 2, 3];
+			var z = 0;
+			var e = new Enumerable(a).invokeAsync(2, 0, -2, function (x, i) {
+				z += x;
+				if (i === 2) {
+					expect(z, 3);
+				} else if (i === 0) {
+					expect(z, 7);
+				}
+			});
+			expect(z, 3);
+			z *= 2;
+			expect(z, 6);
+		},
+		function () {
+			var a = [1, 2, 3];
+			var z = 0;
+			var e = new Enumerable(a).invokeAsync(2, 0, -2, function (x, i) {
+				z += x;
+				if (i === 0) {
+					expect(z, 4);
+				}
+			}, 2);
+			expect(z, 4);
+			z *= 2;
+			expect(z, 8);
+		},
+		function () {
 			var e = new Enumerable([1, 2, 3]);
 			expect(e.peekAt(0), 1);
 			expect(e.peekAt(1), 2);
