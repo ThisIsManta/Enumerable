@@ -433,21 +433,22 @@ Enumerable.prototype.invoke = function () {
 	var fnc = new Enumerable(arguments).lastOrNull(function (tmp) { return typeof tmp === 'function'; });
 	var idx = arguments.length > 1 ? arguments[0] : 0;
 	var bnd = arguments.length > 2 ? arguments[1] : this._a.length - 1;
-	var stp = arguments.length > 3 ? arguments[2] : (idx <= bnd ? 1 : -1);
+	var stp = arguments.length > 3 ? arguments[2] : (idx < bnd ? 1 : -1);
 	if (fnc !== null && typeof idx === 'number' && !isNaN(idx) && isFinite(idx) && typeof bnd === 'number' && !isNaN(bnd) && isFinite(bnd) && typeof stp === 'number' && !isNaN(stp) && stp !== 0 && isFinite(stp)) {
-		idx -= stp;
 		if (stp > 0) {
-			while ((idx += stp) <= bnd) {
+			while (idx <= bnd) {
 				if (fnc.call(this._s, this._a[idx], idx, bnd) === false) {
 					break;
 				}
+				idx += stp;
 			}
 
 		} else {
-			while ((idx += stp) >= bnd) {
+			while (idx >= bnd) {
 				if (fnc.call(this._s, this._a[idx], idx, bnd) === false) {
 					break;
 				}
+				idx += stp;
 			}
 		}
 
@@ -463,7 +464,7 @@ Enumerable.prototype.invokeAsync = function () {
 	var fnc = arguments[tmp];
 	var idx = tmp > 0 ? arguments[0] : 0;
 	var bnd = tmp > 1 ? arguments[1] : this._a.length - 1;
-	var stp = tmp > 2 ? arguments[2] : (idx <= bnd ? 1 : -1);
+	var stp = tmp > 2 ? arguments[2] : (idx < bnd ? 1 : -1);
 	var btc = (tmp >= 0 && tmp !== arguments.length - 1) ? arguments[arguments.length - 1] : 1;
 	var hdr;
 	if (typeof fnc === 'function' && typeof idx === 'number' && !isNaN(idx) && isFinite(idx) && typeof bnd === 'number' && !isNaN(bnd) && isFinite(bnd) && typeof stp === 'number' && !isNaN(stp) && stp !== 0 && isFinite(stp) && !isNaN(btc) && isFinite(btc) && btc > 0) {

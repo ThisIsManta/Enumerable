@@ -271,6 +271,11 @@ var Test = {
 			expect(a[1], 2);
 		},
 		function () {
+			var z = [];
+			var e = new Enumerable([]).invoke(function (x) { z.push(x); });
+			expect(z.length, 0);
+		},
+		function () {
 			var a = [1, 2, 3];
 			var z = [];
 			var e = new Enumerable(a).invoke(function (x) { z.push(x); });
