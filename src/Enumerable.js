@@ -435,20 +435,22 @@ Enumerable.prototype.invoke = function () {
 	var bnd = arguments.length > 2 ? arguments[1] : this._a.length - 1;
 	var stp = arguments.length > 3 ? arguments[2] : (idx < bnd ? 1 : -1);
 	if (fnc !== null && typeof idx === 'number' && !isNaN(idx) && isFinite(idx) && typeof bnd === 'number' && !isNaN(bnd) && isFinite(bnd) && typeof stp === 'number' && !isNaN(stp) && stp !== 0 && isFinite(stp)) {
-		if (stp > 0) {
-			while (idx <= bnd) {
-				if (fnc.call(this._s, this._a[idx], idx, bnd) === false) {
-					break;
+		if (bnd >= 0 && bnd < this._a.length) {
+			if (stp > 0) {
+				while (idx <= bnd) {
+					if (fnc.call(this._s, this._a[idx], idx, bnd) === false) {
+						break;
+					}
+					idx += stp;
 				}
-				idx += stp;
-			}
 
-		} else {
-			while (idx >= bnd) {
-				if (fnc.call(this._s, this._a[idx], idx, bnd) === false) {
-					break;
+			} else {
+				while (idx >= bnd) {
+					if (fnc.call(this._s, this._a[idx], idx, bnd) === false) {
+						break;
+					}
+					idx += stp;
 				}
-				idx += stp;
 			}
 		}
 
@@ -468,35 +470,37 @@ Enumerable.prototype.invokeAsync = function () {
 	var btc = (tmp >= 0 && tmp !== arguments.length - 1) ? arguments[arguments.length - 1] : 1;
 	var hdr;
 	if (typeof fnc === 'function' && typeof idx === 'number' && !isNaN(idx) && isFinite(idx) && typeof bnd === 'number' && !isNaN(bnd) && isFinite(bnd) && typeof stp === 'number' && !isNaN(stp) && stp !== 0 && isFinite(stp) && !isNaN(btc) && isFinite(btc) && btc > 0) {
-		if (stp > 0) {
-			hdr = function () {
-				var btx = btc;
-				while (idx <= bnd && btx-- > 0) {
-					if (fnc.call(this._s, arr[idx], idx, bnd) === false) {
-						idx = bnd;
+		if (bnd >= 0 && bnd < this._a.length) {
+			if (stp > 0) {
+				hdr = function () {
+					var btx = btc;
+					while (idx <= bnd && btx-- > 0) {
+						if (fnc.call(this._s, arr[idx], idx, bnd) === false) {
+							idx = bnd;
+						}
+						idx += stp;
 					}
-					idx += stp;
-				}
-				if (idx <= bnd) {
-					setTimeout(hdr, 5);
-				}
-			};
-			hdr();
+					if (idx <= bnd) {
+						setTimeout(hdr, 5);
+					}
+				};
+				hdr();
 
-		} else {
-			hdr = function () {
-				var btx = btc;
-				while (idx >= bnd && btx-- > 0) {
-					if (fnc.call(this._s, arr[idx], idx, bnd) === false) {
-						idx = 0;
+			} else {
+				hdr = function () {
+					var btx = btc;
+					while (idx >= bnd && btx-- > 0) {
+						if (fnc.call(this._s, arr[idx], idx, bnd) === false) {
+							idx = 0;
+						}
+						idx += stp;
 					}
-					idx += stp;
-				}
-				if (idx >= bnd) {
-					setTimeout(hdr, 5);
-				}
-			};
-			hdr();
+					if (idx >= bnd) {
+						setTimeout(hdr, 5);
+					}
+				};
+				hdr();
+			}
 		}
 
 	} else {
