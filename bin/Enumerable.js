@@ -469,13 +469,14 @@ Enumerable.prototype.invokeAsync = function () {
 	var stp = tmp > 2 ? arguments[2] : (idx < bnd ? 1 : -1);
 	var btc = (tmp >= 0 && tmp !== arguments.length - 1) ? arguments[arguments.length - 1] : 1;
 	var hdr;
+	var scp = this._s;
 	if (typeof fnc === 'function' && typeof idx === 'number' && !isNaN(idx) && isFinite(idx) && typeof bnd === 'number' && !isNaN(bnd) && isFinite(bnd) && typeof stp === 'number' && !isNaN(stp) && stp !== 0 && isFinite(stp) && !isNaN(btc) && isFinite(btc) && btc > 0) {
 		if (bnd >= 0 && bnd < this._a.length) {
 			if (stp > 0) {
 				hdr = function () {
 					var btx = btc;
 					while (idx <= bnd && btx-- > 0) {
-						if (fnc.call(this._s, arr[idx], idx, bnd) === false) {
+						if (fnc.call(scp, arr[idx], idx, bnd) === false) {
 							idx = bnd;
 						}
 						idx += stp;
@@ -490,7 +491,7 @@ Enumerable.prototype.invokeAsync = function () {
 				hdr = function () {
 					var btx = btc;
 					while (idx >= bnd && btx-- > 0) {
-						if (fnc.call(this._s, arr[idx], idx, bnd) === false) {
+						if (fnc.call(scp, arr[idx], idx, bnd) === false) {
 							idx = 0;
 						}
 						idx += stp;
