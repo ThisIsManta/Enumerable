@@ -430,26 +430,43 @@ Enumerable.prototype.selectAny = function () {
 };
 
 Enumerable.prototype.invoke = function () {
+	var arr = this._a;
+	var scp = this._s;
 	var fnc = new Enumerable(arguments).lastOrNull(function (tmp) { return typeof tmp === 'function'; });
 	var idx = arguments.length > 1 ? arguments[0] : 0;
 	var bnd = arguments.length > 2 ? arguments[1] : this._a.length - 1;
 	var stp = arguments.length > 3 ? arguments[2] : (idx < bnd ? 1 : -1);
+	var lim;
+	var brk;
 	if (fnc !== null && typeof idx === 'number' && !isNaN(idx) && isFinite(idx) && typeof bnd === 'number' && !isNaN(bnd) && isFinite(bnd) && typeof stp === 'number' && !isNaN(stp) && stp !== 0 && isFinite(stp)) {
 		if (bnd >= 0 && bnd < this._a.length) {
-			if (stp > 0) {
+			if (stp === 1 && idx === 0 && bnd > 1024) {
+				brk = function () { fnc = function () { }; idx = bnd; };
+				lim = bnd % 8;
+				while (idx <= lim) {
+					fnc.call(scp, arr[idx], idx++, bnd, brk);
+				}
 				while (idx <= bnd) {
-					if (fnc.call(this._s, this._a[idx], idx, bnd) === false) {
-						break;
-					}
-					idx += stp;
+					fnc.call(scp, arr[idx], idx++, bnd, brk);
+					fnc.call(scp, arr[idx], idx++, bnd, brk);
+					fnc.call(scp, arr[idx], idx++, bnd, brk);
+					fnc.call(scp, arr[idx], idx++, bnd, brk);
+					fnc.call(scp, arr[idx], idx++, bnd, brk);
+					fnc.call(scp, arr[idx], idx++, bnd, brk);
+					fnc.call(scp, arr[idx], idx++, bnd, brk);
+					fnc.call(scp, arr[idx], idx++, bnd, brk);
+				}
+
+			} else if (stp > 0) {
+				brk = function () { idx = bnd; };
+				while (idx <= bnd) {
+					fnc.call(scp, arr[idx], idx, bnd, brk); idx += stp;
 				}
 
 			} else {
+				brk = function () { idx = 0; };
 				while (idx >= bnd) {
-					if (fnc.call(this._s, this._a[idx], idx, bnd) === false) {
-						break;
-					}
-					idx += stp;
+					fnc.call(scp, arr[idx], idx, bnd, brk); idx += stp;
 				}
 			}
 		}
@@ -462,42 +479,40 @@ Enumerable.prototype.invoke = function () {
 
 Enumerable.prototype.invokeAsync = function () {
 	var arr = this._a;
+	var scp = this._s;
 	var tmp = new Enumerable(arguments).indexOf(function (tmp) { return typeof tmp === 'function'; });
 	var fnc = arguments[tmp];
 	var idx = tmp > 0 ? arguments[0] : 0;
 	var bnd = tmp > 1 ? arguments[1] : this._a.length - 1;
 	var stp = tmp > 2 ? arguments[2] : (idx < bnd ? 1 : -1);
 	var btc = (tmp >= 0 && tmp !== arguments.length - 1) ? arguments[arguments.length - 1] : 1;
+	var lim;
+	var brk;
 	var hdr;
-	var scp = this._s;
 	if (typeof fnc === 'function' && typeof idx === 'number' && !isNaN(idx) && isFinite(idx) && typeof bnd === 'number' && !isNaN(bnd) && isFinite(bnd) && typeof stp === 'number' && !isNaN(stp) && stp !== 0 && isFinite(stp) && !isNaN(btc) && isFinite(btc) && btc > 0) {
 		if (bnd >= 0 && bnd < this._a.length) {
 			if (stp > 0) {
+				brk = function () { idx = bnd; };
 				hdr = function () {
-					var btx = btc;
-					while (idx <= bnd && btx-- > 0) {
-						if (fnc.call(scp, arr[idx], idx, bnd) === false) {
-							idx = bnd;
-						}
-						idx += stp;
+					lim = btc;
+					while (idx <= bnd && lim-- > 0) {
+						fnc.call(scp, arr[idx], idx, bnd, brk); idx += stp;
 					}
 					if (idx <= bnd) {
-						setTimeout(hdr, 5);
+						setTimeout(hdr, 2);
 					}
 				};
 				hdr();
 
 			} else {
+				brk = function () { idx = 0; };
 				hdr = function () {
-					var btx = btc;
-					while (idx >= bnd && btx-- > 0) {
-						if (fnc.call(scp, arr[idx], idx, bnd) === false) {
-							idx = 0;
-						}
-						idx += stp;
+					lim = btc;
+					while (idx >= bnd && lim-- > 0) {
+						fnc.call(scp, arr[idx], idx, bnd, brk); idx += stp;
 					}
 					if (idx >= bnd) {
-						setTimeout(hdr, 5);
+						setTimeout(hdr, 2);
 					}
 				};
 				hdr();

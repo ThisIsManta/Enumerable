@@ -342,17 +342,10 @@ var Test = {
 			expect(z[0], 1);
 		},
 		function () {
-			var a = [1, 2, 3];
 			var z = 0;
-			var e = new Enumerable(a).invoke(function (x, i) {
-				z += x;
-				if (i === 1) {
-					return false;
-				} else if (i == 2) {
-					unexpect();
-				}
-			});
-			expect(z, 3);
+			var e = new Enumerable(1000);
+			e.invoke(function () { z++; });
+			expect(z, 1000);
 		},
 		function () {
 			var a = [1, 2, 3];
@@ -468,11 +461,11 @@ var Test = {
 		function () {
 			var a = [1, 2, 3];
 			var z = 0;
-			var e = new Enumerable(a).invokeAsync(function (x, i) {
+			var e = new Enumerable(a).invokeAsync(function (x, i, j, b) {
 				z += x;
 				if (i === 1) {
-					return false;
-				} else if (i == 2) {
+					b();
+				} else if (i === 2) {
 					unexpect();
 				}
 			}, 3);
