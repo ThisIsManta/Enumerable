@@ -1295,6 +1295,8 @@ Enumerable.prototype.sortBy = function () {
 };
 
 Enumerable.prototype.groupBy = function () {
+	var arr = this._a;
+	var scp = this._s;
 	var ar0 = arguments[0];
 	var idx = -1;
 	var bnd = this._a.length;
@@ -1312,11 +1314,11 @@ Enumerable.prototype.groupBy = function () {
 	}
 	if (typeof ar0 === 'function') {
 		while (++idx < bnd) {
-			tmp = ar0.call(this._s, this._a[idx], idx).toString();
+			tmp = ar0.call(scp, arr[idx], idx).toString();
 			if (out[tmp] === undefined) {
-				out[tmp] = [this._a[idx]];
+				out[tmp] = [arr[idx]];
 			} else {
-				out[tmp].push(this._a[idx]);
+				out[tmp].push(arr[idx]);
 			}
 		}
 		for (tmp in out) {
@@ -1328,7 +1330,18 @@ Enumerable.prototype.groupBy = function () {
 		throw 'one or more parameters were not valid';
 	}
 	out.asEnumerable = function () {
-		return new Enumerable(this, this._s);
+		if (arguments.length === 0) {
+			return new Enumerable(this, scp);
+
+		} else if (arguments.length === 1 && typeof arguments[0] === 'string') {
+			return new Enumerable(this, arguments[0], scp);
+
+		} else if (arguments.length === 2 && typeof arguments[0] === 'string' && typeof arguments[1] === 'string') {
+			return new Enumerable(this, arguments[0], arguments[1], scp);
+
+		} else {
+			throw 'one or more parameters were not valid';
+		}
 	};
 	return out;
 };
