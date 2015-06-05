@@ -615,6 +615,7 @@ Enumerable.prototype.skip = function () {
 };
 
 Enumerable.prototype.flatten = function () {
+	var arr = this._a;
 	var ar0 = !!arguments[0];
 	var idx = -1;
 	var jdx;
@@ -624,7 +625,7 @@ Enumerable.prototype.flatten = function () {
 	var tmp;
 	var out = [];
 	while (++idx < bnd) {
-		tmp = this._a[idx];
+		tmp = arr[idx];
 		if (typeof tmp === 'object' && tmp instanceof Array) {
 			if (tmp.length > 0) {
 				if (ar0) {
@@ -632,15 +633,11 @@ Enumerable.prototype.flatten = function () {
 				}
 				jdx = -1;
 				len = tmp.length;
-				if (len > 1) {
-					out = out.concat(tmp);
-
-				} else {
-					while (++jdx < len) {
-						out[++kdx] = tmp[jdx];
-					}
+				while (++jdx < len) {
+					out[++kdx] = tmp[jdx];
 				}
 			}
+
 		} else {
 			out[++kdx] = tmp;
 		}
@@ -1206,32 +1203,36 @@ Enumerable.prototype.union = function () {
 };
 
 Enumerable.prototype.intersect = function () {
-	var ar0 = new Enumerable(arguments[0])._a;
+	var arr = this._a;
+	var ar0 = new Enumerable(arguments[0]);
 	var idx = -1;
 	var jdx = -1;
-	var bnd = ar0.length;
+	var bnd = arr.length;
 	var out = [];
 	while (++idx < bnd) {
-		if (this.contains(ar0[idx])) {
-			out[++jdx] = ar0[idx];
+		if (ar0.contains(arr[idx])) {
+			out[++jdx] = arr[idx];
 		}
 	}
-	return new Enumerable(out, this._s);
+	out = new Enumerable(out, this._s);
+	out._m = false;
+	return out;
 };
 
 Enumerable.prototype.difference = function () {
-	var ar0 = new Enumerable(arguments[0])._a;
+	var arr = this._a;
+	var ar0 = new Enumerable(arguments[0]);
 	var idx = -1;
-	var jdx;
-	var bnd = ar0.length;
-	var out = new Enumerable(this.toImmutableArray(), this._s);
-	out._m = false;
+	var jdx = -1;
+	var bnd = arr.length;
+	var out = [];
 	while (++idx < bnd) {
-		jdx = out.indexOf(ar0[idx]);
-		if (jdx >= 0) {
-			out._a.splice(jdx, 1);
+		if (!ar0.contains(arr[idx])) {
+			out[++jdx] = arr[idx];
 		}
 	}
+	out = new Enumerable(out, this._s);
+	out._m = false;
 	return out;
 };
 

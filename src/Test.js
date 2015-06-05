@@ -26,9 +26,7 @@ var Test = {
 				console.debug(Test.cases[i]);
 			}
 		}
-		var t = 'Done' + (c > 0 ? ' with ' + c + ' error' + (c > 1 ? 's' : '') : ' without any error');
-		console.log(t);
-		document.documentElement.textContent = t;
+		console.log('Done' + (c > 0 ? ' with ' + c + ' error' + (c > 1 ? 's' : '') : ' without any error'));
 	},
 	cases: [
 		function () {
@@ -545,6 +543,15 @@ var Test = {
 			var e = new Enumerable(a).take(1, 2);
 			expect(e._a.length, 1);
 			expect(e._a[0], 2);
+		},
+		function () {
+			var a = [1, 2, [3, 4, 5], 6];
+			var e = new Enumerable(a).flatten();
+			expect(e._a.length, 6);
+			expect(e._a[0], 1);
+			expect(e._a[2], 3);
+			expect(e._a[4], 5);
+			expect(e._a[5], 6);
 		},
 		function () {
 			var a = [[1, 2, 3], [4, 5, [6, 7]]];
