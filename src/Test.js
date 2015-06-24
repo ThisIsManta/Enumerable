@@ -1179,6 +1179,34 @@ var Test = {
 			if (!(e.cast('object')._a[0] instanceof Object)) { unexpect(); }
 		},
 		function () {
+			var e = new Enumerable([1, 2]).cross([3, 4]);
+			expect(e._a.length, 4);
+			expect(e._a[0].length, 2);
+			expect(e._a[0][0], 1);
+			expect(e._a[0][1], 3);
+			expect(e._a[1].length, 2);
+			expect(e._a[1][0], 1);
+			expect(e._a[1][1], 4);
+			expect(e._a[2].length, 2);
+			expect(e._a[2][0], 2);
+			expect(e._a[2][1], 3);
+			expect(e._a[3].length, 2);
+			expect(e._a[3][0], 2);
+			expect(e._a[3][1], 4);
+		},
+		function () {
+			var e = new Enumerable([1, 2]).cross([3, 4], [5,6,7]);
+			expect(e._a.length, 12);
+			expect(e._a[0].length, 3);
+			expect(e._a[0][0], 1);
+			expect(e._a[0][1], 3);
+			expect(e._a[0][2], 5);
+			expect(e._a[11].length, 3);
+			expect(e._a[11][0], 2);
+			expect(e._a[11][1], 4);
+			expect(e._a[11][2], 7);
+		},
+		function () {
 			Enumerable.define('test', function (x) { return this._a[x] === 1; });
 			var e = new Enumerable([0, 1]);
 			var f = new Enumerable([1, 2, 3]);
