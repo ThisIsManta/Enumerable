@@ -1787,32 +1787,27 @@ Enumerable.prototype.cast = function () {
 };
 
 Enumerable.prototype.cross = function () {
-	var out = this.clone().select(function (tmp) { return [tmp]; }).toArray();
-	var idx = -1;
-	var bnd = arguments.length;
-	while (++idx < bnd) {
-		if (Array.isArray(arguments[idx])) {
-			out = Enumerable._cross(out, arguments[idx]);
-		}
-	}
-	return new Enumerable(out, this._s);
-};
-
-Enumerable._cross = function () {
+	var arr = this._x ? this.toArray() : this.select(function (tmp) { return [tmp]; }).toArray();
 	var ar0 = arguments[0];
-	var ar1 = arguments[1];
-	var out = new Array(ar0.length * ar1.length);
 	var idx = -1;
 	var jdx;
 	var kdx = -1;
-	var bnd = ar0.length;
-	var cnd = ar1.length;
-	while (++idx < bnd) {
-		jdx = -1;
-		while (++jdx < cnd) {
-			out[++kdx] = new Enumerable(ar0[idx]).clone().add(ar1[jdx]).toArray();
+	var bnd = arr.length;
+	var cnd = ar0.length;
+	var out = new Array(bnd * cnd);
+	if (Array.isArray(ar0)) {
+		while (++idx < bnd) {
+			jdx = -1;
+			while (++jdx < cnd) {
+				out[++kdx] = new Enumerable(arr[idx]).clone().add(ar0[jdx]).toArray();
+			}
 		}
+
+	} else {
+		throw 'one or more parameters were not valid';
 	}
+	out = new Enumerable(out, this._s);
+	out._x = true;
 	return out;
 };
 

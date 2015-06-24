@@ -1195,7 +1195,7 @@ var Test = {
 			expect(e._a[3][1], 4);
 		},
 		function () {
-			var e = new Enumerable([1, 2]).cross([3, 4], [5,6,7]);
+			var e = new Enumerable([1, 2]).cross([3, 4]).cross([5,6,7]);
 			expect(e._a.length, 12);
 			expect(e._a[0].length, 3);
 			expect(e._a[0][0], 1);
