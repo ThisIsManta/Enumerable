@@ -1172,9 +1172,11 @@ var Test = {
 			expect(e._a[3].v, 'x');
 		},
 		function () {
-			var e = new Enumerable(['a', 1, null, undefined, {}, []]);
+			var e = new Enumerable(['a', 1, '123', NaN, Infinity, null, undefined, {}, []]);
 			expect(e.cast('string')._a[0], 'a');
 			expect(e.cast('number')._a[0], 1);
+			expect(e.cast('number')._a[1], 123);
+			expect(e.cast('number')._a[2], Infinity);
 			if (!(e.cast('array')._a[0] instanceof Array)) { unexpect(); }
 			if (!(e.cast('object')._a[0] instanceof Object)) { unexpect(); }
 		},

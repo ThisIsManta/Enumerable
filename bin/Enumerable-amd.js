@@ -1748,7 +1748,9 @@ Enumerable.prototype.cast = function () {
 			while (++idx < bnd) {
 				tmp = this._a[idx];
 				if (typeof tmp === 'number') {
-					out[++jdx] = tmp;
+					if (!isNaN(tmp)) {
+						out[++jdx] = tmp;
+					}
 
 				} else if (typeof tmp === 'string') {
 					tmp = parseFloat(tmp);
