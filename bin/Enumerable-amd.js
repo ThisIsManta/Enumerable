@@ -1811,6 +1811,29 @@ Enumerable.prototype.cross = function () {
 	return out;
 };
 
+Enumerable.prototype.assign = function () {
+	var arr = this._a;
+	var ar0 = arguments[0];
+	var idx = -1;
+	var jdx;
+	var bnd = arr.length;
+	var cnd = ar0.length;
+	var out = new Array(arr.length);
+	if (new Enumerable(ar0).all(function (itm) { return typeof itm === 'string'; })) {
+		while (++idx < bnd) {
+			out[idx] = {};
+			jdx = -1;
+			while (++jdx < cnd) {
+				out[idx][ar0[jdx]] = arr[idx][jdx];
+			}
+		}
+
+	} else {
+		throw 'one or more parameters were not valid';
+	}
+	return new Enumerable(out, this._s);
+};
+
 Enumerable.define = function () {
 	var ar0 = arguments[0];
 	var ar1 = arguments[1];

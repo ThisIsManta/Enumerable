@@ -1207,6 +1207,16 @@ var Test = {
 			expect(e._a[11][2], 7);
 		},
 		function () {
+			var e = new Enumerable([[1,2], [3,4]]).assign(['a','b','c']);
+			expect(e._a.length, 2);
+			expect(e._a[0].a, 1);
+			expect(e._a[0].b, 2);
+			expect(e._a[0].c, undefined);
+			expect(e._a[1].a, 3);
+			expect(e._a[1].b, 4);
+			expect(e._a[1].c, undefined);
+		},
+		function () {
 			Enumerable.define('test', function (x) { return this._a[x] === 1; });
 			var e = new Enumerable([0, 1]);
 			var f = new Enumerable([1, 2, 3]);
