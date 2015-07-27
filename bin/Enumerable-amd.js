@@ -189,20 +189,6 @@ Enumerable.prototype.toObject = function () {
 	return out;
 };
 
-Enumerable.prototype.peekAt = function () {
-	var ar0 = arguments[0];
-	if (typeof ar0 === 'number') {
-		if (!isNaN(ar0) && ar0 >= 0 && ar0 < this._a.length) {
-			return this._a[ar0];
-		} else {
-			throw 'an index was out of range'
-		}
-
-	} else {
-		throw 'one or more parameters were not valid';
-	}
-};
-
 Enumerable.prototype.clone = function (idp) {
 	var arr = this._a;
 	var ar0 = arguments[0];
@@ -702,15 +688,20 @@ Enumerable.prototype.all = function () {
 };
 
 Enumerable.prototype.subsetOf = function () {
-	var arr = new Enumerable(arguments[0]);
+	var arr = this._a;
+	var ar0 = new Enumerable(arguments[0])._a;
 	var idx = -1;
-	var bnd = this._a.length;
+	var bnd = arr.length;
 	while (++idx < bnd) {
-		if (arr.contains(this._a[idx]) === false) {
+		if (ar0.indexOf(arr[idx]) === -1) {
 			return false;
 		}
 	}
 	return true;
+};
+
+Enumerable.prototype.equalTo = function () {
+
 };
 
 Enumerable.prototype.equivalentTo = function () {
@@ -766,6 +757,7 @@ Enumerable.prototype.indexOf = function () {
 	if (typeof ar1 === 'number') {
 		if (ar1 >= 0 || ar1 <= bnd) {
 			idx = ar1 - 1;
+
 		} else {
 			throw 'an index was out of range';
 		}
@@ -797,6 +789,7 @@ Enumerable.prototype.lastIndexOf = function () {
 	if (typeof ar1 === 'number') {
 		if (ar1 >= 0 || ar1 <= idx) {
 			idx = ar1;
+
 		} else {
 			throw 'an index was out of range';
 		}
@@ -828,10 +821,13 @@ Enumerable.prototype.contains = function () {
 Enumerable.prototype.find = function () {
 	var ar0 = arguments[0];
 	var ar1 = arguments[1];
-	if (typeof ar0 === 'string' && arguments.length === 2) {
+	if (typeof ar0 === 'string' && arguments.length >= 2) {
 		var idx = this.indexOf.call(this, function (obj) { return obj[ar0] === ar1; });
 		if (idx >= 0) {
 			return this._a[idx];
+
+		} else if (arguments.length > 2) {
+			return arguments[2];
 
 		} else {
 			return null;
@@ -872,6 +868,7 @@ Enumerable.prototype.first = function () {
 		var idx = this.indexOf.apply(this, arguments);
 		if (idx >= 0) {
 			return this._a[idx];
+
 		} else {
 			throw 'no element was matched';
 		}
@@ -1036,53 +1033,18 @@ Enumerable.prototype.distinct = function () {
 	return new Enumerable(out, this._s);
 };
 
-Enumerable.prototype.replace = function () {
+Enumerable.prototype.peekAt = function () {
 	var ar0 = arguments[0];
-	var ar1 = arguments[1];
-	var ar2 = arguments[2];
-	var idx = -1;
-	var bnd = this._a.length;
-	var out = this.toImmutableArray();
-	if (ar0 === undefined) {
-		throw 'one or more parameters were not valid';
-	}
-	if (typeof ar2 !== 'number' || ar2 < 0) {
-		ar2 = Infinity;
-	}
-	if (typeof ar0 === 'function') {
-		while (++idx < bnd && ar2 > 0) {
-			if (ar0.call(this._s, out[idx])) {
-				out[idx] = ar1;
-				ar2--;
-			}
+	if (typeof ar0 === 'number') {
+		if (!isNaN(ar0) && ar0 >= 0 && ar0 < this._a.length) {
+			return this._a[ar0];
+		} else {
+			throw 'an index was out of range'
 		}
 
 	} else {
-		while (++idx < bnd && ar2 > 0) {
-			if (out[idx] === ar0) {
-				out[idx] = ar1;
-				ar2--;
-			}
-		}
-	}
-	return new Enumerable(out, this._s);
-};
-
-Enumerable.prototype.replaceAt = function () {
-	var ar0 = arguments[0];
-	var ar1 = arguments[1];
-	var out = this.toImmutableArray();
-	if (arguments.length !== 2 || typeof ar0 !== 'number') {
 		throw 'one or more parameters were not valid';
-
-	} else if (ar0 < 0 || ar0 >= out.length) {
-		throw 'an index was out of range';
-
-	} else {
-		out[ar0] = ar1;
 	}
-	this._a = out;
-	return this;
 };
 
 Enumerable.prototype.add = function () {
@@ -1183,6 +1145,55 @@ Enumerable.prototype.removeAll = function () {
 
 	} else {
 		throw 'one or more parameters were not valid';
+	}
+	this._a = out;
+	return this;
+};
+
+Enumerable.prototype.replace = function () {
+	var ar0 = arguments[0];
+	var ar1 = arguments[1];
+	var ar2 = arguments[2];
+	var idx = -1;
+	var bnd = this._a.length;
+	var out = this.toImmutableArray();
+	if (ar0 === undefined) {
+		throw 'one or more parameters were not valid';
+	}
+	if (typeof ar2 !== 'number' || ar2 < 0) {
+		ar2 = Infinity;
+	}
+	if (typeof ar0 === 'function') {
+		while (++idx < bnd && ar2 > 0) {
+			if (ar0.call(this._s, out[idx])) {
+				out[idx] = ar1;
+				ar2--;
+			}
+		}
+
+	} else {
+		while (++idx < bnd && ar2 > 0) {
+			if (out[idx] === ar0) {
+				out[idx] = ar1;
+				ar2--;
+			}
+		}
+	}
+	return new Enumerable(out, this._s);
+};
+
+Enumerable.prototype.replaceAt = function () {
+	var ar0 = arguments[0];
+	var ar1 = arguments[1];
+	var out = this.toImmutableArray();
+	if (arguments.length !== 2 || typeof ar0 !== 'number') {
+		throw 'one or more parameters were not valid';
+
+	} else if (ar0 < 0 || ar0 >= out.length) {
+		throw 'an index was out of range';
+
+	} else {
+		out[ar0] = ar1;
 	}
 	this._a = out;
 	return this;
@@ -1295,6 +1306,29 @@ Enumerable.prototype.sortBy = function () {
 	}
 };
 
+Enumerable.prototype.groupOf = function () {
+	var arr = this._a;
+	var ar0 = arguments[0];
+	var idx = -1;
+	var bnd = arr.length;
+	var tmp;
+	var out;
+	if (typeof ar0 === 'number' && ar0 > 0 && arguments.length === 1) {
+		out = new Array(Math.ceil(bnd / ar0));
+		while (++idx < bnd) {
+			tmp = out[Math.floor(idx / ar0)];
+			if (tmp === undefined) {
+				tmp = out[Math.floor(idx / ar0)] = [];
+			}
+			tmp.push(arr[idx]);
+		}
+		return new Enumerable(out, this._s);
+
+	} else {
+		throw 'one or more parameters were not valid';
+	}
+};
+
 Enumerable.prototype.groupBy = function () {
 	var arr = this._a;
 	var scp = this._s;
@@ -1306,7 +1340,7 @@ Enumerable.prototype.groupBy = function () {
 	var out = {};
 	if (typeof ar0 === 'string') {
 		if (ar0.length === 0) {
-			throw 'name was empty';
+			throw 'a name was empty';
 
 		} else {
 			nam = ar0;
@@ -1364,7 +1398,7 @@ Enumerable.prototype.joinBy = function () {
 
 	} else if (typeof ar1 === 'string') {
 		if (ar1.length === 0) {
-			throw 'name was empty';
+			throw 'a name was empty';
 
 		} else {
 			while (++idx < bnd) {

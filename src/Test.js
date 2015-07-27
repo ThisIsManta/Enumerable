@@ -1007,6 +1007,17 @@ var Test = {
 			expect(e._a[2].v, 3);
 		},
 		function () {
+			var a = [1,2,3,4,5];
+			var e = new Enumerable(a).groupOf(2);
+			expect(e._a.length, 3);
+			expect(e._a[0][0], 1);
+			expect(e._a[0][1], 2);
+			expect(e._a[1][0], 3);
+			expect(e._a[1][1], 4);
+			expect(e._a[2][0], 5);
+			expect(e._a[2].length, 1);
+		},
+		function () {
 			var a = [{ v: 1, g: 1 }, { v: 2, g: 1 }, { v: 3, g: 2 }];
 			var e = new Enumerable(a).groupBy('g');
 			expect(e[1]._a.length, 2);
