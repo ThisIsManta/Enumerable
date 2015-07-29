@@ -447,13 +447,19 @@ one or more parameters were not valid
 **Accepts**  
 `(array-like)` as a target members.
 
-    new Enumerable([1, 2, 3]).subsetOf([1, 3]);
+    new Enumerable([1, 2]).subsetOf([1, 2, 3]);
     // This returns true
 
-    new Enumerable([1, 2, 3]).subsetOf([1, 4]);
+    new Enumerable([1, 2]).subsetOf([1, 2]);
+    // This returns true
+
+    new Enumerable([1, 2]).subsetOf([1, 4]);
     // This returns false
 
-    new Enumerable([1, 2, 3]).subsetOf([]);
+    new Enumerable([1, 2]).subsetOf([1]);
+    // This returns false
+
+    new Enumerable([]).subsetOf([1, 2, 3]);
     // This returns true
 
 ## equivalentTo()
