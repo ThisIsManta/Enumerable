@@ -569,10 +569,10 @@ one or more parameters were not valid
 
 Just like `first()` but will return `null` instead of throwing an exception.
 
-    new Enumerable([{ name: 'Bob', job: 'Singer' }, { name: 'Jim', job: 'Composer' }, { name: 'Max', job: 'Singer' }]).first(function (x, i) { return x.job === 'Singer'; });
+    new Enumerable([{ name: 'Bob', job: 'Singer' }, { name: 'Jim', job: 'Composer' }, { name: 'Max', job: 'Singer' }]).firstOrNull(function (x, i) { return x.job === 'Singer'; });
     // This returns { name: 'Bob', job: 'Singer' }
     
-    new Enumerable([{ name: 'Bob', job: 'Singer' }, { name: 'Jim', job: 'Composer' }, { name: 'Max', job: 'Singer' }]).first(function (x, i) { return x.job === 'Dancer'; });
+    new Enumerable([{ name: 'Bob', job: 'Singer' }, { name: 'Jim', job: 'Composer' }, { name: 'Max', job: 'Singer' }]).firstOrNull(function (x, i) { return x.job === 'Dancer'; });
     // This returns null
 
 ## last()
@@ -589,10 +589,10 @@ Just like `first()` but iterate from the rightmost index to the zeroth index.
 
 Just like `firstOrNull()` but iterate from rightmost index to the zeroth index.
 
-    new Enumerable([{ name: 'Bob', job: 'Singer' }, { name: 'Jim', job: 'Composer' }, { name: 'Max', job: 'Singer' }]).last(function (x, i) { return x.job === 'Singer'; });
+    new Enumerable([{ name: 'Bob', job: 'Singer' }, { name: 'Jim', job: 'Composer' }, { name: 'Max', job: 'Singer' }]).lastOrNull(function (x, i) { return x.job === 'Singer'; });
     // This returns { name: 'Max', job: 'Singer' }
     
-    new Enumerable([{ name: 'Bob', job: 'Singer' }, { name: 'Jim', job: 'Composer' }, { name: 'Max', job: 'Singer' }]).last(function (x, i) { return x.job === 'Dancer'; });
+    new Enumerable([{ name: 'Bob', job: 'Singer' }, { name: 'Jim', job: 'Composer' }, { name: 'Max', job: 'Singer' }]).lastOrNull(function (x, i) { return x.job === 'Dancer'; });
     // This returns null
 
 ## single()
@@ -606,13 +606,13 @@ no element was matched
 more than one element were matched  
 one or more parameters were not valid
 
-    new Enumerable([{ name: 'Bob', job: 'Singer' }, { name: 'Jim', job: 'Composer' }, { name: 'Max', job: 'Singer' }]).last(function (x, i) { return x.job === 'Singer'; });
+    new Enumerable([{ name: 'Bob', job: 'Singer' }, { name: 'Jim', job: 'Composer' }, { name: 'Max', job: 'Singer' }]).single(function (x, i) { return x.job === 'Singer'; });
     // This throw an exception
     
-    new Enumerable([{ name: 'Bob', job: 'Singer' }, { name: 'Jim', job: 'Composer' }, { name: 'Max', job: 'Singer' }]).last(function (x, i) { return x.job === 'Composer'; });
+    new Enumerable([{ name: 'Bob', job: 'Singer' }, { name: 'Jim', job: 'Composer' }, { name: 'Max', job: 'Singer' }]).single(function (x, i) { return x.job === 'Composer'; });
     // This return { name: 'Jim', job: 'Composer' }
     
-    new Enumerable([{ name: 'Bob', job: 'Singer' }, { name: 'Jim', job: 'Composer' }, { name: 'Max', job: 'Singer' }]).last(function (x, i) { return x.job === 'Dancer'; });
+    new Enumerable([{ name: 'Bob', job: 'Singer' }, { name: 'Jim', job: 'Composer' }, { name: 'Max', job: 'Singer' }]).single(function (x, i) { return x.job === 'Dancer'; });
     // This throw an exception
 
 ## singleOrNull()
@@ -622,13 +622,13 @@ Just like `first()` but will return `null` if and only if found more than one ma
 **Throws**  
 one or more parameters were not valid
 
-    new Enumerable([{ name: 'Bob', job: 'Singer' }, { name: 'Jim', job: 'Composer' }, { name: 'Max', job: 'Singer' }]).last(function (x, i) { return x.job === 'Singer'; });
+    new Enumerable([{ name: 'Bob', job: 'Singer' }, { name: 'Jim', job: 'Composer' }, { name: 'Max', job: 'Singer' }]).singleOrNull(function (x, i) { return x.job === 'Singer'; });
     // This returns null
     
-    new Enumerable([{ name: 'Bob', job: 'Singer' }, { name: 'Jim', job: 'Composer' }, { name: 'Max', job: 'Singer' }]).last(function (x, i) { return x.job === 'Composer'; });
+    new Enumerable([{ name: 'Bob', job: 'Singer' }, { name: 'Jim', job: 'Composer' }, { name: 'Max', job: 'Singer' }]).singleOrNull(function (x, i) { return x.job === 'Composer'; });
     // This return { name: 'Jim', job: 'Composer' }
     
-    new Enumerable([{ name: 'Bob', job: 'Singer' }, { name: 'Jim', job: 'Composer' }, { name: 'Max', job: 'Singer' }]).last(function (x, i) { return x.job === 'Dancer'; });
+    new Enumerable([{ name: 'Bob', job: 'Singer' }, { name: 'Jim', job: 'Composer' }, { name: 'Max', job: 'Singer' }]).singleOrNull(function (x, i) { return x.job === 'Dancer'; });
     // This returns null
 
 ## distinct()
