@@ -138,7 +138,7 @@ one or more parameters were not valid.
 one or more parameters were not valid.
 
     new Enumerable(['a', 'book']).toObject();
-    // This returns { "0": 'a', "1": 'book' }
+    // This returns { "a": 'a', "book": 'book' }
     
     new Enumerable(['a', 'book']).toObject('length');
     // This returns { "1": 'a', "4": 'book' }
@@ -403,7 +403,8 @@ one or more parameters were not valid.
 **Accepts**  
 `()`. This will return `true` if there are one or more members inside the current enumerable. Otherwise, `false`.  
 `(function)` as a boolean generator.  
-`(anything)` as a target member.
+`(anything)` as a target member.  
+`(string, anything) as a name projector and a target value.
 
     new Enumerable().any();
     // This returns false
@@ -417,7 +418,13 @@ one or more parameters were not valid.
     new Enumerable([1, 2, 3]).any(4);
     // This returns false
     
-    new Enumerable([1, 2, 4]).any(4);
+    new Enumerable([1, 2, 3]).any(3);
+    // This returns true
+	
+    new Enumerable([{ name: 'Tony' }, { name: 'Alex' }, { name: 'Josh' }]).any('name', 'Kris');
+    // This returns false
+
+    new Enumerable([{ name: 'Tony' }, { name: 'Alex' }, { name: 'Josh' }]).any('name', 'Alex');
     // This returns true
 
 ## all()
@@ -426,7 +433,8 @@ one or more parameters were not valid.
 
 **Accepts**  
 `(function)` as a boolean generator.  
-`(anything)` as a target member.
+`(anything)` as a target member.  
+`(string, anything) as a name projector and a target value.
 
 **Throws**  
 one or more parameters were not valid
@@ -438,6 +446,12 @@ one or more parameters were not valid
     // This returns false
     
     new Enumerable([2, 2, 2]).all(2);
+    // This returns true
+
+    new Enumerable([{ name: 'Tony' }, { name: 'Alex' }, { name: 'Josh' }]).all('name', 'Alex');
+    // This returns false
+
+    new Enumerable([{ name: 'Alex' }, { name: 'Alex' }, { name: 'Alex' }]).all('name', 'Alex');
     // This returns true
 
 ## subsetOf()
@@ -883,7 +897,6 @@ one or more parameters were not valid
 **Returns** the new enumerable that has only members which present in the current enumerable but the specified array-like.
 
 **Accepts**  
-`()`.  
 `(string)` as a name projector.  
 `(function)` as a value generator.
 
@@ -910,15 +923,12 @@ one or more parameters were not valid
 **Throws**  
 one or more parameters were not valid
 
-    new Enumerable(['Tom', 'Tommy', 'Bob', 'Bobby']).groupOf(2).toArray();
-    // This returns [['Tom', 'Tommy'], ['Bob', 'Bobby']]
-    
     new Enumerable(['Tom', 'Tommy', 'Bob', 'Bobby', 'Kris']).groupOf(2).toArray();
     // This returns [['Tom', 'Tommy'], ['Bob', 'Bobby'], ['Kris']]
 
 ## groupBy()
 
-**Returns** an object of name-enumerable pairs.
+**Returns** the new enumerable of enumberable(s) which has a special property `name`.
 
 **Accepts**  
 `(string)` as a name projector.  
@@ -928,11 +938,14 @@ one or more parameters were not valid
 a name was empty  
 one or more parameters were not valid
 
-    new Enumerable(['Tom', 'Tommy', 'Bob', 'Bobby']).groupBy('length');
-    // This returns { "3": new Enumerable(['Tom', 'Bob']), "5": new Enumerable(['Tommy', 'Bobby']) }
+    new Enumerable(['Tom', 'Tommy', 'Bob', 'Bobby']).groupBy('length').toArray();
+    // This returns [new Enumerable(['Tom', 'Bob']), new Enumerable(['Tommy', 'Bobby'])]
     
-    new Enumerable(['Tom', 'Tommy', 'Bob', 'Bobby']).groupBy(function (x) { return x.charAt(0); });
-    // This returns { "B": new Enumerable(['Bob', 'Bobby']), "T": new Enumerable(['Tom', 'Tommy']) }
+    new Enumerable(['Tom', 'Tommy', 'Bob', 'Bobby']).groupBy(function (x) { return x.charAt(0); }).toArray();
+    // This returns [new Enumerable(['Bob', 'Bobby']), new Enumerable(['Tom', 'Tommy'])]
+    
+    new Enumerable(['Tom', 'Tommy', 'Bob', 'Bobby']).groupBy(function (x) { return x.charAt(0); }).select('name').toArray();
+    // This returns ['B', 'T']
 
 ## joinBy()
 
@@ -1149,7 +1162,7 @@ one or more parameters were not valid.
 
 ## assign()
 
-**Returns** the new enumerable that creates object(s) by using the given argument as the name list and the current enumerable as the value list. The current enumerable must be an _array of array_.
+**Returns** the new enumerable that creates object(s) by using the given argument as the name list and the current enumerable as the value list. The current enumerable must be an _array of array(s)_.
 
 **Accepts**  
 `(array of string)` as a name list.
@@ -1157,7 +1170,7 @@ one or more parameters were not valid.
 **Throws**  
 one or more parameters were not valid.
 
-    new Enumerable([1, 2], [3, 4]]).assign(['a', 'b']).toArray();
+    new Enumerable([[1, 2], [3, 4]]).assign(['a', 'b']).toArray();
     // This returns [{ a: 1, b: 4 }, { a: 3, b: 4 }]
 
 ## define()
@@ -1176,7 +1189,8 @@ The followings are internal variables you should know:
 `(string, function)` as a function name and a function respectively
 
 **Throws**  
-one or more parameters were not valid.
+one or more parameters were not valid.  
+a function has been defined.
 
     Enumerable.define('increase', function (amount) {
         for (var index = 0; index < this._a.length; index--) {

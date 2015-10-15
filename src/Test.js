@@ -105,7 +105,7 @@ var Test = {
 		function () {
 			var e = new Enumerable([1, 2, 3]);
 			var z = e.toObject();
-			return typeof z === 'object' && z['0'] === 1 && z['1'] === 2 && z['2'] === 3;
+			return typeof z === 'object' && z['1'] === 1 && z['2'] === 2 && z['3'] === 3;
 		},
 		function () {
 			var a = [{ i: 1 }, { i: 2 }, { i: 3 }];
@@ -598,6 +598,16 @@ var Test = {
 			expect(e, false);
 		},
 		function () {
+			var a = [{ v: 1 }, { v: 2 }, { v: 3 }];
+			var e = new Enumerable(a).any('v', 2);
+			expect(e, true);
+		},
+		function () {
+			var a = [{ v: 1 }, { v: 2 }, { v: 3 }];
+			var e = new Enumerable(a).any('v', 4);
+			expect(e, false);
+		},
+		function () {
 			var a = [1, 2, 3];
 			var e = new Enumerable(a).all(1);
 			expect(e, false);
@@ -618,6 +628,16 @@ var Test = {
 			expect(e, true);
 		},
 		function () {
+			var a = [{ v: 1 }, { v: 2 }, { v: 3 }];
+			var e = new Enumerable(a).all('v', 2);
+			expect(e, false);
+		},
+		function () {
+			var a = [{ v: 2 }, { v: 2 }, { v: 2 }];
+			var e = new Enumerable(a).all('v', 2);
+			expect(e, true);
+		},
+		function () {
 			var e = new Enumerable([]).subsetOf([1, 2, 3]);
 			expect(e, true);
 		},
@@ -627,6 +647,33 @@ var Test = {
 		},
 		function () {
 			var e = new Enumerable([1, 4]).subsetOf([1, 2, 3]);
+			expect(e, false);
+		},
+		function () {
+			var e = new Enumerable([]).equalsTo([2, 3, 1]);
+			expect(e, false);
+		},
+		function () {
+			var e = new Enumerable([1, 2, 3]).equalsTo([2, 3, 1]);
+			expect(e, false);
+		},
+		function () {
+			var e = new Enumerable([1, 2, 3]).equalsTo([1, 2, 3]);
+			expect(e, true);
+		},
+		function () {
+			var a = [{ v: 1 }, { v: 2 }, { v: 3 }];
+			var e = new Enumerable(a).equalsTo([{ v: 1 }, { v: 2 }, { v: 3 }], function (x, y) { return x.v === y.v; });
+			expect(e, true);
+		},
+		function () {
+			var a = [{ v: 1 }, { v: 2 }, { v: 3 }];
+			var e = new Enumerable(a).equalsTo([{ v: 1 }, { v: 3 }, { v: 2 }], function (x, y) { return x.v === y.v; });
+			expect(e, false);
+		},
+		function () {
+			var a = [{ v: 1 }, { v: 2 }, { v: 3 }];
+			var e = new Enumerable(a).equalsTo([{ v: 1 }, { v: 1 }, { v: 2 }], function (x, y) { return x.v === y.v; });
 			expect(e, false);
 		},
 		function () {
@@ -983,12 +1030,26 @@ var Test = {
 			expect(e._a[2], 3);
 		},
 		function () {
-			var a = ['c', 'a', 'b'];
-			var e = new Enumerable(a).sortBy();
+			var a = [3, 1, 2];
+			var e = new Enumerable(a).sort(true);
 			expect(e._a.length, 3);
-			expect(e._a[0], 'a');
-			expect(e._a[1], 'b');
-			expect(e._a[2], 'c');
+			expect(e._a[0], 1);
+			expect(e._a[1], 2);
+			expect(e._a[2], 3);
+		},
+		function () {
+			var a = [3, 1, 2];
+			var e = new Enumerable(a).sort(false);
+			expect(e._a.length, 3);
+			expect(e._a[0], 3);
+			expect(e._a[1], 2);
+			expect(e._a[2], 1);
+		},
+		function () {
+			try {
+				new Enumerable(['c', 'a', 'b']).sortBy();
+				unexpect();
+			} catch (ex) { }
 		},
 		function () {
 			var a = [{ v: 3 }, { v: 1 }, { v: 2 }];
@@ -1000,6 +1061,14 @@ var Test = {
 		},
 		function () {
 			var a = [{ v: 3 }, { v: 1 }, { v: 2 }];
+			var e = new Enumerable(a).sortBy('v', false);
+			expect(e._a.length, 3);
+			expect(e._a[0].v, 3);
+			expect(e._a[1].v, 2);
+			expect(e._a[2].v, 1);
+		},
+		function () {
+			var a = [{ v: 3 }, { v: 1 }, { v: 2 }];
 			var e = new Enumerable(a).sortBy(function (x) { return x.v; });
 			expect(e._a.length, 3);
 			expect(e._a[0].v, 1);
@@ -1007,7 +1076,26 @@ var Test = {
 			expect(e._a[2].v, 3);
 		},
 		function () {
-			var a = [1,2,3,4,5];
+			var a = [{ v: 3 }, { v: 1 }, { v: 2 }];
+			var e = new Enumerable(a).sortBy(function (x) { return x.v; }, false);
+			expect(e._a.length, 3);
+			expect(e._a[0].v, 3);
+			expect(e._a[1].v, 2);
+			expect(e._a[2].v, 1);
+		},
+		function () {
+			var a = [{ v: 3, k: 1 }, { v: 1, k: 2 }, { v: 2, k: 1 }, { v: 4, k: 2 }, { v: 4, k: 2, c: 1 }];
+			var e = new Enumerable(a).sortBy('k', true, function (x) { return x.v; }, false);
+			expect(e._a.length, 5);
+			expect(e._a[0].v, 3);
+			expect(e._a[1].v, 2);
+			expect(e._a[2].v, 4);
+			expect(e._a[3].v, 4);
+			expect(e._a[3].c, 1);
+			expect(e._a[4].v, 1);
+		},
+		function () {
+			var a = [1, 2, 3, 4, 5];
 			var e = new Enumerable(a).groupOf(2);
 			expect(e._a.length, 3);
 			expect(e._a[0][0], 1);
@@ -1019,26 +1107,25 @@ var Test = {
 		},
 		function () {
 			var a = [{ v: 1, g: 1 }, { v: 2, g: 1 }, { v: 3, g: 2 }];
-			var e = new Enumerable(a).groupBy('g');
-			expect(e[1]._a.length, 2);
-			expect(e[1]._a[0].v, 1);
-			expect(e[1]._a[1].v, 2);
-			expect(e[2]._a.length, 1);
-			expect(e[2]._a[0].v, 3);
+			var e = new Enumerable(a).groupBy('g').toArray();
+			expect(e[0].name, 1);
+			expect(e[0].count(), 2);
+			expect(e[0].peekAt(0).v, 1);
+			expect(e[0].peekAt(1).v, 2);
+			expect(e[1].name, 2);
+			expect(e[1].count(), 1);
+			expect(e[1].peekAt(0).v, 3);
 		},
 		function () {
 			var a = [{ v: 1, g: 1 }, { v: 2, g: 1 }, { v: 3, g: 2 }];
-			var e = new Enumerable(a).groupBy(function (x) { return x.g; });
-			expect(e[1]._a.length, 2);
-			expect(e[1]._a[0].v, 1);
-			expect(e[1]._a[1].v, 2);
-			expect(e[2]._a.length, 1);
-			expect(e[2]._a[0].v, 3);
-			expect(e.asEnumerable().count(), 2);
-			expect(e.asEnumerable().first().name, '1');
-			expect(e.asEnumerable().first().value.last(), a[1]);
-			expect(e.asEnumerable('h').first().h, '1');
-			expect(e.asEnumerable('h', 'k').first().k.last(), a[1]);
+			var e = new Enumerable(a).groupBy(function (x) { return x.g; }).toArray();
+			expect(e[0].name, 1);
+			expect(e[0].count(), 2);
+			expect(e[0].peekAt(0).v, 1);
+			expect(e[0].peekAt(1).v, 2);
+			expect(e[1].name, 2);
+			expect(e[1].count(), 1);
+			expect(e[1].peekAt(0).v, 3);
 		},
 		function () {
 			var a = [{ v: 1, g: 1 }, { v: 2, g: 1 }, { v: 3, g: 2 }];
@@ -1208,7 +1295,7 @@ var Test = {
 			expect(e._a[3][1], 4);
 		},
 		function () {
-			var e = new Enumerable([1, 2]).cross([3, 4]).cross([5,6,7]);
+			var e = new Enumerable([1, 2]).cross([3, 4]).cross([5, 6, 7]);
 			expect(e._a.length, 12);
 			expect(e._a[0].length, 3);
 			expect(e._a[0][0], 1);
@@ -1220,7 +1307,7 @@ var Test = {
 			expect(e._a[11][2], 7);
 		},
 		function () {
-			var e = new Enumerable([[1,2], [3,4]]).assign(['a','b','c']);
+			var e = new Enumerable([[1, 2], [3, 4]]).assign(['a', 'b', 'c']);
 			expect(e._a.length, 2);
 			expect(e._a[0].a, 1);
 			expect(e._a[0].b, 2);
@@ -1237,11 +1324,21 @@ var Test = {
 			expect(e.test(1), true);
 			expect(f.test(0), true);
 			expect(f.test(1), false);
+
+			try {
+				Enumerable.define('test', function () { });
+				unexpect();
+			} catch (ex) { }
 		},
 		function () {
-			Enumerable.define('test', 'count');
+			Enumerable.define('test2', 'count');
 			var e = new Enumerable([1, 2, 3]);
-			expect(e.test(), 3);
+			expect(e.test2(), 3);
 		}
 	]
+};
+
+console.log = console.error = console.warn = console.debug = function (txt) {
+	document.body.appendChild(document.createTextNode(txt));
+	document.body.appendChild(document.createElement('br'));
 };
