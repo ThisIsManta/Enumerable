@@ -346,6 +346,16 @@ var Test = {
 			expect(z, 1000);
 		},
 		function () {
+			var s = 0;
+			var z = [];
+			new Enumerable([1, 2, 3]).invokeWhile(function (x) { z.push(x); s += x; return s < 9; });
+			expect(z.length, 5);
+			expect(z[0], 1);
+			expect(z[2], 3);
+			expect(z[4], 2);
+			expect(s, 9);
+		},
+		function () {
 			var a = [1, 2, 3];
 			var z = 0;
 			var e = new Enumerable(a).invokeAsync(function (x, i) {
@@ -1118,7 +1128,8 @@ var Test = {
 		},
 		function () {
 			var a = [{ v: 1, g: 1 }, { v: 2, g: 1 }, { v: 3, g: 2 }];
-			var e = new Enumerable(a).groupBy(function (x) { return x.g; }).toArray();
+			var s = 0;
+			var e = new Enumerable(a).groupBy(function (x) { return x.g; }).invokeWhich(1, function (x) { s += x.v * x.v; }).toArray();
 			expect(e[0].name, 1);
 			expect(e[0].count(), 2);
 			expect(e[0].peekAt(0).v, 1);
@@ -1126,6 +1137,7 @@ var Test = {
 			expect(e[1].name, 2);
 			expect(e[1].count(), 1);
 			expect(e[1].peekAt(0).v, 3);
+			expect(s, 5);
 		},
 		function () {
 			var a = [{ v: 1, g: 1 }, { v: 2, g: 1 }, { v: 3, g: 2 }];

@@ -43,7 +43,7 @@ Create a new enumerable by giving a string and an optional separator.
     
     new Enumerable('a book', ' ');
     // This internally creates ['a', 'book']
-	
+    
     new Enumerable('a book, a duck', /\, | |\,/g);
     // This internally creates ['a', 'book', 'a', 'duck']
 
@@ -160,8 +160,8 @@ one or more parameters were not valid.
 `(number)` as a zero-based index.
 
 **Throws**  
-an index was out of range
-one or more parameters were not valid  
+an index was out of range.  
+one or more parameters were not valid.
 
     new Enumerable(['La', 'Da', 'Dee']).peekAt(1);
     // This returns 'Da'
@@ -271,18 +271,45 @@ one or more parameters were not valid.
 `(number, number, number, function)` as a zero-based start index, a zero-based stop index, a number of step and an iterator.
 
 **Throws**  
-one or more parameters were not valid
+one or more parameters were not valid.
 
-    new Enumerable([1, 2, 3]).invoke(function (x) { console.log(x); }).toArray();
+    new Enumerable([1, 2, 3]).invoke(function (x) { console.log(x); });
     // This prints:
     // 1
     // 2
     // 3
     
-    new Enumerable([1, 2, 3]).invoke(2, 0, -2, function (x) { console.log(x); }).toArray();
+    new Enumerable([1, 2, 3]).invoke(2, 0, -2, function (x) { console.log(x); });
     // This prints:
     // 3
     // 1
+
+## invokeWhile()
+
+**Returns** the current enumberable and iterates on it indefinitely until a given iterator returns `false` explicitly.
+
+**Accepts**  
+`(function)` as an iterator.
+
+**Throws**  
+one or more parameters were not valid.
+
+    var a = 0;
+    new Enumerable([1, 2, 3]).invokeWhile(function (x) { console.log(x); a += x; return a < 9; });
+    // This prints:
+    // 1
+    // 2
+    // 3
+    // 1
+    // 2
+    // The value of a after the invocation is 9
+
+## invokeUntil()
+
+**Returns** the current enumberable and iterates on it indefinitely until a given iterator returns `true` explicitly.
+
+**Sees**  
+invokeWhile()
 
 ## invokeAsync()
 
@@ -296,7 +323,7 @@ one or more parameters were not valid
 `(number, number, number, function, number)` as a zero-based start index, a zero-based stop index, a number of step, an iterator and a number of batch.
 
 **Throws**  
-one or more parameters were not valid
+one or more parameters were not valid.
 
     console.log(new Enumerable([1, 2, 3]).invokeAsync(function (x) { console.log(x); }).toArray());
     // This prints
@@ -318,6 +345,25 @@ one or more parameters were not valid
     // [1, 2, 3]
 
 **Notes** this function is very useful for non-blocking thread purposes.
+
+## invokeWhich()
+
+**Returns** the current enumerable and iterates on the given group. This function must be used after `groupBy`.
+
+**Accepts**  
+`(anything, function)` as a target value and an iterator.
+
+**Throws**  
+a call was not valid.  
+one or more parameters were not valid.
+
+    new Enumerable(['Tom', 'Tommy', 'Bob', 'Bobby']).groupBy('length').invokeWhich(3, function (name) { console.log(name); });
+    // This prints:
+    // Tom
+    // Bob
+
+**Sees**  
+groupBy()
 
 ## take()
 
@@ -420,7 +466,7 @@ one or more parameters were not valid.
     
     new Enumerable([1, 2, 3]).any(3);
     // This returns true
-	
+    
     new Enumerable([{ name: 'Tony' }, { name: 'Alex' }, { name: 'Josh' }]).any('name', 'Kris');
     // This returns false
 
@@ -956,8 +1002,8 @@ one or more parameters were not valid
 `(array-like, function, boolean)` as another enumerable, a name projector and overwrite flag.
 
 **Throws**  
-a name was empty  
-one or more parameters were not valid
+a name was empty.  
+one or more parameters were not valid.
 
     new Enumerable([{ name: 'Tom' }, { name: 'Bob', age: 25 }]).joinBy([{ name: 'Tom', age: 18 }, { name: 'Bob', age: 26 }], 'name').toArray();
     // This returns [{ name: 'Tom', age: 18 }, { name: 'Bob', age: 25 }]
@@ -973,7 +1019,7 @@ one or more parameters were not valid
 `()`.
 
 **Throws**  
-one or more parameters were not valid
+one or more parameters were not valid.
 
     new Enumerable([1, 2, 3]).count();
     // This returns 3

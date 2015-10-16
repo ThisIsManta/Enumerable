@@ -462,6 +462,50 @@ Enumerable.prototype.invoke = function () {
 	return this;
 };
 
+Enumerable.prototype.invokeWhile = function () {
+	var arr = this._a;
+	var ar0 = arguments[0];
+	var idx;
+	var bnd = this._a.length;
+	var tmp;
+	if (typeof ar0 === 'function') {
+		while (true) {
+			idx = -1;
+			while (++idx < bnd) {
+				if (tmp === false) {
+					return this;
+				}
+				tmp = ar0.call(this._s, arr[idx], idx, arr);
+			}
+		}
+
+	} else {
+		throw 'one or more parameters were not valid';
+	}
+};
+
+Enumerable.prototype.invokeUntil = function () {
+	var arr = this._a;
+	var ar0 = arguments[0];
+	var idx;
+	var bnd = this._a.length;
+	var tmp;
+	if (typeof ar0 === 'function') {
+		while (true) {
+			idx = -1;
+			while (++idx < bnd) {
+				if (tmp === true) {
+					return this;
+				}
+				tmp = ar0.call(this._s, arr[idx], idx, arr);
+			}
+		}
+
+	} else {
+		throw 'one or more parameters were not valid';
+	}
+};
+
 Enumerable.prototype.invokeAsync = function () {
 	var arr = this._a;
 	var scp = this._s;
@@ -503,6 +547,33 @@ Enumerable.prototype.invokeAsync = function () {
 				hdr();
 			}
 		}
+
+	} else {
+		throw 'one or more parameters were not valid';
+	}
+	return this;
+};
+
+Enumerable.prototype.invokeWhich = function () {
+	var ar0 = arguments[0];
+	var ar1 = arguments[1];
+	var idx = -1;
+	var bnd;
+	var tmp;
+	if (this._g === undefined) {
+		throw 'a call was not valid';
+
+	} else if (arguments.length === 2 && typeof ar1 === 'function') {
+		if (ar0 === undefined) {
+			ar0 = 'undefined';
+
+		} else if (ar0 === null) {
+			ar0 = 'null';
+
+		} else {
+			ar0 = ar0.toString();
+		}
+		this._g[ar0].invoke(ar1);
 
 	} else {
 		throw 'one or more parameters were not valid';
@@ -1453,36 +1524,47 @@ Enumerable.prototype.groupBy = function () {
 	var idx = -1;
 	var bnd = this._a.length;
 	var tmp;
+	var att;
 	var nam;
 	var hsh = {};
-	var tru = {};
+	var map = {};
 	var out = new Enumerable();
 	out._s = this._s;
+	out._g = hsh;
 	if (typeof ar0 === 'string') {
 		if (ar0.length === 0) {
 			throw 'a name was empty';
 
 		} else {
-			nam = ar0;
-			ar0 = function (val) { return val[nam]; };
+			att = ar0;
+			ar0 = function (val) { return val[att]; };
 		}
 	}
 	if (typeof ar0 === 'function') {
 		while (++idx < bnd) {
 			tmp = ar0.call(this._s, arr[idx], idx);
-			tru[tmp.toString()] = tmp;
-			tmp = tmp.toString();
-			if (hsh[tmp] === undefined) {
-				hsh[tmp] = [arr[idx]];
+			if (tmp === undefined) {
+				nam = 'undefined';
+
+			} else if (tmp === null) {
+				nam = 'null';
 
 			} else {
-				hsh[tmp].push(arr[idx]);
+				nam = tmp.toString();
+			}
+			if (hsh[nam] === undefined) {
+				hsh[nam] = new Enumerable([arr[idx]]);
+				map[nam] = tmp;
+
+			} else {
+				hsh[nam].add(arr[idx]);
 			}
 		}
 		for (nam in hsh) {
-			tmp = new Enumerable(hsh[nam]);
+			tmp = hsh[nam];
+			tmp._s = this._s;
 			tmp._m = false;
-			tmp.name = tru[nam];
+			tmp.name = map[nam];
 			out.add(tmp);
 		}
 
