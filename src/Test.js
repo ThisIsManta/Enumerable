@@ -5,7 +5,9 @@
 	}
 };
 
-var unexpect = function () { console.error('Unexpected'); };
+var unexpect = function () {
+	console.error('Unexpected');
+};
 
 var Test = {
 	run: function () {
@@ -1319,7 +1321,7 @@ var Test = {
 			expect(e._a[11][2], 7);
 		},
 		function () {
-			var e = new Enumerable([[1, 2], [3, 4]]).assign(['a', 'b', 'c']);
+			var e = new Enumerable([[1, 2], [3, 4]]).toTable(['a', 'b', 'c']);
 			expect(e._a.length, 2);
 			expect(e._a[0].a, 1);
 			expect(e._a[0].b, 2);
@@ -1329,6 +1331,19 @@ var Test = {
 			expect(e._a[1].c, undefined);
 		},
 		function () {
+			var e = new Enumerable([{ i: 1, a: [{ i: 11 }] }, { i: 2, a: [{ i: 22, a: [{ i: 222, a: [] }] }] }]);
+			expect(e.seek('a', 'i', 1).i, 1);
+			expect(e.seek('a', 'i', 2).i, 2);
+			expect(e.seek('a', 'i', 22).i, 22);
+			expect(e.seek('a', 'i', 222).i, 222);
+			expect(e.seek('a', 'i', 3), null);
+			expect(e.seek('a', function (x) { return x.i === 1; }).i, 1);
+			expect(e.seek('a', function (x) { return x.i === 2; }).i, 2);
+			expect(e.seek('a', function (x) { return x.i === 22; }).i, 22);
+			expect(e.seek('a', function (x) { return x.i === 222; }).i, 222);
+			expect(e.seek('a', function (x) { return x.i === 3; }), null);
+		},
+		function () {
 			Enumerable.define('test', function (x) { return this._a[x] === 1; });
 			var e = new Enumerable([0, 1]);
 			var f = new Enumerable([1, 2, 3]);
@@ -1336,11 +1351,16 @@ var Test = {
 			expect(e.test(1), true);
 			expect(f.test(0), true);
 			expect(f.test(1), false);
-
-			try {
-				Enumerable.define('test', function () { });
-				unexpect();
-			} catch (ex) { }
+		},
+		function () {
+			// Redefine the test function; this will print a warning message
+			Enumerable.define('test', function (x) { return this._a[x] === 2; });
+			var e = new Enumerable([0, 1]);
+			var f = new Enumerable([1, 2, 3]);
+			expect(e.test(0), false);
+			expect(e.test(1), false);
+			expect(f.test(0), false);
+			expect(f.test(1), true);
 		},
 		function () {
 			Enumerable.define('test2', 'count');

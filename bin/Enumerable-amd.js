@@ -8,7 +8,6 @@ var Enumerable = function Enumerable() {
 	var ar0 = arguments[0];
 	var ar1 = arguments[1];
 	var ar2 = arguments[2];
-	var ar3 = arguments[3];
 	var idx = -1;
 	var bnd;
 	if (typeof ar0 === 'object') {
@@ -2040,7 +2039,7 @@ Enumerable.prototype.cross = function () {
 	return out;
 };
 
-Enumerable.prototype.assign = function () {
+Enumerable.prototype.toTable = function () {
 	var arr = this._a;
 	var ar0 = arguments[0];
 	var idx = -1;
@@ -2063,14 +2062,41 @@ Enumerable.prototype.assign = function () {
 	return new Enumerable(out, this._s);
 };
 
+Enumerable.prototype.seek = function () {
+	var ar0 = arguments[0];
+	var ar1 = arguments[1];
+	var ar2 = arguments[2];
+	var scp = this._s;
+	if (arguments.length >= 2 && typeof ar0 === 'string' && ar0.length > 0 && (typeof ar1 === 'string' && ar1.length > 0 || typeof ar1 === 'function')) {
+		var skf = function (lst) {
+			var idx = -1;
+			var bnd = lst.length;
+			var tmp;
+			while (++idx < bnd) {
+				if (typeof ar1 === 'string' && lst[idx][ar1] === ar2 || typeof ar1 === 'function' && ar1.call(scp, lst[idx], idx, lst) === true) {
+					return lst[idx];
+
+				} else if (typeof lst[idx][ar0] === 'object' && lst[idx][ar0] instanceof Array && (tmp = skf(lst[idx][ar0])) !== undefined) {
+					return tmp;
+				}
+			}
+		};
+		var out = skf(this._a);
+		return out === undefined ? null : out;
+
+	} else {
+		throw 'one or more parameters were not valid';
+	}
+};
+
 Enumerable.define = function () {
 	var ar0 = arguments[0];
 	var ar1 = arguments[1];
 	if (arguments.length === 2 && typeof ar0 === 'string' && ar0.length > 0) {
-		if (Enumerable.prototype[ar0] !== undefined) {
-			throw 'a function has been defined';
-
-		} else if (typeof ar1 === 'function') {
+		if (typeof ar1 === 'function') {
+			if (Enumerable.prototype[ar0] !== undefined) {
+				console.warn('a function has been redefined');
+			}
 			Enumerable.prototype[ar0] = ar1;
 
 		} else if (typeof ar1 === 'string' && typeof Enumerable.prototype[ar1] === 'function') {

@@ -152,6 +152,19 @@ one or more parameters were not valid.
     new Enumerable(['a', 'book']).toObject(function (x) { return x.length; }, function (x) { return x.toUpperCase(); });
     // This returns { "1": 'A', "4": 'BOOK' }
 
+## toTable()
+
+**Returns** the new enumerable that creates object(s) by using the given argument as the name list and the current enumerable as the value list. The current enumerable must be an _array of array(s)_.
+
+**Accepts**  
+`(array of string)` as a name list.
+
+**Throws**  
+one or more parameters were not valid.
+
+    new Enumerable([[1, 2], [3, 4]]).toTable(['a', 'b']).toArray();
+    // This returns [{ a: 1, b: 4 }, { a: 3, b: 4 }]
+
 ## peekAt()
 
 **Returns** a member at specified index.
@@ -576,8 +589,8 @@ one or more parameters were not valid
 `(anything, number)` as a target member and a start zero-based index. This start index is _different_ from `String.lastIndexOf()`.
 
 **Throws**  
-an index was out of range  
-one or more parameters were not valid
+an index was out of range.  
+one or more parameters were not valid.
 
     new Enumerable([1, 2, 3]).lastIndexOf(function (x, i) { return x === 2; });
     // This returns 1
@@ -597,7 +610,7 @@ one or more parameters were not valid
 `(string, anything)` as a name projector and a target value.
 
 **Throws**  
-one or more parameters were not valid
+one or more parameters were not valid.
 
     new Enumerable(['Bob', 'Jeremy', 'Maximilian']).find('length', 5);
     // This returns 'Jeremy'
@@ -1206,22 +1219,44 @@ one or more parameters were not valid.
     new Enumerable([1, 2, 3]).cross([4, 5]).cross([6, 7]).toArray();
     // This returns [[1, 4, 6], [1, 4, 7], [1, 5, 6], [1, 5, 7], [2, 4, 6], [2, 4, 7], [2, 5, 6], [2, 5, 7], [3, 4, 6], [3, 4, 7], [3, 5, 6], [3, 5, 7]]
 
-## assign()
+## seek()
 
-**Returns** the new enumerable that creates object(s) by using the given argument as the name list and the current enumerable as the value list. The current enumerable must be an _array of array(s)_.
+**Returns** a matched member or `null`. Just like `find()` but this will travel in an enumberable recursively.
 
 **Accepts**  
-`(array of string)` as a name list.
+`(string, function)` as a property projector and an equality boolean generator.
+`(string, string, anything)` as a property projector, a name projector and a target value.
 
 **Throws**  
 one or more parameters were not valid.
 
-    new Enumerable([[1, 2], [3, 4]]).assign(['a', 'b']).toArray();
-    // This returns [{ a: 1, b: 4 }, { a: 3, b: 4 }]
+    var organization = [
+        { name: 'Dave', work: 'CFO' },
+        { name: 'Josh', work: 'CTO', reporters: [
+            { name: 'Alex' },
+            { name: 'Adam', reporters: [
+                { name: 'Brad' },
+                { name: 'Bill' }
+            ] }
+        ] },
+        { name: 'Kris', work: 'COO', reporters: [
+            { name: 'Tony' },
+            { name: 'Mike' }
+        ] }
+    ];
+    
+    new Enumerable(organization).seek('reporters', 'name', 'Bill');
+    // This returns { name: 'Bill' }
+    
+    new Enumerable(organization).seek('reporters', 'name', 'Todd');
+    // This returns null
+    
+    new Enumerable(organization).seek('reporters', function (person) { return person.name === 'Mike'; });
+    // This returns { name: 'Mike' }
 
 ## define()
 
-**Returns** nothing but attaches a user-defined function to all enumerable globally. If a function name was already existed, this would overwrite an existing function.
+**Returns** nothing but attaches a user-defined function to all enumerable globally. If a function name was already existed, this would overwrite an existing function and print a warning message to the console.
 
 Calling `this` inside the specified function will give you the current enumerable.
 
@@ -1232,20 +1267,25 @@ The followings are internal variables you should know:
 `this._x` as Boolean refers to the state whether the current enumerable is the product of `cross()` function or not.
 
 **Accepts**  
-`(string, function)` as a function name and a function respectively
+`(string, function)` as a function name and a function respectively.  
+`(string, string)` as a new function name and an existing function name.
 
 **Throws**  
 one or more parameters were not valid.  
-a function has been defined.
 
     Enumerable.define('increase', function (amount) {
         for (var index = 0; index < this._a.length; index--) {
             this._a[index] += amount;
         }
         return this;
-    }).increase(1).toArray();
-    // This returns [2, 3, 4]
+    });
     // After this point, you can call increase function immediately
     
     new Enumerable([1, 2, 3]).increase(5).toArray();
+    // This returns [6, 7, 8]
+    
+    // Create a synonym function
+    Enumerable.define('up', 'increase');
+    
+    new Enumerable([1, 2, 3]).up(5).toArray();
     // This returns [6, 7, 8]
