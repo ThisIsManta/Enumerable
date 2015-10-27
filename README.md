@@ -1042,9 +1042,11 @@ one or more parameters were not valid.
 **Returns** a number of member in the current enumerable.
 
 **Accepts**  
-`()`.  
-`(anything)` as a counting value.
+`(anything)` as a target value.
 `(function)` as a boolean generator.  
+
+**Throws**  
+one or more parameters were not valid.
 
     new Enumerable([1, 2, 3]).countBy();
     // This returns 3
