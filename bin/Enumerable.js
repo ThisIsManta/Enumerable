@@ -1391,7 +1391,7 @@ Enumerable.prototype.sortBy = function () {
 	var scp = this._s;
 	if (arguments.length <= 2) {
 		if (typeof ar0 === 'function') {
-			out = this.select(function (val, idx) { return { v: val, r: ar0.call(scp, val, idx) }; });
+			out = this.select(function (val, idx) { return { v: val, r: ar0.call(scp, val, idx), i: idx }; });
 
 		} else if (typeof ar0 === 'string') {
 			if (ar0.length === 0) {
@@ -1405,7 +1405,7 @@ Enumerable.prototype.sortBy = function () {
 		if (ar1 === undefined || ar1 === true) {
 			out._a.sort(function (x, y) {
 				if (x.r === y.r) {
-					return 0;
+					return x.i - y.i;
 
 				} else {
 					if (x.r > y.r || x.r === undefined || x.r === null || x.r === '') {
@@ -1421,7 +1421,7 @@ Enumerable.prototype.sortBy = function () {
 		} else if (ar1 === false) {
 			out._a.sort(function (x, y) {
 				if (x.r === y.r) {
-					return 0;
+					return x.i - y.i;
 
 				} else {
 					if (x.r > y.r || x.r === undefined || x.r === null || x.r === '') {

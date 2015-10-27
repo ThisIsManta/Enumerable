@@ -75,7 +75,7 @@
 
 		Using Output As New StreamWriter("Enumerable-amd.js", False, System.Text.Encoding.ASCII)
 			Output.WriteLine(DebugBuffer)
-			Output.WriteLine("module.exports = window.top.Enumerable = window.Enumerable = Enumerable;")
+			Output.WriteLine("module.exports = Enumerable;")
 		End Using
 
 		Using Output As New StreamWriter("Enumerable-min.js", False, System.Text.Encoding.ASCII)
