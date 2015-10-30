@@ -1182,7 +1182,7 @@ var Test = {
 		},
 		function () {
 			var a = [{ v: 1 }, { v: 2 }, { v: 2 }];
-			var e = new Enumerable(a).countBy('x', 2);
+			var e = new Enumerable(a).countBy('v', 2);
 			expect(e, 2);
 		},
 		function () {

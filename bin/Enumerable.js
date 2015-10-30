@@ -1689,7 +1689,7 @@ Enumerable.prototype.countBy = function () {
 
 	} else if (typeof ar0 === 'string' && ar0.length > 0 && arguments.length === 2) {
 		while (++idx < bnd) {
-			if (arr[ar0] === ar1) {
+			if (arr[idx][ar0] === ar1) {
 				out++;
 			}
 		}
