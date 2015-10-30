@@ -1181,13 +1181,18 @@ var Test = {
 			expect(e, 3);
 		},
 		function () {
-			var a = [1, 2, 3];
+			var a = [{ v: 1 }, { v: 2 }, { v: 2 }];
+			var e = new Enumerable(a).countBy('x', 2);
+			expect(e, 2);
+		},
+		function () {
+			var a = [1, 2, 2];
 			var e = new Enumerable(a).countBy(function (x) { return x === 2; });
-			expect(e, 1);
+			expect(e, 2);
 		},
 		function () {
 			var a = [1, 2, 3];
-			var e = new Enumerable(a).countBy(1);
+			var e = new Enumerable(a).countBy(2);
 			expect(e, 1);
 		},
 		function () {

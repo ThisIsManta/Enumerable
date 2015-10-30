@@ -1042,8 +1042,9 @@ one or more parameters were not valid.
 **Returns** a number of member in the current enumerable.
 
 **Accepts**  
-`(anything)` as a target value.
 `(function)` as a boolean generator.  
+`(anything)` as a target value.  
+`(string, anything)` as a name projector and a target value.
 
 **Throws**  
 one or more parameters were not valid.

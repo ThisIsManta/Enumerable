@@ -1679,6 +1679,7 @@ Enumerable.prototype.count = function () {
 Enumerable.prototype.countBy = function () {
 	var arr = this._a;
 	var ar0 = arguments[0];
+	var ar1 = arguments[1];
 	var idx = -1;
 	var bnd = arr.length;
 	var out = 0;
@@ -1686,21 +1687,24 @@ Enumerable.prototype.countBy = function () {
 	if (ar0 === undefined) {
 		throw 'one or more parameters were not valid';
 
+	} else if (typeof ar0 === 'string' && ar0.length > 0 && arguments.length === 2) {
+		while (++idx < bnd) {
+			if (arr[ar0] === ar1) {
+				out++;
+			}
+		}
+
 	} else if (typeof ar0 === 'function') {
 		while (++idx < bnd) {
-			tmp = ar0.call(this._s, arr[idx], idx, arr);
-			if (typeof tmp === 'number') {
-				out += tmp;
-
-			} else if (tmp) {
-				out += 1;
+			if (ar0.call(this._s, arr[idx], idx, arr)) {
+				out++;
 			}
 		}
 
 	} else {
 		while (++idx < bnd) {
 			if (arr[idx] === ar0) {
-				out += 1;
+				out++;
 			}
 		}
 	}
