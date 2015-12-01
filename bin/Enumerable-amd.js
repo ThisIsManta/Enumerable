@@ -1216,6 +1216,31 @@ Enumerable.prototype.addRange = function () {
 	return this;
 };
 
+Enumerable.prototype.addFetch = function () {
+	var url = arguments[0];
+	var par = arguments[1];
+	var out = this;
+	var evt = [];
+	out.then = function (cal) {
+		if (typeof cal === 'function') {
+			evt.push(cal);
+		}
+		return out;
+	};
+	$.getJSON(url, par, function (dat) {
+		out.addRange(dat);
+	}).then(function () {
+		var idx = -1;
+		var bnd = evt.length;
+		while (++idx < bnd) {
+			evt[idx].call(out._s, out);
+		}
+
+		delete out.then;
+	});
+	return out;
+};
+
 Enumerable.prototype.remove = function () {
 	var ar0 = arguments[0];
 	var ar1 = arguments[1];

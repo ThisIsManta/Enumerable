@@ -1371,6 +1371,16 @@ var Test = {
 			Enumerable.define('test2', 'count');
 			var e = new Enumerable([1, 2, 3]);
 			expect(e.test2(), 3);
+		},
+		function () {
+			var e = new Enumerable([], { z: 0 });
+			e.addFetch('Test.json').then(function (x) {
+				expect(e, x);
+				expect(e._a.length, 3);
+				expect(e._a[0], 1);
+				expect(e._a[1], 2);
+				expect(e._a[2], 3);
+			});
 		}
 	]
 };

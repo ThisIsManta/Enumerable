@@ -89,6 +89,7 @@
 			Output.WriteLine("<head>")
 			Output.WriteLine("<meta charset=""utf-8"" />")
 			Output.WriteLine("<title></title>")
+			Output.WriteLine("<script type=""text/javascript"" src=""https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js""></script>")
 			If System.Environment.GetCommandLineArgs.Contains("-debug") Then
 				Output.WriteLine("<script type=""text/javascript"" src=""Enumerable.js""></script>")
 			Else
