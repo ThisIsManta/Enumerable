@@ -1189,6 +1189,7 @@ Enumerable.prototype.add = function () {
 		out.splice(ar1, 0, ar0);
 	}
 	this._a = out;
+	this.spark(1, ar0);
 	return this;
 };
 
@@ -2135,6 +2136,56 @@ Enumerable.prototype.seek = function () {
 		throw 'one or more parameters were not valid';
 	}
 };
+
+Enumerable.prototype.watch = function () {
+	var ar0 = arguments[0];
+	if (typeof ar0 === 'function') {
+		if (this._w === undefined) {
+			this._w = [];
+		}
+		this._w.push(ar0);
+		
+	} else {
+		throw 'one or more parameters were not valid';
+	}
+	return this;
+};
+
+Enumerable.prototype.spark = function () {
+	if (this._w instanceof Array) {
+		if (this._w.length === 1) {
+			this._w[0].apply(this, arguments);
+
+		} else {
+			var idx = -1;
+			var bnd = this._w.length;
+			while (++idx < bnd) {
+				this._w[idx].apply(this, arguments);
+			}
+		}
+	}
+	return this;
+};
+
+Enumerable.prototype.blind = function () {
+	var ar0 = arguments[0];
+	if (arguments.length === 0) {
+		delete this._w;
+
+	} else if (arguments.length === 1) {
+		var idx = -1;
+		var bnd = this._w.length;
+		while (++idx < bnd) {
+			if (this._w[idx] === ar0) {
+				this._w.splice(idx, 1);
+			}
+		}
+
+	} else {
+		throw 'one or more parameters were not valid';
+	}
+	return this;
+}
 
 Enumerable.define = function () {
 	var ar0 = arguments[0];
