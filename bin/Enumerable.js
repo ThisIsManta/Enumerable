@@ -2086,7 +2086,7 @@ Enumerable.prototype.cross = function () {
 	return out;
 };
 
-Enumerable.prototype.toTable = function () {
+Enumerable.prototype.assign = function () {
 	var arr = this._a;
 	var ar0 = arguments[0];
 	var idx = -1;

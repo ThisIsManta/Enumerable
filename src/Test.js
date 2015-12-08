@@ -1326,7 +1326,7 @@ var Test = {
 			expect(e._a[11][2], 7);
 		},
 		function () {
-			var e = new Enumerable([[1, 2], [3, 4]]).toTable(['a', 'b', 'c']);
+			var e = new Enumerable([[1, 2], [3, 4]]).assign(['a', 'b', 'c']);
 			expect(e._a.length, 2);
 			expect(e._a[0].a, 1);
 			expect(e._a[0].b, 2);
