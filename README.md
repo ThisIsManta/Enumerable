@@ -463,7 +463,7 @@ one or more parameters were not valid.
 `()`. This will return `true` if there are one or more members inside the current enumerable. Otherwise, `false`.  
 `(function)` as a boolean generator.  
 `(anything)` as a target member.  
-`(string, anything) as a name projector and a target value.
+`(string, anything)` as a name projector and a target value.
 
     new Enumerable().any();
     // This returns false
@@ -493,7 +493,7 @@ one or more parameters were not valid.
 **Accepts**  
 `(function)` as a boolean generator.  
 `(anything)` as a target member.  
-`(string, anything) as a name projector and a target value.
+`(string, anything)` as a name projector and a target value.
 
 **Throws**  
 one or more parameters were not valid
