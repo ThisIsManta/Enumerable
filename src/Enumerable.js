@@ -448,13 +448,15 @@ Enumerable.prototype.invoke = function () {
 			} else if (stp > 0) {
 				brk = function () { idx = bnd; };
 				while (idx <= bnd) {
-					fnc.call(scp, arr[idx], idx, arr, brk); idx += stp;
+					fnc.call(scp, arr[idx], idx, arr, brk);
+					idx += stp;
 				}
 
 			} else {
 				brk = function () { idx = 0; };
 				while (idx >= bnd) {
-					fnc.call(scp, arr[idx], idx, arr, brk); idx += stp;
+					fnc.call(scp, arr[idx], idx, arr, brk);
+					idx += stp;
 				}
 			}
 		}
@@ -528,7 +530,8 @@ Enumerable.prototype.invokeAsync = function () {
 				hdr = function () {
 					lim = btc;
 					while (idx <= bnd && lim-- > 0) {
-						fnc.call(scp, arr[idx], idx, arr, brk); idx += stp;
+						fnc.call(scp, arr[idx], idx, arr, brk);
+						idx += stp;
 					}
 					if (idx <= bnd) {
 						setTimeout(hdr, 2);
@@ -541,7 +544,8 @@ Enumerable.prototype.invokeAsync = function () {
 				hdr = function () {
 					lim = btc;
 					while (idx >= bnd && lim-- > 0) {
-						fnc.call(scp, arr[idx], idx, arr, brk); idx += stp;
+						fnc.call(scp, arr[idx], idx, arr, brk);
+						idx += stp;
 					}
 					if (idx >= bnd) {
 						setTimeout(hdr, 2);
@@ -1166,7 +1170,7 @@ Enumerable.prototype.peekAt = function () {
 			return this._a[ar0];
 
 		} else {
-			throw 'an index was out of range'
+			throw 'an index was out of range';
 		}
 
 	} else {
