@@ -11,6 +11,8 @@ var unexpect = function () {
 
 var Test = {
 	run: function () {
+		document.body.innerHTML = '';
+
 		var c = 0;
 		for (var i in Test.cases) {
 			try {
@@ -236,6 +238,55 @@ var Test = {
 			var e = new Enumerable(a).select('x', 2, 'x');
 			expect(e._a.length, 1);
 			expect(e._a[0], 2);
+		},
+		function () {
+			var a = [1, 2, 0, 3, 0];
+			var e = new Enumerable(a).split(0);
+			expect(e._a.length, 3);
+			expect(e._a[0].length, 2);
+			expect(e._a[0][0], 1);
+			expect(e._a[0][1], 2);
+			expect(e._a[1].length, 1);
+			expect(e._a[1][0], 3);
+			expect(e._a[2].length, 0);
+			expect(a.length, 5);
+		},
+		function () {
+			var a = [1, 2, 0, 3, 0];
+			var e = new Enumerable(a).split(function (x) { return x === 0; });
+			expect(e._a.length, 3);
+			expect(e._a[0].length, 2);
+			expect(e._a[0][0], 1);
+			expect(e._a[0][1], 2);
+			expect(e._a[1].length, 1);
+			expect(e._a[1][0], 3);
+			expect(e._a[2].length, 0);
+			expect(a.length, 5);
+		},
+		function () {
+			var a = [];
+			var e = new Enumerable(a).split(0);
+			expect(e._a.length, 0);
+			expect(a.length, 0);
+		},
+		function () {
+			var a = [1, 2, 3];
+			var e = new Enumerable(a).splitAt(2);
+			expect(e._a.length, 2);
+			expect(e._a[0].length, 2);
+			expect(e._a[0][0], 1);
+			expect(e._a[0][1], 2);
+			expect(e._a[1].length, 1);
+			expect(e._a[1][0], 3);
+			expect(a.length, 3);
+		},
+		function () {
+			var a = [1, 2, 3];
+			var e = new Enumerable(a).splitAt(0);
+			expect(e._a.length, 2);
+			expect(e._a[0].length, 0);
+			expect(e._a[1].length, 3);
+			expect(a.length, 3);
 		},
 		function () {
 			var z;
@@ -1371,21 +1422,11 @@ var Test = {
 			Enumerable.define('test2', 'count');
 			var e = new Enumerable([1, 2, 3]);
 			expect(e.test2(), 3);
-		},
-		function () {
-			var e = new Enumerable([], { z: 0 });
-			e.addFetch('Test.json').then(function (x) {
-				expect(e, x);
-				expect(e._a.length, 3);
-				expect(e._a[0], 1);
-				expect(e._a[1], 2);
-				expect(e._a[2], 3);
-			});
 		}
 	]
 };
 
-console.log = console.error = console.warn = console.debug = function (txt) {
+console.log = console.error = console.debug = function (txt) {
 	document.body.appendChild(document.createTextNode(txt));
 	document.body.appendChild(document.createElement('br'));
 };

@@ -1281,6 +1281,58 @@ Enumerable.prototype.removeAll = function () {
 	return this;
 };
 
+Enumerable.prototype.split = function () {
+	var arr = this._a;
+	var ar0 = arguments[0];
+	var idx = -1;
+	var pvt = 0;
+	var bnd = arr.length;
+	var out = [];
+	var scp = this._s;
+	if (arguments.length !== 1) {
+		throw 'one or more parameters were not valid';
+
+	} else if (typeof ar0 === 'function') {
+		while (++idx < bnd) {
+			if (ar0.call(scp, arr[idx], idx, arr)) {
+				out.push(arr.slice(pvt, idx));
+				pvt = idx + 1;
+			}
+		}
+
+	} else {
+		while (++idx < bnd) {
+			if (arr[idx] === ar0) {
+				out.push(arr.slice(pvt, idx));
+				pvt = idx + 1;
+			}
+		}
+	}
+	if (arr.length > 0 && pvt <= bnd) {
+		out.push(arr.slice(pvt));
+	}
+	return new Enumerable(out, scp);
+};
+
+Enumerable.prototype.splitAt = function () {
+	var arr = this._a;
+	var ar0 = arguments[0];
+	var out = [];
+	if (arguments.length === 1 && typeof ar0 === 'number' && isFinite(ar0) && !isNaN(ar0)) {
+		if (ar0 >= 0 && ar0 < arr.length) {
+			out.push(arr.slice(0, ar0));
+			out.push(arr.slice(ar0));
+			return new Enumerable(out, this._s);
+			
+		} else {
+			throw 'an index was out of range';
+		}
+		
+	} else {
+		throw 'one or more parameters were not valid';
+	}
+};
+
 Enumerable.prototype.replace = function () {
 	var ar0 = arguments[0];
 	var ar1 = arguments[1];
