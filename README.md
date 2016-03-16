@@ -695,13 +695,13 @@ Just like `first()` but will return `null` if and only if found more than one ma
 **Throws**  
 one or more parameters were not valid
 
-    new Enumerable([{ name: 'Bob', job: 'Singer' }, { name: 'Jim', job: 'Composer' }, { name: 'Max', job: 'Singer' }]).singleOrNull(function (x, i) { return x.job === 'Singer'; });
+    new Enumerable([{ name: 'Bob', job: 'Singer' }, { name: 'Jim', job: 'Composer' }, { name: 'Max', job: 'Singer' }]).singleOrNull(function (x) { return x.job === 'Singer'; });
     // This returns null
     
-    new Enumerable([{ name: 'Bob', job: 'Singer' }, { name: 'Jim', job: 'Composer' }, { name: 'Max', job: 'Singer' }]).singleOrNull(function (x, i) { return x.job === 'Composer'; });
+    new Enumerable([{ name: 'Bob', job: 'Singer' }, { name: 'Jim', job: 'Composer' }, { name: 'Max', job: 'Singer' }]).singleOrNull(function (x) { return x.job === 'Composer'; });
     // This return { name: 'Jim', job: 'Composer' }
     
-    new Enumerable([{ name: 'Bob', job: 'Singer' }, { name: 'Jim', job: 'Composer' }, { name: 'Max', job: 'Singer' }]).singleOrNull(function (x, i) { return x.job === 'Dancer'; });
+    new Enumerable([{ name: 'Bob', job: 'Singer' }, { name: 'Jim', job: 'Composer' }, { name: 'Max', job: 'Singer' }]).singleOrNull(function (x) { return x.job === 'Dancer'; });
     // This returns null
 
 ## distinct()
@@ -724,6 +724,37 @@ one or more parameters were not valid
     
     new Enumerable([{ name: 'Bob', job: 'Singer' }, { name: 'Jim', job: 'Composer' }, { name: 'Max', job: 'Singer' }]).distinct(function (x, i) { return x.job; }).toArray();
     // This returns [{ name: 'Bob', job: 'Singer' }, { name: 'Jim', job: 'Composer' }]
+
+## split()
+
+**Returns** the new enumerable that a member is an array of the original enumerable splitted by the given separator.
+
+**Accepts**  
+`(function)` as a boolean generator.  
+`(anything)` as a separator.
+
+**Throws**  
+one or more parameters were not valid
+
+    new Enumerable([1, 2, 0, 3, 0]).split(0).toArray();
+    // This returns [[1, 2], [3], []]
+    
+    new Enumerable([1, 2, 0, 3, 0]).split(function (x) { return x === 0; }).toArray();
+    // This returns [[1, 2], [3], []]
+
+## splitAt()
+
+**Returns** the new enumerable that a member is an array of the original enumerable splitted at the given index into two arrays.
+
+**Accepts**  
+`(number)` as a zero-based index.  
+
+**Throws**  
+an index was out of range  
+one or more parameters were not valid
+
+    new Enumerable([1, 2, 3]).splitAt(2).toArray();
+    // This returns [[1, 2], [3]]
 
 ## replace()
 
