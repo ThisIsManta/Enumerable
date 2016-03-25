@@ -1565,6 +1565,25 @@ Enumerable.prototype.sortBy = function () {
 	}
 };
 
+Enumerable.prototype.sortOn = function () {
+	var ar0 = arguments[0];
+	if (arguments.length === 1 && typeof ar0 !== 'object') {
+		throw 'one or more parameters were not valid';
+
+	} else if (this._a.length <= 1) {
+		return this;
+
+	} else if (typeof ar0.sorter === 'function') {
+		return ar0.sorter(this);
+
+	} else {
+		return new Enumerable(this, this._s).sortBy(function (itm) {
+			var tmp = ar0.indexOf(itm);
+			return tmp >= 0 ? tmp : ar0.length;
+		});
+	}
+};
+
 Enumerable.prototype.groupOf = function () {
 	var arr = this._a;
 	var ar0 = arguments[0];

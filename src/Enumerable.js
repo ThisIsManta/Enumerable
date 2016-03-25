@@ -898,15 +898,12 @@ Enumerable.prototype.indexOf = function () {
 			}
 		}
 
-	} else if (ar0 !== undefined) {
+	} else {
 		while (++idx < bnd) {
 			if (arr[idx] === ar0) {
 				return idx;
 			}
 		}
-
-	} else {
-		throw 'one or more parameters were not valid';
 	}
 	return -1;
 };
@@ -1562,6 +1559,37 @@ Enumerable.prototype.sortBy = function () {
 			return 0;
 		});
 		return out;
+	}
+};
+
+Enumerable.prototype.sortOn = function () {
+	var ar0 = new Enumerable(arguments[0]);
+	var ar1 = arguments[1];
+	var bnd = ar0.count();
+	var scp = this._s;
+	if (typeof ar1 === 'string' && ar1.length > 0) {
+		var nam = ar1;
+		ar1 = function (itm) {
+			return itm[nam];
+		};
+	}
+	if (this._a.length <= 1) {
+		return this;
+
+	} else if (arguments.length === 1) {
+		return this.sortBy(function (itm, idx) {
+			var tmp = ar0.indexOf(itm);
+			return tmp >= 0 ? tmp : (bnd + idx);
+		});
+
+	} else if (arguments.length === 2 && typeof ar1 === 'function') {
+		return this.sortBy(function (itm, idx) {
+			var tmp = ar0.indexOf(ar1.apply(scp, arguments));
+			return tmp >= 0 ? tmp : (bnd + idx);
+		});
+
+	} else {
+		throw 'one or more parameters were not valid';
 	}
 };
 
