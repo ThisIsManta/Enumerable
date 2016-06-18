@@ -1,0 +1,31 @@
+{
+	"name": "Enumerable",
+	"version": "4.0.0",
+	"description": "A JavaScript library that provides useful and handy query functions.",
+	"main": "Enumerable.js",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ThisIsManta/Enumerable.git"
+	},
+	"keywords": [
+		"array",
+		"collection",
+		"query",
+		"polyfill"
+	],
+	"author": "Anantachai Saothong <thisismanta@outlook.com>",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/ThisIsManta/Enumerable/issues"
+	},
+	"homepage": "https://github.com/ThisIsManta/Enumerable#readme",
+	"devDependencies": {
+		"grunt": "~1.0.1",
+		"typescript": "^1.8.10",
+		"uglyfly-js": "^3.2.2"
+	},
+	"scripts": {
+		"preversion": "uglifyjs --mangle --compress --comments --output Enumerable-min.js --verbose Enumerable.js",
+		"version": "grunt license:Enumerable*.*"
+	}
+}
