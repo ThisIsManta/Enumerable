@@ -98,7 +98,7 @@
 		return out;
 	};
 
-	Array.prototype.scope = function (ctx) {
+	Array.prototype.bind = function (ctx) {
 		this._s = ctx;
 		return this;
 	};
@@ -150,6 +150,7 @@
 	};
 
 	var _toString = Array.prototype.toString;
+
 	Array.prototype.toString = function () {
 		var ar0 = arguments[0];
 		if (arguments.length === 0) {
@@ -168,37 +169,37 @@
 		var ar1 = arguments[1];
 		var idx = -1;
 		var bnd = this.length;
-		var tmp;
+		var nam;
 		var out = {};
 		var ctx = this._s;
 		if (arguments.length === 0) {
 			while (++idx < bnd) {
-				tmp = this[idx];
-				out[tmp] = tmp;
+				nam = this[idx];
+				out[nam] = nam;
 			}
 
 		} else if (typeof ar0 === 'string') {
 			if (arguments.length === 1) {
 				while (++idx < bnd) {
-					tmp = this[idx][ar0];
-					if (tmp !== undefined) {
-						out[tmp] = this[idx];
+					nam = this[idx][ar0];
+					if (nam !== undefined) {
+						out[nam] = this[idx];
 					}
 				}
 
 			} else if (typeof ar1 === 'string') {
 				while (++idx < bnd) {
-					tmp = this[idx][ar0];
-					if (tmp !== undefined) {
-						out[tmp] = this[idx][ar1];
+					nam = this[idx][ar0];
+					if (nam !== undefined) {
+						out[nam] = this[idx][ar1];
 					}
 				}
 
 			} else if (typeof ar1 === 'function') {
 				while (++idx < bnd) {
-					tmp = this[idx][ar0];
-					if (tmp !== undefined) {
-						out[tmp] = ar1.call(ctx, this[idx], idx, this);
+					nam = this[idx][ar0];
+					if (nam !== undefined) {
+						out[nam] = ar1.call(ctx, this[idx], idx, this);
 					}
 				}
 
@@ -209,20 +210,20 @@
 		} else if (typeof ar0 === 'function') {
 			if (arguments.length === 1) {
 				while (++idx < bnd) {
-					tmp = ar0.call(ctx, this[idx], idx, this).toString();
-					out[tmp] = this[idx];
+					nam = ar0.call(ctx, this[idx], idx, this).toString();
+					out[nam] = this[idx];
 				}
 
 			} else if (typeof ar1 === 'string') {
 				while (++idx < bnd) {
-					tmp = ar0.call(ctx, this[idx], idx, this).toString();
-					out[tmp] = this[idx][ar1];
+					nam = ar0.call(ctx, this[idx], idx, this).toString();
+					out[nam] = this[idx][ar1];
 				}
 
 			} else if (typeof ar1 === 'function') {
 				while (++idx < bnd) {
-					tmp = ar0.call(ctx, this[idx], idx, this).toString();
-					out[tmp] = ar1.call(ctx, this[idx], idx, this);
+					nam = ar0.call(ctx, this[idx], idx, this).toString();
+					out[nam] = ar1.call(ctx, this[idx], idx, this);
 				}
 
 			} else {
@@ -236,7 +237,62 @@
 	};
 
 	Array.prototype.toMap = function () {
+		var ar0 = arguments[0];
+		var ar1 = arguments[1];
+		var idx = -1;
+		var bnd = this.length;
+		var nam;
+		var out = new Map();
+		var ctx = this._s;
+		if (arguments.length === 0) {
+			while (++idx < bnd) {
+				out.set(idx, this[idx]);
+			}
 
+		} else if (typeof ar0 === 'string') {
+			if (arguments.length === 1) {
+				while (++idx < bnd) {
+					out.set(this[idx][ar0], this[idx]);
+				}
+
+			} else if (typeof ar1 === 'string') {
+				while (++idx < bnd) {
+					out.set(this[idx][ar0], this[idx][ar1]);
+				}
+
+			} else if (typeof ar1 === 'function') {
+				while (++idx < bnd) {
+					out.set(this[idx][ar0], ar1.call(ctx, this[idx], idx, this));
+				}
+
+			} else {
+				throw new Error(ERR_INV);
+			}
+
+		} else if (typeof ar0 === 'function') {
+			if (arguments.length === 1) {
+				while (++idx < bnd) {
+					out.set(ar0.call(ctx, this[idx], idx, this), this[idx]);
+				}
+
+			} else if (typeof ar1 === 'string') {
+				while (++idx < bnd) {
+					out.set(ar0.call(ctx, this[idx], idx, this), this[idx][ar1]);
+				}
+
+			} else if (typeof ar1 === 'function') {
+				while (++idx < bnd) {
+					out.set(ar0.call(ctx, this[idx], idx, this), ar1.call(ctx, this[idx], idx, this));
+				}
+
+			} else {
+				throw new Error(ERR_INV);
+			}
+
+		} else {
+			throw new Error(ERR_INV);
+		}
+		return out;
 	};
 
 	Array.prototype.where = function () {
@@ -283,21 +339,12 @@
 	};
 
 	Array.prototype.select = function () {
-		if (arguments.length === 1) {
-			return this.selectAll.apply(this, arguments);
-
-		} else if (arguments.length >= 2 && arguments.length <= 3) {
-			return this.selectAny.apply(this, arguments);
-
-		} else {
-			throw new Error(ERR_INV);
-		}
-	};
-
-	Array.prototype.selectAll = function () {
 		var ar0 = arguments[0];
 		var idx = -1;
+		var jdx;
 		var bnd = this.length;
+		var lim;
+		var tmp;
 		var out;
 		if (typeof ar0 === 'function') {
 			out = this.map(ar0, this._s);
@@ -311,105 +358,16 @@
 				out[idx] = this[idx][ar0];
 			}
 
-		} else {
-			throw new Error(ERR_INV);
-		}
-		out._s = this._s;
-		return out;
-	};
-
-	Array.prototype.selectAny = function () {
-		var ar0 = arguments[0];
-		var ar1 = arguments[1];
-		var ar2 = arguments[2];
-		var idx = -1;
-		var jdx = -1;
-		var bnd = this.length;
-		var chk;
-		var tmp;
-		var nam;
-		var out = [];
-		if (typeof ar0 === 'function') {
-			if (typeof ar1 === 'function') {
-				while (++idx < bnd) {
-					tmp = this[idx];
-					if (ar0.call(this._s, tmp, idx, this)) {
-						out[++jdx] = ar1.call(this._s, tmp, idx, this);
-					}
+		} else if (Array.isArray(ar0)) {
+			lim = ar0.length;
+			out = new Array(bnd);
+			while (++idx < bnd) {
+				jdx = -1;
+				tmp = {};
+				while (++jdx < lim) {
+					tmp[ar0[jdx]] = this[idx][ar0[jdx]];
 				}
-
-			} else if (typeof ar1 === 'string') {
-				if (ar1.length === 0) {
-					throw new Error(ERR_AES);
-				}
-				while (++idx < bnd) {
-					tmp = this[idx];
-					if (ar0.call(this._s, tmp, idx, this)) {
-						out[++jdx] = tmp[ar1];
-					}
-				}
-
-			} else {
-				throw new Error(ERR_INV);
-			}
-
-		} else if (typeof ar0 === 'object') {
-			if (typeof ar1 === 'function') {
-				while (++idx < bnd) {
-					chk = 1;
-					tmp = this[idx];
-					for (nam in ar0) {
-						chk &= tmp[nam] === ar0[nam];
-						if (!chk) {
-							break;
-						}
-					}
-					if (chk) {
-						out[++jdx] = ar1.call(this._s, tmp, idx, this);
-					}
-				}
-
-			} else if (typeof ar1 === 'string') {
-				while (++idx < bnd) {
-					chk = 1;
-					tmp = this[idx];
-					for (nam in ar0) {
-						chk &= tmp[nam] === ar0[nam];
-						if (!chk) {
-							break;
-						}
-					}
-					if (chk) {
-						out[++jdx] = tmp[ar1];
-					}
-				}
-
-			} else {
-				throw new Error(ERR_INV);
-			}
-
-		} else if (typeof ar0 === 'string' && arguments.length === 3) {
-			if (typeof ar2 === 'function') {
-				while (++idx < bnd) {
-					tmp = this[idx];
-					if (tmp[ar0] === ar1) {
-						out[++jdx] = ar2.call(this._s, tmp, idx, this);
-					}
-				}
-
-			} else if (typeof ar2 === 'string') {
-				if (ar1.length === 0) {
-					throw new Error(ERR_AES);
-				}
-				while (++idx < bnd) {
-					tmp = this[idx];
-					if (tmp !== undefined && tmp !== null && tmp[ar0] === ar1) {
-						out[++jdx] = tmp[ar2];
-					}
-				}
-
-			} else {
-				throw new Error(ERR_INV);
+				out[idx] = tmp;
 			}
 
 		} else {
@@ -420,13 +378,13 @@
 	};
 
 	Array.prototype.invoke = function () {
-		var ctx = this._s;
 		var fnc = Array.prototype.slice.call(arguments).lastOrNull(function (tmp) { return typeof tmp === 'function'; });
 		var idx = arguments.length > 1 ? arguments[0] : 0;
 		var bnd = arguments.length > 2 ? arguments[1] : this.length - 1;
 		var stp = arguments.length > 3 ? arguments[2] : (idx < bnd ? 1 : -1);
 		var lim;
 		var brk;
+		var ctx = this._s;
 		if (fnc !== null && isInt(idx) && idx >= 0 && isInt(bnd) && isInt(stp) && stp !== 0) {
 			if (bnd >= 0 && bnd < this.length) {
 				if (stp === 1 && idx === 0 && bnd > 1024) {
@@ -466,48 +424,6 @@
 			throw new Error(ERR_INV);
 		}
 		return this;
-	};
-
-	Array.prototype.invokeWhile = function () {
-		var ar0 = arguments[0];
-		var idx;
-		var bnd = this.length;
-		var tmp;
-		if (typeof ar0 === 'function') {
-			while (true) {
-				idx = -1;
-				while (++idx < bnd) {
-					if (tmp === false) {
-						return this;
-					}
-					tmp = ar0.call(this._s, this[idx], idx, this);
-				}
-			}
-
-		} else {
-			throw new Error(ERR_INV);
-		}
-	};
-
-	Array.prototype.invokeUntil = function () {
-		var ar0 = arguments[0];
-		var idx;
-		var bnd = this.length;
-		var tmp;
-		if (typeof ar0 === 'function') {
-			while (true) {
-				idx = -1;
-				while (++idx < bnd) {
-					if (tmp === true) {
-						return this;
-					}
-					tmp = ar0.call(this._s, this[idx], idx, this);
-				}
-			}
-
-		} else {
-			throw new Error(ERR_INV);
-		}
 	};
 
 	Array.prototype.invokeAsync = function () {
@@ -790,19 +706,7 @@
 		return this.indexOf.apply(this, arguments) >= 0;
 	};
 
-	Array.prototype.subsetOf = function () {
-		var ar0 = arguments[0];
-		var idx = -1;
-		var bnd = this.length;
-		while (++idx < bnd) {
-			if (ar0.indexOf(this[idx]) === -1) {
-				return false;
-			}
-		}
-		return true;
-	};
-
-	Array.prototype.equalsTo = function () {
+	Array.prototype.isSame = function () {
 		var ar0 = Array.create(arguments[0]);
 		var ar1 = arguments[1];
 		var idx = -1;
@@ -818,7 +722,7 @@
 			}
 			return true;
 
-		} else if (typeof ar1 === 'function') {
+		} else if (typeof ar1 === 'function' && arguments.length === 2) {
 			while (++idx < bnd) {
 				if (ar1.call(this._s, this[idx], ar0[idx]) === false) {
 					return false;
@@ -831,7 +735,7 @@
 		}
 	};
 
-	Array.prototype.equivalentTo = function () {
+	Array.prototype.isLike = function () {
 		var ar0 = arguments[0].toImmutable();
 		var ar1 = arguments[1];
 		var idx = -1;
@@ -876,6 +780,18 @@
 		} else {
 			throw new Error(ERR_INV);
 		}
+	};
+
+	Array.prototype.isSubset = function () {
+		var ar0 = arguments[0];
+		var idx = -1;
+		var bnd = this.length;
+		while (++idx < bnd) {
+			if (ar0.indexOf(this[idx]) === -1) {
+				return false;
+			}
+		}
+		return true;
 	};
 
 	Array.prototype.indexOf = function () {
@@ -948,6 +864,7 @@
 	};
 
 	var _find = Array.prototype.find;
+
 	Array.prototype.find = function () {
 		var ar0 = arguments[0];
 		var ar1 = arguments[1];
@@ -1429,7 +1346,6 @@
 	Array.prototype.reverse = function () {
 		var out = this.toImmutable();
 		_reverse.call(out);
-		out._s = this._s;
 		return out;
 	};
 
@@ -2187,5 +2103,140 @@
 
 	var isInt = function (valu) {
 		return typeof valu === 'number' && isFinite(valu) && Math.floor(valu) === valu && Math.abs(valu) <= Number.MAX_SAFE_INTEGER;
+	};
+
+	Object.isObject = function (ar0) {
+		return typeof ar0 === 'object' && ar0 !== null && (ar0 instanceof Array) === false;
+	};
+
+	Object.isEqual = function (ar0, ar1) {
+		if (ar0 === ar1) {
+			return true;
+
+		} else if (Array.isArray(ar0) && Array.isArray(ar1)) {
+			return ar0.length === ar1.length && ar0.all(function (val, idx) { return Object.isEqual(ar0[idx], ar1[idx]); });
+
+		} else if (Object.isObject(ar0) && Object.isObject(ar1)) {
+			var ls0 = [];
+			for (nam in ar0) {
+				if (ar0[nam] !== undefined) {
+					ls0.push(nam);
+				}
+			}
+			var ls1 = [];
+			for (nam in ar1) {
+				if (ar1[nam] !== undefined) {
+					ls1.push(nam);
+				}
+			}
+			return ls0.isLike(ls1) && ls0.all(function (nam, idx) {
+				return Object.isEqual(ar0[nam], ar1[nam]);
+			});
+
+		} else if (typeof ar0 === 'number' && typeof ar1 === 'number' && isNaN(ar0) && isNaN(ar1)) {
+			return true;
+
+		} else {
+			return false;
+		}
+	};
+
+	String.prototype.contains = function (val) {
+		return this.indexOf(val) >= 0;
+	};
+
+	String.prototype.toRegExp = function (flg) {
+		return new RegExp(this.replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1'), flg);
+	};
+
+	String.prototype.toHashCode = function () {
+		var idx = -1;
+		var bnd = this.length;
+		var out = 0;
+		if (bnd === 0) {
+			return out;
+
+		} else {
+			while (++idx < bnd) {
+				out = ((out << 5) - out) + this.charCodeAt(idx);
+				out |= 0;
+			}
+			return out;
+		}
+	};
+
+	var XML_PAR = [['<', '&lt;'], ['>', '&gt;'], ['&', '&amp;'], ['"', '&quot;'], ['\'', '&apos;']];
+	var XML_ENC = XML_PAR.toObject('0', '1');
+	var XML_DEC = XML_PAR.toObject('1', '0');
+	var XML_SYM = ('[' + XML_PAR.select('0') + ']').toRegExp('g');
+	var XML_COD = ('(' + XML_PAR.select('1').join('|') + ')').toRegExp('g');
+	var _encodeXML = function (chr) {
+		return XML_ENC[chr];
+	};
+	var _decodeXML = function (chr) {
+		return XML_DEC[chr];
+	};
+
+	String.prototype.toEncodedXML = function () {
+		return this.replace(XML_SYM, _encodeXML);
+	};
+
+	String.prototype.toDecodedXML = function () {
+		return this.replace(XML_COD, _decodeXML);
+	};
+
+	var WRD_CPH = /[a-z][A-Z]|[A-Z]{2,}[a-z]|[0-9][a-zA-Z]|[a-zA-Z][0-9]|[^a-zA-Z0-9 ]/;
+	var WRD_CPX =
+		/[A-Z\xc0-\xd6\xd8-\xde]?[a-z\xdf-\xf6\xf8-\xff]+(?:['’](?:d|ll|m|re|s|t|ve))?(?=[\xac\xb1\xd7\xf7\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\xbf\u2000-\u206f \t\x0b\f\xa0\ufeff\n\r\u2028\u2029\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000]|[A-Z\xc0-\xd6\xd8-\xde]|$)|(?:[A-Z\xc0-\xd6\xd8-\xde]|[^\ud800-\udfff\xac\xb1\xd7\xf7\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\xbf\u2000-\u206f \t\x0b\f\xa0\ufeff\n\r\u2028\u2029\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000\d+\u2700-\u27bfa-z\xdf-\xf6\xf8-\xffA-Z\xc0-\xd6\xd8-\xde])+(?:['’](?:D|LL|M|RE|S|T|VE))?(?=[\xac\xb1\xd7\xf7\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\xbf\u2000-\u206f \t\x0b\f\xa0\ufeff\n\r\u2028\u2029\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000]|[A-Z\xc0-\xd6\xd8-\xde](?:[a-z\xdf-\xf6\xf8-\xff]|[^\ud800-\udfff\xac\xb1\xd7\xf7\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\xbf\u2000-\u206f \t\x0b\f\xa0\ufeff\n\r\u2028\u2029\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000\d+\u2700-\u27bfa-z\xdf-\xf6\xf8-\xffA-Z\xc0-\xd6\xd8-\xde])|$)|[A-Z\xc0-\xd6\xd8-\xde]?(?:[a-z\xdf-\xf6\xf8-\xff]|[^\ud800-\udfff\xac\xb1\xd7\xf7\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\xbf\u2000-\u206f \t\x0b\f\xa0\ufeff\n\r\u2028\u2029\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000\d+\u2700-\u27bfa-z\xdf-\xf6\xf8-\xffA-Z\xc0-\xd6\xd8-\xde])+(?:['’](?:d|ll|m|re|s|t|ve))?|[A-Z\xc0-\xd6\xd8-\xde]+(?:['’](?:D|LL|M|RE|S|T|VE))?|\d+|(?:[\u2700-\u27bf]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff])[\ufe0e\ufe0f]?(?:[\u0300-\u036f\ufe20-\ufe23\u20d0-\u20f0]|\ud83c[\udffb-\udfff])?(?:\u200d(?:[^\ud800-\udfff]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff])[\ufe0e\ufe0f]?(?:[\u0300-\u036f\ufe20-\ufe23\u20d0-\u20f0]|\ud83c[\udffb-\udfff])?)*/g;
+	var WRD_BSC = /[a-zA-Z0-9]+/g;
+
+	String.prototype.splitWords = function () {
+		return this.match(WRD_CPH.test(this.toString()) ? WRD_CPX : WRD_BSC) || [];
+	};
+
+	var CAS_LAT = /[\xc0-\xd6\xd8-\xde\xdf-\xf6\xf8-\xff]/g;
+	var CAS_MAP = {
+		"\xc0": 'A', "\xc1": 'A', "\xc2": 'A', "\xc3": 'A', "\xc4": 'A', "\xc5": 'A',
+		"\xe0": 'a', "\xe1": 'a', "\xe2": 'a', "\xe3": 'a', "\xe4": 'a', "\xe5": 'a',
+		"\xc7": 'C', "\xe7": 'c',
+		"\xd0": 'D', "\xf0": 'd',
+		"\xc8": 'E', "\xc9": 'E', "\xca": 'E', "\xcb": 'E',
+		"\xe8": 'e', "\xe9": 'e', "\xea": 'e', "\xeb": 'e',
+		"\xcC": 'I', "\xcd": 'I', "\xce": 'I', "\xcf": 'I',
+		"\xeC": 'i', "\xed": 'i', "\xee": 'i', "\xef": 'i',
+		"\xd1": 'N', "\xf1": 'n',
+		"\xd2": 'O', "\xd3": 'O', "\xd4": 'O', "\xd5": 'O', "\xd6": 'O', "\xd8": 'O',
+		"\xf2": 'o', "\xf3": 'o', "\xf4": 'o', "\xf5": 'o', "\xf6": 'o', "\xf8": 'o',
+		"\xd9": 'U', "\xda": 'U', "\xdb": 'U', "\xdc": 'U',
+		"\xf9": 'u', "\xfa": 'u', "\xfb": 'u', "\xfc": 'u',
+		"\xdd": 'Y', "\xfd": 'y', "\xff": 'y',
+		"\xc6": 'Ae', "\xe6": 'ae',
+		"\xde": 'Th', "\xfe": 'th',
+		"\xdf": 'ss'
+	};
+	var CAS_MAR = /[\u0300-\u036f\ufe20-\ufe23\u20d0-\u20f0]/g;
+	var _convertLatinCase = function (chr) {
+		return CAS_MAP[chr];
+	};
+
+	String.prototype.toEnglishCase = function () {
+		return this.replace(CAS_LAT, _convertLatinCase).replace(CAS_MAR, '');
+	};
+
+	String.prototype.toCapitalWord = function (txt) {
+		if (txt === undefined) {
+			txt = this;
+		}
+		return txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase();
+	};
+
+	var CAS_APO = /['’]/g;
+
+	String.prototype.toCamelCase = function () {
+		return this.toEnglishCase().replace(CAS_APO, '').toLowerCase().splitWords().map(String.prototype.toCapitalWord).join('');
+	};
+
+	String.prototype.toKebabCase = function () {
+		return this.toEnglishCase().replace(CAS_APO, '').toLowerCase().splitWords().join('-');
 	};
 })();
