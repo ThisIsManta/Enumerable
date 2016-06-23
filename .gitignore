@@ -1,9 +1,1 @@
-/bin/*.config
-/bin/*.pdb
-/bin/*.exe
-/bin/Test.js
-/bin/Main.html
-/src/obj
-/src/Enumerable.v11.suo
-*.suo
 node_modules

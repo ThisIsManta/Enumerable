@@ -16,6 +16,7 @@
 	var ERR_MMM = 'an array had too many matching members';
 	var ERR_NOB = 'one or more array members were not an object';
 	var ERR_IWG = '[invokeWhich] must be called after [groupBy]';
+	var ERR_BID = 'a non-object type was not allowed';
 
 	Array.create = function () {
 		var ar0 = arguments[0];
@@ -79,10 +80,6 @@
 			}
 			out._m = false;
 
-		} else if (arguments.length === 0) {
-			out = [];
-			out._m = false;
-
 		} else if (typeof ar0 === 'number' && isInt(ar0) && ar0 >= 0) {
 			out = new Array(ar0);
 			if (ar1 !== undefined) {
@@ -92,6 +89,10 @@
 			}
 			out._m = false;
 
+		} else if (arguments.length === 0) {
+			out = [];
+			out._m = false;
+
 		} else {
 			throw new Error(ERR_INV);
 		}
@@ -99,7 +100,20 @@
 	};
 
 	Array.prototype.bind = function (ctx) {
-		this._s = ctx;
+		if (ctx === window) {
+			console.warn('an array is binded to the window');
+
+		} else if (typeof ctx === 'object') {
+			this._s = ctx;
+
+		} else {
+			throw new TypeError(ERR_BID);
+		}
+		return this;
+	};
+
+	Array.prototype.unbind = function () {
+		delete this._s;
 		return this;
 	};
 
@@ -107,7 +121,7 @@
 		var out;
 		if (dep === true) {
 			out = (function (obj) {
-				if (typeof obj === 'object') {
+				if (typeof obj === 'object' && obj !== null) {
 					var out;
 					var idx;
 					if (obj instanceof Array) {
@@ -136,104 +150,19 @@
 			out = this.slice(0);
 		}
 		out._m = false;
-		out._s = this._s;
+		if (this._s !== undefined) {
+			out._s = this._s;
+		}
 		return out;
 	};
 
 	Array.prototype.toImmutable = function () {
-		if (this._m === true) {
+		if (this._m === undefined || this._m === true) {
 			return this.clone();
 
 		} else {
 			return this;
 		}
-	};
-
-	var _toString = Array.prototype.toString;
-
-	Array.prototype.toString = function () {
-		var ar0 = arguments[0];
-		if (arguments.length === 0) {
-			return _toString.call(this);
-
-		} else if (arguments.length === 1 && typeof ar0 === 'string') {
-			return this.join(ar0);
-
-		} else {
-			throw new Error(ERR_INV);
-		}
-	};
-
-	Array.prototype.toObject = function () {
-		var ar0 = arguments[0];
-		var ar1 = arguments[1];
-		var idx = -1;
-		var bnd = this.length;
-		var nam;
-		var out = {};
-		var ctx = this._s;
-		if (arguments.length === 0) {
-			while (++idx < bnd) {
-				nam = this[idx];
-				out[nam] = nam;
-			}
-
-		} else if (typeof ar0 === 'string') {
-			if (arguments.length === 1) {
-				while (++idx < bnd) {
-					nam = this[idx][ar0];
-					if (nam !== undefined) {
-						out[nam] = this[idx];
-					}
-				}
-
-			} else if (typeof ar1 === 'string') {
-				while (++idx < bnd) {
-					nam = this[idx][ar0];
-					if (nam !== undefined) {
-						out[nam] = this[idx][ar1];
-					}
-				}
-
-			} else if (typeof ar1 === 'function') {
-				while (++idx < bnd) {
-					nam = this[idx][ar0];
-					if (nam !== undefined) {
-						out[nam] = ar1.call(ctx, this[idx], idx, this);
-					}
-				}
-
-			} else {
-				throw new Error(ERR_INV);
-			}
-
-		} else if (typeof ar0 === 'function') {
-			if (arguments.length === 1) {
-				while (++idx < bnd) {
-					nam = ar0.call(ctx, this[idx], idx, this).toString();
-					out[nam] = this[idx];
-				}
-
-			} else if (typeof ar1 === 'string') {
-				while (++idx < bnd) {
-					nam = ar0.call(ctx, this[idx], idx, this).toString();
-					out[nam] = this[idx][ar1];
-				}
-
-			} else if (typeof ar1 === 'function') {
-				while (++idx < bnd) {
-					nam = ar0.call(ctx, this[idx], idx, this).toString();
-					out[nam] = ar1.call(ctx, this[idx], idx, this);
-				}
-
-			} else {
-				throw new Error(ERR_INV);
-			}
-
-		} else {
-			throw new Error(ERR_INV);
-		}
-		return out;
 	};
 
 	Array.prototype.toMap = function () {
@@ -295,6 +224,93 @@
 		return out;
 	};
 
+	Array.prototype.toObject = function () {
+		var ar0 = arguments[0];
+		var ar1 = arguments[1];
+		var idx = -1;
+		var bnd = this.length;
+		var nam;
+		var out = {};
+		var ctx = this._s;
+		if (arguments.length === 0) {
+			while (++idx < bnd) {
+				nam = this[idx];
+				out[nam.toString()] = nam;
+			}
+
+		} else if (typeof ar0 === 'string') {
+			if (arguments.length === 1) {
+				while (++idx < bnd) {
+					nam = this[idx][ar0];
+					if (nam !== undefined) {
+						out[nam] = this[idx];
+					}
+				}
+
+			} else if (typeof ar1 === 'string') {
+				while (++idx < bnd) {
+					nam = this[idx][ar0];
+					if (nam !== undefined) {
+						out[nam] = this[idx][ar1];
+					}
+				}
+
+			} else if (typeof ar1 === 'function') {
+				while (++idx < bnd) {
+					nam = this[idx][ar0];
+					if (nam !== undefined) {
+						out[nam] = ar1.call(ctx, this[idx], idx, this);
+					}
+				}
+
+			} else {
+				throw new Error(ERR_INV);
+			}
+
+		} else if (typeof ar0 === 'function') {
+			if (arguments.length === 1) {
+				while (++idx < bnd) {
+					nam = ar0.call(ctx, this[idx], idx, this).toString();
+					out[nam] = this[idx];
+				}
+
+			} else if (typeof ar1 === 'string') {
+				while (++idx < bnd) {
+					nam = ar0.call(ctx, this[idx], idx, this).toString();
+					out[nam] = this[idx][ar1];
+				}
+
+			} else if (typeof ar1 === 'function') {
+				while (++idx < bnd) {
+					nam = ar0.call(ctx, this[idx], idx, this).toString();
+					out[nam] = ar1.call(ctx, this[idx], idx, this);
+				}
+
+			} else {
+				throw new Error(ERR_INV);
+			}
+
+		} else {
+			throw new Error(ERR_INV);
+		}
+		return out;
+	};
+
+	var _toString = Array.prototype.toString;
+
+	Array.prototype.toString = function () {
+		var ar0 = arguments[0];
+		if (arguments.length === 0) {
+			return _toString.call(this);
+
+		} else if (arguments.length === 1 && typeof ar0 === 'string') {
+			return this.join(ar0);
+
+		} else {
+			throw new Error(ERR_INV);
+		}
+	};
+
 	Array.prototype.where = function () {
 		var ar0 = arguments[0];
 		var ar1 = arguments[1];
@@ -334,7 +350,9 @@
 		} else {
 			throw new Error(ERR_INV);
 		}
-		out._s = this._s;
+		if (this._s !== undefined) {
+			out._s = this._s;
+		}
 		return out;
 	};
 
@@ -373,19 +391,22 @@
 		} else {
 			throw new Error(ERR_INV);
 		}
-		out._s = this._s;
+		if (this._s !== undefined) {
+			out._s = this._s;
+		}
 		return out;
 	};
 
 	Array.prototype.invoke = function () {
-		var fnc = Array.prototype.slice.call(arguments).lastOrNull(function (tmp) { return typeof tmp === 'function'; });
-		var idx = arguments.length > 1 ? arguments[0] : 0;
-		var bnd = arguments.length > 2 ? arguments[1] : this.length - 1;
-		var stp = arguments.length > 3 ? arguments[2] : (idx < bnd ? 1 : -1);
+		var fni = Array.prototype.slice.call(arguments).indexOf(function (itm) { return typeof itm === 'function'; });
+		var idx = fni >= 1 ? arguments[0] : 0;
+		var bnd = fni >= 2 ? arguments[1] : this.length - 1;
+		var stp = fni >= 3 ? arguments[2] : (idx < bnd ? 1 : -1);
+		var fnc = arguments[fni];
 		var lim;
 		var brk;
 		var ctx = this._s;
-		if (fnc !== null && isInt(idx) && idx >= 0 && isInt(bnd) && isInt(stp) && stp !== 0) {
+		if (typeof fnc === 'function' && isInt(idx) && idx >= 0 && isInt(bnd) && isInt(stp) && stp !== 0) {
 			if (bnd >= 0 && bnd < this.length) {
 				if (stp === 1 && idx === 0 && bnd > 1024) {
 					brk = function () { fnc = function () { }; idx = bnd; };
@@ -427,52 +448,79 @@
 	};
 
 	Array.prototype.invokeAsync = function () {
-		var tmp = Array.create(arguments).indexOf(function (itm) { return typeof itm === 'function'; });
-		var fnc = arguments[tmp];
-		var idx = tmp > 0 ? arguments[0] : 0;
-		var bnd = tmp > 1 ? arguments[1] : this.length - 1;
-		var stp = tmp > 2 ? arguments[2] : (idx < bnd ? 1 : -1);
-		var btc = (tmp >= 0 && tmp !== arguments.length - 1) ? arguments[arguments.length - 1] : 1;
+		var fni = Array.prototype.slice.call(arguments).indexOf(function (itm) { return typeof itm === 'function'; });
+		var idx = fni >= 1 ? arguments[0] : 0;
+		var bnd = fni >= 2 ? arguments[1] : this.length - 1;
+		var stp = fni >= 3 ? arguments[2] : (idx < bnd ? 1 : -1);
+		var fnc = arguments[fni];
+		var btc = arguments[fni + 1] !== undefined ? arguments[fni + 1] : 1;
 		var lim;
 		var brk;
 		var hdr;
+		var xit;
+		var arr = this;
 		var ctx = this._s;
+		var pwn;
 		if (typeof fnc === 'function' && isInt(idx) && idx >= 0 && isInt(bnd) && isInt(stp) && stp !== 0 && isInt(btc) && btc > 0) {
 			if (bnd >= 0 && bnd < this.length) {
 				if (stp > 0) {
-					brk = function () { idx = bnd; };
-					hdr = function () {
-						lim = btc;
-						while (idx <= bnd && lim-- > 0) {
-							fnc.call(ctx, this[idx], idx, this, brk);
-							idx += stp;
-						}
-						if (idx <= bnd) {
-							setTimeout(hdr, 2);
-						}
-					};
-					hdr();
+					pwn = new Promise(function (res, rej) {
+						brk = function () {
+							idx = bnd;
+							xit = true;
+						};
+						hdr = function () {
+							lim = btc;
+							while (idx <= bnd && lim-- > 0) {
+								fnc.call(ctx, arr[idx], idx, arr, brk);
+								idx += stp;
+							}
+							if (idx <= bnd) {
+								setTimeout(hdr, 2);
+
+							} else if (xit === true) {
+								rej();
+
+							} else {
+								res(arr);
+							}
+						};
+					});
 
 				} else {
-					brk = function () { idx = 0; };
-					hdr = function () {
-						lim = btc;
-						while (idx >= bnd && lim-- > 0) {
-							fnc.call(ctx, this[idx], idx, this, brk);
-							idx += stp;
-						}
-						if (idx >= bnd) {
-							setTimeout(hdr, 2);
-						}
-					};
-					hdr();
+					pwn = new Promise(function (res, rej) {
+						brk = function () {
+							idx = 0;
+							xit = true;
+						};
+						hdr = function () {
+							lim = btc;
+							while (idx >= bnd && lim-- > 0) {
+								fnc.call(ctx, arr[idx], idx, arr, brk);
+								idx += stp;
+							}
+							if (idx >= bnd) {
+								setTimeout(hdr, 2);
+
+							} else if (xit === true) {
+								rej();
+
+							} else {
+								res(arr);
+							}
+						};
+					});
 				}
+				setTimeout(hdr);
+
+			} else {
+				throw new RangeError(ERR_OOR);
 			}
 
 		} else {
 			throw new Error(ERR_INV);
 		}
-		return this;
+		return pwn;
 	};
 
 	Array.prototype.invokeWhich = function () {
@@ -542,7 +590,9 @@
 		} else {
 			throw new Error(ERR_INV);
 		}
-		out._s = this._s;
+		if (this._s !== undefined) {
+			out._s = this._s;
+		}
 		return out;
 	};
 
@@ -593,7 +643,9 @@
 		} else {
 			throw new Error(ERR_INV);
 		}
-		out._s = this._s;
+		if (this._s !== undefined) {
+			out._s = this._s;
+		}
 		return out;
 	};
 
@@ -624,7 +676,9 @@
 				out[++kdx] = tmp;
 			}
 		}
-		out._s = this._s;
+		if (this._s !== undefined) {
+			out._s = this._s;
+		}
 		return out;
 	};
 
@@ -1078,7 +1132,9 @@
 		} else {
 			throw new Error(ERR_INV);
 		}
-		out._s = this._s;
+		if (this._s !== undefined) {
+			out._s = this._s;
+		}
 		return out;
 	};
 
@@ -1225,7 +1281,9 @@
 		if (this.length > 0 && pvt <= bnd) {
 			out.push(this.slice(pvt));
 		}
-		out._s = this._s;
+		if (this._s !== undefined) {
+			out._s = this._s;
+		}
 		return out;
 	};
 
@@ -1236,7 +1294,9 @@
 			if (ar0 >= 0 && ar0 < this.length) {
 				out.push(this.slice(0, ar0));
 				out.push(this.slice(ar0));
-				out._s = this._s;
+				if (this._s !== undefined) {
+					out._s = this._s;
+				}
 				return out;
 
 			} else {
@@ -1322,7 +1382,9 @@
 			}
 		}
 		out._m = false;
-		out._s = this._s;
+		if (this._s !== undefined) {
+			out._s = this._s;
+		}
 		return out;
 	};
 
@@ -1338,7 +1400,9 @@
 			}
 		}
 		out._m = false;
-		out._s = this._s;
+		if (this._s !== undefined) {
+			out._s = this._s;
+		}
 		return out;
 	};
 
@@ -1509,7 +1573,9 @@
 				}
 				tmp.push(this[idx]);
 			}
-			out._s = this._s;
+			if (this._s !== undefined) {
+				out._s = this._s;
+			}
 			return out;
 
 		} else {
@@ -1568,7 +1634,9 @@
 			throw new Error(ERR_INV);
 		}
 		out._g = hsh;
-		out._s = this._s;
+		if (this._s !== undefined) {
+			out._s = this._s;
+		}
 		return out;
 	};
 
@@ -1952,7 +2020,9 @@
 		} else {
 			throw new Error(ERR_INV);
 		}
-		out._s = this._s;
+		if (this._s !== undefined) {
+			out._s = this._s;
+		}
 		return out;
 	};
 
@@ -2021,7 +2091,9 @@
 					out[++jdx] = this[idx];
 				}
 			}
-			out._s = this._s;
+			if (this._s !== undefined) {
+				out._s = this._s;
+			}
 			return out;
 
 		} else {
@@ -2045,7 +2117,9 @@
 			}
 		}
 		out._x = true;
-		out._s = this._s;
+		if (this._s !== undefined) {
+			out._s = this._s;
+		}
 		return out;
 	};
 
@@ -2070,7 +2144,9 @@
 		} else {
 			throw new Error(ERR_INV);
 		}
-		out._s = this._s;
+		if (this._s !== undefined) {
+			out._s = this._s;
+		}
 		return out;
 	};
 
