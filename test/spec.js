@@ -684,8 +684,8 @@ describe('lastIndexOf()', function () {
 });
 
 describe('find()', function () {
-	it('returns a matched member or null', function () {
-		a = [{ v: 1 }, { v: 2 }, { v: 3 }];
+	it('returns the first matched member or undefined', function () {
+		a = [{ v: 1 }, { v: 2 }, { v: 1 }];
 		expect(a.find('v', 1)).toBe(a[0]);
 		expect(a.find('v', 4)).toBeUndefined();
 		expect(a.find(function (x) { return x.v === 1; })).toBe(a[0]);
@@ -693,8 +693,100 @@ describe('find()', function () {
 	});
 
 	it('throws an error because of invalid parameters', function () {
-		a = [{ v: 1 }, { v: 2 }, { v: 3 }];
+		a = [{ v: 1 }, { v: 2 }, { v: 1 }];
 		expect(a.find.bind(a)).toThrowError();
 		expect(a.find.bind(a, 'v', null, null)).toThrowError();
+	});
+});
+
+describe('firstOrNull()', function () {
+	it('returns the first matched member or null', function () {
+		a = [{ v: 1 }, { v: 2 }, { v: 1 }];
+		expect([].firstOrNull()).toBeNull();
+		expect(a.firstOrNull()).toBe(a[0]);
+		expect(a.firstOrNull(function (x) { return x.v === 1; })).toBe(a[0]);
+		expect(a.firstOrNull(function (x) { return x.v === 4; })).toBeNull();
+	});
+});
+
+describe('first()', function () {
+	it('returns the first matched member or throws an error', function () {
+		a = [{ v: 1 }, { v: 2 }, { v: 1 }];
+		expect(a.first).toThrowError();
+		expect(a.first()).toBe(a[0]);
+		expect(a.first(function (x) { return x.v === 1; })).toBe(a[0]);
+		expect(a.first.bind(a, function (x) { return x.v === 4; })).toThrowError();
+	});
+});
+
+describe('lastOrNull()', function () {
+	it('returns the last matched member or null', function () {
+		a = [{ v: 1 }, { v: 2 }, { v: 1 }];
+		expect([].lastOrNull()).toBeNull();
+		expect(a.lastOrNull()).toBe(a[2]);
+		expect(a.lastOrNull(function (x) { return x.v === 1; })).toBe(a[2]);
+		expect(a.lastOrNull(function (x) { return x.v === 4; })).toBeNull();
+	});
+});
+
+describe('last()', function () {
+	it('returns the first matched member or throws an error', function () {
+		a = [{ v: 1 }, { v: 2 }, { v: 1 }];
+		expect(a.last).toThrowError();
+		expect(a.last()).toBe(a[2]);
+		expect(a.last(function (x) { return x.v === 1; })).toBe(a[2]);
+		expect(a.last.bind(a, function (x) { return x.v === 4; })).toThrowError();
+	});
+});
+
+describe('singleOrNull()', function () {
+	it('returns the last matched member or null', function () {
+		a = [{ v: 1 }, { v: 2 }, { v: 1 }];
+		expect([].singleOrNull()).toBeNull();
+		expect([1].singleOrNull()).toBe(1);
+		expect([1, 2, 3].singleOrNull()).toBeNull();
+		expect(a.singleOrNull(function (x) { return x.v === 1; })).toBeNull();
+		expect(a.singleOrNull(function (x) { return x.v === 2; })).toBe(a[1]);
+		expect(a.singleOrNull(function (x) { return x.v === 4; })).toBeNull();
+	});
+});
+
+describe('single()', function () {
+	it('returns the first matched member or throws an error', function () {
+		a = [{ v: 1 }, { v: 2 }, { v: 1 }];
+		expect(a.single).toThrowError();
+		expect([1].single()).toBe(1);
+		expect(a.single.bind([1, 2, 3])).toThrowError();
+		expect(a.single.bind(a, function (x) { return x.v === 1; })).toThrowError();
+		expect(a.single(function (x) { return x.v === 2; })).toBe(a[1]);
+		expect(a.single.bind(a, function (x) { return x.v === 4; })).toThrowError();
+	});
+});
+
+describe('distinct()', function () {
+	it('returns a new array which has unique members', function () {
+		a = [1, 2, 1, 2, 2, undefined, null];
+		z = a.distinct();
+		expect(z.length).toBe(3);
+		expect(z[0]).toBe(1);
+		expect(z[1]).toBe(2);
+		expect(z[2]).toBeUndefined();
+
+		a = [{ v: 1 }, { v: 2 }, { v: 1 }, { v: undefined }, { v: null }];
+		z = a.distinct('v');
+		expect(z.length).toBe(3);
+		expect(z[0]).toBe(a[0]);
+		expect(z[1]).toBe(a[1]);
+		expect(z[2]).toBe(a[3]);
+
+		z = a.distinct(function (x) { return x.v; });
+		expect(z.length).toBe(3);
+		expect(z[0]).toBe(a[0]);
+		expect(z[1]).toBe(a[1]);
+		expect(z[2]).toBe(a[3]);
+	});
+
+	it('throws an error', function () {
+		expect([].distinct.bind(null, null)).toThrowError();
 	});
 });

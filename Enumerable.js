@@ -1088,13 +1088,13 @@
 		var tmp;
 		var nil = false;
 		var out = [];
-		if (ar0 === undefined) {
+		if (arguments.length === 0) {
 			while (++idx < bnd) {
 				tmp = this[idx];
 				if (tmp === undefined || tmp === null) {
 					if (nil === false) {
 						nil = true;
-						out[++jdx] = tmp;
+						out[++jdx] = this[idx];
 					}
 
 				} else if (hsh[(tmp = tmp.toString())] === undefined) {
@@ -1103,13 +1103,13 @@
 				}
 			}
 
-		} else if (typeof ar0 === 'string' && ar0.length > 0) {
+		} else if (typeof ar0 === 'string' && ar0.length > 0 && arguments.length === 1) {
 			while (++idx < bnd) {
 				tmp = this[idx][ar0];
 				if (tmp === undefined || tmp === null) {
 					if (nil === false) {
 						nil = true;
-						out[++jdx] = tmp;
+						out[++jdx] = this[idx];
 					}
 
 				} else if (hsh[(tmp = tmp.toString())] === undefined) {
@@ -1118,13 +1118,13 @@
 				}
 			}
 
-		} else if (typeof ar0 === 'function') {
+		} else if (typeof ar0 === 'function' && arguments.length === 1) {
 			while (++idx < bnd) {
 				tmp = ar0.call(this._s, this[idx], idx, this);
 				if (tmp === undefined || tmp === null) {
 					if (nil === false) {
 						nil = true;
-						out[++jdx] = null;
+						out[++jdx] = this[idx];
 					}
 
 				} else if (hsh[(tmp = tmp.toString())] === undefined) {
