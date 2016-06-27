@@ -117,9 +117,10 @@
 		return this;
 	};
 
-	Array.prototype.clone = function (dep) {
+	Array.prototype.clone = function () {
+		var ar0 = !!arguments[0];
 		var out;
-		if (dep === true) {
+		if (ar0 === true) {
 			out = (function (obj) {
 				if (typeof obj === 'object' && obj !== null) {
 					var out;
@@ -400,45 +401,44 @@
 	Array.prototype.invoke = function () {
 		var fni = Array.prototype.slice.call(arguments).indexOf(function (itm) { return typeof itm === 'function'; });
 		var idx = fni >= 1 ? arguments[0] : 0;
-		var bnd = fni >= 2 ? arguments[1] : this.length - 1;
+		var bnd = fni >= 2 ? arguments[1] : this.length;
 		var stp = fni >= 3 ? arguments[2] : (idx < bnd ? 1 : -1);
 		var fnc = arguments[fni];
-		var lim;
 		var brk;
 		var ctx = this._s;
 		if (typeof fnc === 'function' && isInt(idx) && idx >= 0 && isInt(bnd) && isInt(stp) && stp !== 0) {
-			if (bnd >= 0 && bnd < this.length) {
-				if (stp === 1 && idx === 0 && bnd > 1024) {
-					brk = function () { fnc = function () { }; idx = bnd; };
-					lim = bnd % 8;
-					while (idx <= lim) {
-						fnc.call(ctx, this[idx], idx++, this, brk);
+			if (bnd >= 0 && bnd <= this.length) {
+				if (idx === 0 && bnd >= 1024 && stp === 1) {
+					while (idx < bnd % 8 && brk !== false) {
+						brk = fnc.call(ctx, this[idx], idx++, this);
 					}
-					while (idx <= bnd) {
-						fnc.call(ctx, this[idx], idx++, this, brk);
-						fnc.call(ctx, this[idx], idx++, this, brk);
-						fnc.call(ctx, this[idx], idx++, this, brk);
-						fnc.call(ctx, this[idx], idx++, this, brk);
-						fnc.call(ctx, this[idx], idx++, this, brk);
-						fnc.call(ctx, this[idx], idx++, this, brk);
-						fnc.call(ctx, this[idx], idx++, this, brk);
-						fnc.call(ctx, this[idx], idx++, this, brk);
+					while (idx < bnd && brk !== false) {
+						if (brk !== false) brk = fnc.call(ctx, this[idx], idx++, this);
+						if (brk !== false) brk = fnc.call(ctx, this[idx], idx++, this);
+						if (brk !== false) brk = fnc.call(ctx, this[idx], idx++, this);
+						if (brk !== false) brk = fnc.call(ctx, this[idx], idx++, this);
+						if (brk !== false) brk = fnc.call(ctx, this[idx], idx++, this);
+						if (brk !== false) brk = fnc.call(ctx, this[idx], idx++, this);
+						if (brk !== false) brk = fnc.call(ctx, this[idx], idx++, this);
+						if (brk !== false) brk = fnc.call(ctx, this[idx], idx++, this);
 					}
 
 				} else if (stp > 0) {
-					brk = function () { idx = bnd; };
-					while (idx <= bnd) {
-						fnc.call(ctx, this[idx], idx, this, brk);
+					while (idx < bnd && brk !== false) {
+						brk = fnc.call(ctx, this[idx], idx, this);
 						idx += stp;
 					}
 
 				} else {
-					brk = function () { idx = 0; };
-					while (idx >= bnd) {
-						fnc.call(ctx, this[idx], idx, this, brk);
+					idx--;
+					while (idx >= bnd && brk !== false) {
+						brk = fnc.call(ctx, this[idx], idx, this);
 						idx += stp;
 					}
 				}
+
+			} else {
+				throw new RangeError(ERR_OOR);
 			}
 
 		} else {
@@ -450,36 +450,30 @@
 	Array.prototype.invokeAsync = function () {
 		var fni = Array.prototype.slice.call(arguments).indexOf(function (itm) { return typeof itm === 'function'; });
 		var idx = fni >= 1 ? arguments[0] : 0;
-		var bnd = fni >= 2 ? arguments[1] : this.length - 1;
+		var bnd = fni >= 2 ? arguments[1] : this.length;
 		var stp = fni >= 3 ? arguments[2] : (idx < bnd ? 1 : -1);
 		var fnc = arguments[fni];
 		var btc = arguments[fni + 1] !== undefined ? arguments[fni + 1] : 1;
-		var lim;
-		var brk;
 		var hdr;
-		var xit;
 		var arr = this;
 		var ctx = this._s;
 		var pwn;
 		if (typeof fnc === 'function' && isInt(idx) && idx >= 0 && isInt(bnd) && isInt(stp) && stp !== 0 && isInt(btc) && btc > 0) {
-			if (bnd >= 0 && bnd < this.length) {
+			if (bnd >= 0 && bnd <= this.length) {
 				if (stp > 0) {
 					pwn = new Promise(function (res, rej) {
-						brk = function () {
-							idx = bnd;
-							xit = true;
-						};
 						hdr = function () {
-							lim = btc;
-							while (idx <= bnd && lim-- > 0) {
-								fnc.call(ctx, arr[idx], idx, arr, brk);
+							var lim = btc;
+							var brk;
+							while (idx < bnd && lim-- > 0 && brk !== false) {
+								brk = fnc.call(ctx, arr[idx], idx, arr);
 								idx += stp;
 							}
-							if (idx <= bnd) {
-								setTimeout(hdr, 2);
-
-							} else if (xit === true) {
+							if (brk === false) {
 								rej();
+
+							} else if (idx < bnd) {
+								setTimeout(hdr, 2);
 
 							} else {
 								res(arr);
@@ -488,22 +482,20 @@
 					});
 
 				} else {
+					idx--;
 					pwn = new Promise(function (res, rej) {
-						brk = function () {
-							idx = 0;
-							xit = true;
-						};
 						hdr = function () {
-							lim = btc;
-							while (idx >= bnd && lim-- > 0) {
-								fnc.call(ctx, arr[idx], idx, arr, brk);
+							var lim = btc;
+							var brk;
+							while (idx >= bnd && lim-- > 0 && brk !== false) {
+								brk = fnc.call(ctx, arr[idx], idx, arr);
 								idx += stp;
 							}
-							if (idx >= bnd) {
-								setTimeout(hdr, 2);
-
-							} else if (xit === true) {
+							if (brk === false) {
 								rej();
+
+							} else if (idx >= bnd) {
+								setTimeout(hdr, 2);
 
 							} else {
 								res(arr);
@@ -551,28 +543,23 @@
 		var ar0 = arguments[0];
 		var ar1 = arguments[1];
 		var idx = -1;
-		var jdx = 0;
-		var kdx;
+		var jdx;
 		var bnd = this.length;
 		var out;
 		if (typeof ar0 === 'function') {
-			kdx = bnd;
 			while (++idx < bnd) {
 				if (ar0.call(this._s, this[idx], idx, this) === false) {
-					kdx = idx;
 					break;
 				}
 			}
+			out = this.slice(0, idx);
 
-		} else if (!isFinite(ar0) || ar0 === Number.MAX_SAFE_INTEGER) {
-			out = [];
+		} else if (!isFinite(ar0) || ar0 >= Number.MAX_SAFE_INTEGER) {
+			out = this.toImmutable();
 
 		} else if (isInt(ar0)) {
 			if (ar0 < 0 || ar0 > bnd) {
 				throw new RangeError(ERR_OOR);
-
-			} else {
-				jdx = ar0;
 			}
 			if (isInt(ar1)) {
 				if (ar1 < 0 || ar1 > bnd) {
@@ -580,12 +567,12 @@
 
 				} else if (ar0 > ar1) {
 					throw new RangeError(ERR_SGS);
-
-				} else {
-					kdx = ar1;
 				}
+				out = this.slice(ar0, ar1);
+
+			} else {
+				out = this.slice(ar0);
 			}
-			out = this.slice(jdx, kdx);
 
 		} else {
 			throw new Error(ERR_INV);
@@ -613,15 +600,12 @@
 			}
 			return this.take.call(this, tmp, bnd);
 
-		} else if (!isFinite(ar0) || ar0 === Number.MAX_SAFE_INTEGER) {
-			out = this.toImmutable();
+		} else if (!isFinite(ar0) || ar0 >= Number.MAX_SAFE_INTEGER) {
+			out = [];
 
 		} else if (isInt(ar0)) {
 			if (ar0 < 0 || ar0 > bnd) {
 				throw new RangeError(ERR_OOR);
-
-			} else {
-				jdx = ar0;
 			}
 			if (isInt(ar1)) {
 				if (ar1 < 0 || ar1 > bnd) {
@@ -629,9 +613,6 @@
 
 				} else if (ar0 > ar1) {
 					throw new RangeError(ERR_SGS);
-
-				} else {
-					kdx = ar1;
 				}
 				out = this.toImmutable();
 				out.splice(ar0, ar1 - ar0);
@@ -662,7 +643,7 @@
 			tmp = this[idx];
 			if (typeof tmp === 'object' && tmp instanceof Array) {
 				if (tmp.length > 0) {
-					if (ar0) {
+					if (ar0 === true) {
 						tmp = tmp.flatten(ar0);
 					}
 					jdx = -1;
@@ -690,7 +671,7 @@
 		if (bnd === 0) {
 			return false;
 
-		} else if (ar0 === undefined) {
+		} else if (arguments.length === 0) {
 			return true;
 
 		} else if (typeof ar0 === 'function') {
@@ -727,7 +708,7 @@
 		if (bnd === 0) {
 			return true;
 
-		} else if (ar0 === undefined) {
+		} else if (arguments.length === 0) {
 			throw new Error(ERR_INV);
 
 		} else if (typeof ar0 === 'function') {
@@ -778,7 +759,7 @@
 
 		} else if (typeof ar1 === 'function' && arguments.length === 2) {
 			while (++idx < bnd) {
-				if (ar1.call(this._s, this[idx], ar0[idx]) === false) {
+				if (!ar1.call(this._s, this[idx], ar0[idx])) {
 					return false;
 				}
 			}
@@ -790,7 +771,7 @@
 	};
 
 	Array.prototype.isLike = function () {
-		var ar0 = arguments[0].toImmutable();
+		var ar0 = Array.create(arguments[0]).toImmutable();
 		var ar1 = arguments[1];
 		var idx = -1;
 		var jdx;
@@ -800,7 +781,7 @@
 		if (bnd !== ar0.length || ((bnd === 0) !== (ar0.length === 0))) {
 			return false;
 
-		} else if (ar1 === undefined) {
+		} else if (arguments.length === 1) {
 			while (++idx < bnd) {
 				tmp = ar0.indexOf(this[idx]);
 				if (tmp < 0) {
@@ -812,7 +793,7 @@
 			}
 			return ar0.length === 0;
 
-		} else if (typeof ar1 === 'function') {
+		} else if (typeof ar1 === 'function' && arguments.length === 2) {
 			while (++idx < bnd) {
 				tmp = this[idx];
 				jdx = -1;
@@ -836,14 +817,37 @@
 		}
 	};
 
-	Array.prototype.isSubset = function () {
-		var ar0 = arguments[0];
+	Array.prototype.isPart = function () {
+		var arr = this;
+		var ar0 = Array.create(arguments[0]);
+		var ar1 = arguments[1];
 		var idx = -1;
 		var bnd = this.length;
-		while (++idx < bnd) {
-			if (ar0.indexOf(this[idx]) === -1) {
-				return false;
+		var ctx = ar0._s;
+		ar0._s = this._s;
+		if (arguments.length === 1) {
+			while (++idx < bnd) {
+				if (ar0.indexOf(this[idx]) === -1) {
+					return false;
+				}
 			}
+
+		} else if (typeof ar1 === 'function' && arguments.length === 2) {
+			var fnc = function (itm) { return ar1.call(this, arr[idx], itm); };
+			while (++idx < bnd) {
+				if (ar0.indexOf(fnc) === -1) {
+					return false;
+				}
+			}
+
+		} else {
+			throw new Error(ERR_INV);
+		}
+		if (ctx === undefined) {
+			delete ar0._s;
+
+		} else {
+			ar0._s = ctx;
 		}
 		return true;
 	};
@@ -854,7 +858,7 @@
 		var idx = -1;
 		var bnd = this.length;
 		if (arguments.length === 2) {
-			if (isInt(ar1) && ar1 >= 0 && ar1 <= idx) {
+			if (isInt(ar1) && ar1 >= 0 && ar1 <= bnd) {
 				idx = ar1 - 1;
 
 			} else {
@@ -864,7 +868,7 @@
 		if (arguments.length >= 1) {
 			if (typeof ar0 === 'function') {
 				while (++idx < bnd) {
-					if (ar0.call(this._s, this[idx], idx, this) === true) {
+					if (ar0.call(this._s, this[idx], idx, this)) {
 						return idx;
 					}
 				}
@@ -898,7 +902,7 @@
 		if (arguments.length >= 1) {
 			if (typeof ar0 === 'function') {
 				while (--idx >= 0) {
-					if (ar0.call(this._s, this[idx], idx, this) === true) {
+					if (ar0.call(this._s, this[idx], idx, this)) {
 						return idx;
 					}
 				}
@@ -2161,7 +2165,7 @@
 				var bnd = lst.length;
 				var tmp;
 				while (++idx < bnd) {
-					if (typeof ar1 === 'string' && lst[idx][ar1] === ar2 || typeof ar1 === 'function' && ar1.call(ctx, lst[idx], idx, lst) === true) {
+					if (typeof ar1 === 'string' && lst[idx][ar1] === ar2 || typeof ar1 === 'function' && ar1.call(ctx, lst[idx], idx, lst)) {
 						return lst[idx];
 
 					} else if (typeof lst[idx][ar0] === 'object' && lst[idx][ar0] instanceof Array && (tmp = skf(lst[idx][ar0])) !== undefined) {

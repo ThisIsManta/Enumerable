@@ -92,10 +92,46 @@ describe('create()', function () {
 
 describe('bind()', function () {
 	it('asserts a context', function () {
-		a = [1, 2, 3];
-		expect(a._s).toBeUndefined();
-		expect(a.bind(null)._s).toBe(null);
-		expect(a.bind(this)._s).toBe(this);
+		c = {};
+		expect([].bind(c)._s).toBe(c);
+		expect([].bind(c).bind({})._s).not.toBe(c);
+		expect([].bind(null)._s).toBeNull();
+		expect([].bind(window)._s).toBeUndefined();
+
+		try {
+			expect([].bind()._s).to(null);
+			fail();
+		} catch (ex) { }
+	});
+});
+
+describe('unbind()', function () {
+	it('asserts no contexts', function () {
+		expect([].unbind()._s).toBeUndefined();
+		expect([].bind({}).unbind()._s).toBeUndefined();
+	});
+});
+
+describe('clone()', function () {
+	it('returns a copy of a given array', function () {
+		a = [1, [2], { v: null, w: { x: [3] } }];
+		z = a.clone();
+		z.push(4);
+		expect(a.length).toBe(3);
+		expect(z.length).toBe(4);
+		expect(z[0]).toBe(a[0]);
+		expect(z[1]).toBe(a[1]);
+		expect(z[2]).toBe(a[2]);
+
+		z = a.clone(true);
+		z.push(4);
+		expect(a.length).toBe(3);
+		expect(z.length).toBe(4);
+		expect(z[0]).toBe(a[0]);
+		expect(z[1]).not.toBe(a[1]);
+		expect(z[1]).toEqual([2]);
+		expect(z[2]).not.toBe(a[2]);
+		expect(z[2]).toEqual(a[2]);
 	});
 });
 
@@ -141,38 +177,38 @@ describe('toObject()', function () {
 	});
 
 	it('returns an object by giving a name projector', function () {
-		a = [{ x: 1, y: 4 }, { x: 2, y: 5 }, { x: 3, y: 6 }];
-		z = a.toObject('x');
+		a = [{ v: 1, w: 4 }, { v: 2, w: 5 }, { v: 3, w: 6 }];
+		z = a.toObject('v');
 		expect(typeof z).toBe('object');
 		expect(z['1']).toBe(a[0]);
 		expect(z['2']).toBe(a[1]);
 		expect(z['3']).toBe(a[2]);
 
-		z = a.toObject(function (m, i) { return m.x; });
+		z = a.toObject(function (x) { return x.v; });
 		expect(typeof z).toBe('object');
 		expect(z['1']).toBe(a[0]);
 		expect(z['2']).toBe(a[1]);
 		expect(z['3']).toBe(a[2]);
 
-		z = a.toObject('x', 'y');
+		z = a.toObject('v', 'w');
 		expect(typeof z).toBe('object');
 		expect(z['1']).toBe(4);
 		expect(z['2']).toBe(5);
 		expect(z['3']).toBe(6);
 
-		z = a.toObject('x', function (m, i) { return m.y; });
+		z = a.toObject('v', function (x) { return x.w; });
 		expect(typeof z).toBe('object');
 		expect(z['1']).toBe(4);
 		expect(z['2']).toBe(5);
 		expect(z['3']).toBe(6);
 
-		z = a.toObject(function (m, i) { return m.x; }, 'y');
+		z = a.toObject(function (x) { return x.v; }, 'w');
 		expect(typeof z).toBe('object');
 		expect(z['1']).toBe(4);
 		expect(z['2']).toBe(5);
 		expect(z['3']).toBe(6);
 
-		z = a.toObject(function (m, i) { return m.x; }, function (m, i) { return m.y; });
+		z = a.toObject(function (x) { return x.v; }, function (x) { return x.w; });
 		expect(typeof z).toBe('object');
 		expect(z['1']).toBe(4);
 		expect(z['2']).toBe(5);
@@ -195,123 +231,74 @@ describe('toString()', function () {
 	});
 });
 
-describe('bind()', function () {
-	it('asserts a context', function () {
-		c = {};
-		expect([].bind(c)._s).toBe(c);
-		expect([].bind(c).bind({})._s).not.toBe(c);
-		expect([].bind(null)._s).toBeNull();
-		expect([].bind(window)._s).toBeUndefined();
-
-		try {
-			expect([].bind()._s).to(null);
-			fail();
-		} catch (ex) { }
-	});
-});
-
-describe('unbind()', function () {
-	it('asserts no contexts', function () {
-		expect([].unbind()._s).toBeUndefined();
-		expect([].bind({}).unbind()._s).toBeUndefined();
-	});
-});
-
-describe('clone()', function () {
-	it('returns a copy of a given array', function () {
-		a = [1, [2], { x: null, y: { z: [3] } }];
-		z = a.clone();
-		z.push(4);
-		expect(a.length).toBe(3);
-		expect(z.length).toBe(4);
-		expect(z[0]).toBe(a[0]);
-		expect(z[1]).toBe(a[1]);
-		expect(z[2]).toBe(a[2]);
-
-		z = a.clone(true);
-		z.push(4);
-		expect(a.length).toBe(3);
-		expect(z.length).toBe(4);
-		expect(z[0]).toBe(a[0]);
-		expect(z[1]).not.toBe(a[1]);
-		expect(z[1]).toEqual([2]);
-		expect(z[2]).not.toBe(a[2]);
-		expect(z[2]).toEqual(a[2]);
-	});
-});
-
 describe('where()', function () {
-	it('returns a new array by giving a filter', function () {
-		a = [{ x: 1 }, { x: 2 }, { x: 3 }];
-		z = a.where('x', 2);
+	it('returns a new array', function () {
+		a = [{ v: 1 }, { v: 2 }, { v: 3 }];
+		z = a.where('v', 2);
 		expect(z.length).toBe(1);
 		expect(z[0]).toBe(a[1]);
 
-		z = a.where({ x: 2 });
+		z = a.where({ v: 2 });
 		expect(z.length).toBe(1);
 		expect(z[0]).toBe(a[1]);
 
-		z = a.where(function (m) { return m.x === 2; });
+		z = a.where(function (x) { return x.v === 2; });
 		expect(z.length).toBe(1);
 		expect(z[0]).toBe(a[1]);
 	});
 });
 
 describe('select()', function () {
-	it('returns a new array by giving a selector', function () {
-		a = [{ x: 1 }, { x: 2 }, { x: 3 }];
-		z = a.select('x');
+	it('returns a new array', function () {
+		a = [{ v: 1 }, { v: 2 }, { v: 3 }];
+		z = a.select('v');
 		expect(z.length).toBe(3);
 		expect(z[0]).toBe(1);
 		expect(z[1]).toBe(2);
 		expect(z[2]).toBe(3);
 
-		z = a.select(function (m) { return m.x; });
+		z = a.select(function (x) { return x.v; });
 		expect(z.length).toBe(3);
 		expect(z[0]).toBe(1);
 		expect(z[1]).toBe(2);
 		expect(z[2]).toBe(3);
 
-		z = a.select(['x']);
+		z = a.select(['v']);
 		expect(z.length).toBe(3);
-		expect(z[0]).toEqual({ x: 1 });
-		expect(z[1]).toEqual({ x: 2 });
-		expect(z[2]).toEqual({ x: 3 });
+		expect(z[0]).toEqual({ v: 1 });
+		expect(z[1]).toEqual({ v: 2 });
+		expect(z[2]).toEqual({ v: 3 });
 	});
 });
 
 describe('invoke()', function () {
 	it('executes a function by giving a small array', function () {
-		a = [{ x: 1 }, { x: 2 }, { x: 3 }];
+		a = [{ v: 1 }, { v: 2 }, { v: 3 }];
 		z = 0;
-		a.invoke(function (m) { z += m.x; });
+		a.invoke(function (x) { z += x.v; });
 		expect(z).toBe(6);
 
 		z = 0;
-		a.invoke(1, function (m) { z += m.x; });
+		a.invoke(1, function (x) { z += x.v; });
 		expect(z).toBe(5);
 
 		z = 0;
-		a.invoke(1, 1, function (m) { z += m.x; });
-		expect(z).toBe(2);
+		a.invoke(1, 0, function (x) { z += x.v; });
+		expect(z).toBe(1);
 
 		z = 0;
-		a.invoke(1, 0, function (m) { z += m.x; });
-		expect(z).toBe(3);
+		a.invoke(1, 0, -1, function (x) { z += x.v; });
+		expect(z).toBe(1);
 
 		z = 0;
-		a.invoke(1, 0, -1, function (m) { z += m.x; });
-		expect(z).toBe(3);
-
-		z = 0;
-		a.invoke(2, 0, -2, function (m) { z += m.x; });
+		a.invoke(3, 0, -2, function (x) { z += x.v; });
 		expect(z).toBe(4);
 
 		z = 0;
-		a.invoke(function (m, i, a, b) {
-			z += m.x;
+		a.invoke(function (x, i) {
+			z += x.v;
 			if (i === 1) {
-				b();
+				return false;
 			}
 		});
 		expect(z).toBe(3);
@@ -320,14 +307,14 @@ describe('invoke()', function () {
 	it('executes a function by giving a large array', function () {
 		a = Array.create(2048, 1);
 		z = 0;
-		a.invoke(function (m) { z += m; });
+		a.invoke(function (x) { z += x; });
 		expect(z).toBe(2048);
 
 		z = 0;
-		a.invoke(function (m, i, a, b) {
-			z += m;
+		a.invoke(function (x, i) {
+			z += x;
 			if (i === 1536 - 1) {
-				b();
+				return false;
 			}
 		});
 		expect(z).toBe(1536);
@@ -338,8 +325,8 @@ describe('invokeAsync()', function () {
 	it('executes a function', function (done) {
 		a = [1, 2, 3];
 		z = 0;
-		p = a.invokeAsync(function (m, i, a, b) {
-			z += m;
+		p = a.invokeAsync(function (x, i) {
+			z += x;
 			expect(z).toBe([1, 4, 7][i]);
 		}).then(function () {
 			expect(z).toBe(7);
@@ -356,8 +343,8 @@ describe('invokeAsync()', function () {
 	it('executes a function by giving a start index', function (done) {
 		a = [1, 2, 3];
 		z = 0;
-		p = a.invokeAsync(1, function (m, i, a, b) {
-			z += m;
+		p = a.invokeAsync(1, function (x, i) {
+			z += x;
 			expect(z).toBe([0, 2, 6][i]);
 		}).then(function () {
 			expect(z).toBe(6);
@@ -374,8 +361,8 @@ describe('invokeAsync()', function () {
 	it('executes a function by giving a stop index', function (done) {
 		a = [1, 2, 3];
 		z = 0;
-		p = a.invokeAsync(0, 1, function (m, i, a, b) {
-			z += m;
+		p = a.invokeAsync(0, 2, function (x, i) {
+			z += x;
 			expect(z).toBe([1, 4, 0][i]);
 		}).then(function () {
 			expect(z).toBe(4);
@@ -392,8 +379,8 @@ describe('invokeAsync()', function () {
 	it('executes a function by giving a step count', function (done) {
 		a = [1, 2, 3];
 		z = 0;
-		p = a.invokeAsync(1, 0, -1, function (m, i, a, b) {
-			z += m;
+		p = a.invokeAsync(2, 0, -1, function (x, i) {
+			z += x;
 			expect(z).toBe([4, 2, 0][i]);
 		}).then(function () {
 			expect(z).toBe(4);
@@ -410,8 +397,8 @@ describe('invokeAsync()', function () {
 	it('executes a function by giving a batch count', function (done) {
 		a = [1, 2, 3];
 		z = 0;
-		p = a.invokeAsync(function (m, i, a, b) {
-			z += m;
+		p = a.invokeAsync(function (x, i) {
+			z += x;
 			expect(z).toBe([1, 3, 7][i]);
 		}, 2).then(function () {
 			expect(z).toBe(7);
@@ -425,14 +412,17 @@ describe('invokeAsync()', function () {
 		expect(p instanceof Promise).toBe(true);
 	});
 
-	it('executes a function onward with a break', function (done) {
+	it('executes a function with a break', function (done) {
 		a = [1, 2, 3];
 		z = 0;
-		p = a.invokeAsync(function (m, i, a, b) {
-			z += m;
-			expect(z).toBe([1, 4, 7][i]);
-		}).then(function () {
-			expect(z).toBe(7);
+		p = a.invokeAsync(function (x, i) {
+			z += x;
+			if (i === 1) {
+				return false;
+			}
+			expect(z).toBe([1, 4, 0][i]);
+		}).catch(function () {
+			expect(z).toBe(4);
 			done();
 		});
 		expect(z).toBe(0);
@@ -441,5 +431,270 @@ describe('invokeAsync()', function () {
 			expect(z).toBe(2);
 		});
 		expect(p instanceof Promise).toBe(true);
+	});
+});
+
+describe('invokeWhich()', function () {
+	it('executes a function', function () {
+		a = [1, 2, 3];
+		a.groupBy(function (x) {
+			return x <= 2;
+		}).invokeWhich(true, function (x, i) {
+			expect(x).toBe([1, 2][i]);
+		});
+	});
+
+	it('throws an error', function () {
+		a = [1, 2, 3];
+		expect(a._g).toBeUndefined();
+		expect(a.invokeWhich.bind(a)).toThrowError();
+
+		z = a.groupBy(function (x) { return x <= 2; });
+		expect(z._g).toBeDefined();
+		expect(z.invokeWhich.bind(z)).toThrowError();
+	});
+});
+
+describe('take()', function () {
+	it('returns a new array', function () {
+		a = [1, 2, 3].take(function (x) { return x <= 2; });
+		expect(a.length).toBe(2);
+		expect(a[0]).toBe(1);
+		expect(a[1]).toBe(2);
+
+		a = [1, 2, 3].take(Infinity);
+		expect(a.length).toBe(3);
+		expect(a[0]).toBe(1);
+		expect(a[1]).toBe(2);
+		expect(a[2]).toBe(3);
+
+		a = [1, 2, 3].take(Number.MAX_SAFE_INTEGER);
+		expect(a.length).toBe(3);
+		expect(a[0]).toBe(1);
+		expect(a[1]).toBe(2);
+		expect(a[2]).toBe(3);
+
+		a = [1, 2, 3].take(1);
+		expect(a.length).toBe(2);
+		expect(a[0]).toBe(2);
+		expect(a[1]).toBe(3);
+
+		a = [1, 2, 3].take(1, 2);
+		expect(a.length).toBe(1);
+		expect(a[0]).toBe(2);
+	});
+});
+
+describe('skip()', function () {
+	it('returns a new array', function () {
+		a = [1, 2, 3];
+		z = a.skip(function (x) { return x <= 2; });
+		expect(z.length).toBe(1);
+		expect(z[0]).toBe(3);
+
+		z = a.skip(Infinity);
+		expect(z.length).toBe(0);
+
+		z = a.skip(Number.MAX_SAFE_INTEGER);
+		expect(z.length, 0);
+
+		z = a.skip(1);
+		expect(z.length).toBe(1);
+		expect(z[0]).toBe(1);
+
+		z = a.skip(1, 2);
+		expect(z.length).toBe(2);
+		expect(z[0]).toBe(1);
+		expect(z[1]).toBe(3);
+	});
+});
+
+describe('flatten()', function () {
+	it('returns a new array', function () {
+		a = [1, 2, [3, 4, 5], 6].flatten();
+		expect(a.length).toBe(6);
+		for (i = 0; i < a.length; i++) {
+			expect(a[i]).toBe(i + 1);
+		}
+
+		a = [[1, 2, 3], [4, [5, 6]]].flatten();
+		expect(a.length).toBe(5);
+		expect(Array.isArray(a[4])).toBe(true);
+		expect(a[4].length).toBe(2);
+
+		a = [[1, 2, 3], [4, [5, 6]], []].flatten(true);
+		expect(a.length).toBe(6);
+		for (i = 0; i < a.length; i++) {
+			expect(a[i]).toBe(i + 1);
+		}
+	});
+});
+
+describe('any()', function () {
+	it('returns a boolean', function () {
+		expect([].any()).toBe(false);
+
+		a = [1, 2, 3];
+		expect(a.any()).toBe(true);
+
+		expect(a.any(function (x) { return x === 2; })).toBe(true);
+		expect(a.any(function (x) { return x === 4; })).toBe(false);
+
+		expect(a.any(2)).toBe(true);
+		expect(a.any(4)).toBe(false);
+
+		a = [{ v: 1 }, { v: 2 }, { v: 3 }];
+		expect(a.any('v', 2)).toBe(true);
+		expect(a.any('v', 4)).toBe(false);
+	});
+});
+
+describe('all()', function () {
+	it('returns a boolean', function () {
+		expect([].all()).toBe(true);
+
+		a = [1, 2, 3];
+		b = [1, 1, 1];
+		expect(a.all(function (x) { return x === 1; })).toBe(false);
+		expect(b.all(function (x) { return x === 1; })).toBe(true);
+
+		expect(a.all(1)).toBe(false);
+		expect(b.all(1)).toBe(true);
+
+		a = [{ v: 1 }, { v: 2 }, { v: 3 }];
+		b = [{ v: 1 }, { v: 1 }, { v: 1 }];
+		expect(a.all('v', 1)).toBe(false);
+		expect(b.all('v', 1)).toBe(true);
+	});
+
+	it('throws an error because of invalid parameters', function () {
+		a = [1, 2, 3];
+		expect(a.all.bind(a)).toThrowError();
+	});
+});
+
+describe('has()', function () {
+	it('returns a boolean', function () {
+		a = [1, 2, 3];
+		expect(a.has(2)).toBe(true);
+		expect(a.has(4)).toBe(false);
+	});
+
+	it('throws an error because of invalid parameters', function () {
+		a = [1, 2, 3];
+		expect(a.has.bind(a)).toThrowError();
+	});
+});
+
+describe('isSame()', function () {
+	it('returns a boolean', function () {
+		a = [1, 2, 3];
+		expect(a.isSame([1])).toBe(false);
+		expect(a.isSame([1, 2, 3])).toBe(true);
+		expect(a.isSame([1, 3, 2])).toBe(false);
+		expect(a.isSame([1, 1, 1])).toBe(false);
+		expect(a.isSame([1, 2, 3, 4])).toBe(false);
+		expect(a.isSame([0, 1, 2], function (x, y) { return x === y + 1; })).toBe(true);
+	});
+
+	it('throws an error because of invalid parameters', function () {
+		a = [1, 2, 3];
+		expect(a.isSame.bind(a)).toThrowError();
+	});
+});
+
+describe('isLike()', function () {
+	it('returns a boolean', function () {
+		a = [1, 2, 3];
+		expect(a.isLike([1])).toBe(false);
+		expect(a.isLike([1, 2, 3])).toBe(true);
+		expect(a.isLike([1, 3, 2])).toBe(true);
+		expect(a.isLike([1, 1, 1])).toBe(false);
+		expect(a.isLike([1, 2, 3, 4])).toBe(false);
+		expect(a.isLike([0, 1, 2], function (x, y) { return x === y + 1; })).toBe(true);
+	});
+
+	it('throws an error because of invalid parameters', function () {
+		a = [1, 2, 3];
+		expect(a.isSame.bind(a)).toThrowError();
+	});
+});
+
+describe('isPart()', function () {
+	it('returns a boolean', function () {
+		a = [1, 2, 3];
+		expect(a.isPart([1])).toBe(false);
+		expect(a.isPart([1, 2, 3])).toBe(true);
+		expect(a.isPart([1, 3, 2])).toBe(true);
+		expect(a.isPart([1, 1, 1])).toBe(false);
+		expect(a.isPart([1, 2, 3, 4])).toBe(true);
+		expect(a.isPart([0, 1, 2], function (x, y) { return x === y + 1; })).toBe(true);
+	});
+
+	it('throws an error because of invalid parameters', function () {
+		a = [1, 2, 3];
+		expect(a.isPart.bind(a)).toThrowError();
+	});
+});
+
+describe('indexOf()', function () {
+	it('returns a number', function () {
+		a = [1, 2, 1];
+		expect(a.indexOf(1)).toBe(0);
+		expect(a.indexOf(4)).toBe(-1);
+		expect(a.indexOf(1, 0)).toBe(0);
+		expect(a.indexOf(1, 1)).toBe(2);
+		expect(a.indexOf(1, 1)).toBe(2);
+		expect(a.indexOf(function (x) { return x === 1; })).toBe(0);
+		expect(a.indexOf(function (x) { return x === 4; })).toBe(-1);
+		expect(a.indexOf(function (x) { return x === 1; }, 0)).toBe(0);
+		expect(a.indexOf(function (x) { return x === 1; }, 1)).toBe(2);
+		expect(a.indexOf(function (x) { return x === 1; }, 1)).toBe(2);
+	});
+
+	it('throws an error because of invalid parameters', function () {
+		a = [1, 2, 3];
+		expect(a.indexOf.bind(a)).toThrowError();
+		expect(a.indexOf.bind(a, 1, -1)).toThrowError(RangeError);
+		expect(a.indexOf.bind(a, 1, 4)).toThrowError(RangeError);
+	});
+});
+
+describe('lastIndexOf()', function () {
+	it('returns a number', function () {
+		a = [1, 2, 1];
+		expect(a.lastIndexOf(1)).toBe(2);
+		expect(a.lastIndexOf(4)).toBe(-1);
+		expect(a.lastIndexOf(1, 3)).toBe(2);
+		expect(a.lastIndexOf(1, 1)).toBe(0);
+		expect(a.lastIndexOf(1, 1)).toBe(0);
+		expect(a.lastIndexOf(function (x) { return x === 1; })).toBe(2);
+		expect(a.lastIndexOf(function (x) { return x === 4; })).toBe(-1);
+		expect(a.lastIndexOf(function (x) { return x === 1; }, 3)).toBe(2);
+		expect(a.lastIndexOf(function (x) { return x === 1; }, 1)).toBe(0);
+		expect(a.lastIndexOf(function (x) { return x === 1; }, 1)).toBe(0);
+	});
+
+	it('throws an error because of invalid parameters', function () {
+		a = [1, 2, 3];
+		expect(a.lastIndexOf.bind(a)).toThrowError();
+		expect(a.lastIndexOf.bind(a, 1, -1)).toThrowError(RangeError);
+		expect(a.lastIndexOf.bind(a, 1, 4)).toThrowError(RangeError);
+	});
+});
+
+describe('find()', function () {
+	it('returns a matched member or null', function () {
+		a = [{ v: 1 }, { v: 2 }, { v: 3 }];
+		expect(a.find('v', 1)).toBe(a[0]);
+		expect(a.find('v', 4)).toBeUndefined();
+		expect(a.find(function (x) { return x.v === 1; })).toBe(a[0]);
+		expect(a.find(function (x) { return x.v === 4; })).toBeUndefined();
+	});
+
+	it('throws an error because of invalid parameters', function () {
+		a = [{ v: 1 }, { v: 2 }, { v: 3 }];
+		expect(a.find.bind(a)).toThrowError();
+		expect(a.find.bind(a, 'v', null, null)).toThrowError();
 	});
 });
