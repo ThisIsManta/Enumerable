@@ -26,7 +26,7 @@
 		var nam;
 		var tmp;
 		var out;
-		if (typeof ar0 === 'object') {
+		if (typeof ar0 === 'object' && ar0 !== null) {
 			if (ar0 instanceof Array) {
 				out = ar0;
 				out._m = true;
@@ -100,8 +100,8 @@
 	};
 
 	Array.prototype.bind = function (ctx) {
-		if (ctx === window) {
-			console.warn('an array is binded to the window');
+		if (arguments.length === 1 && ctx === undefined || ctx === null || ctx === window) {
+			delete this._s;
 
 		} else if (typeof ctx === 'object') {
 			this._s = ctx;
@@ -109,11 +109,6 @@
 		} else {
 			throw new TypeError(ERR_BID);
 		}
-		return this;
-	};
-
-	Array.prototype.unbind = function () {
-		delete this._s;
 		return this;
 	};
 
@@ -641,7 +636,7 @@
 		var out = [];
 		while (++idx < bnd) {
 			tmp = this[idx];
-			if (typeof tmp === 'object' && tmp instanceof Array) {
+			if (Array.isArray(tmp)) {
 				if (tmp.length > 0) {
 					if (ar0 === true) {
 						tmp = tmp.flatten(ar0);
@@ -741,7 +736,7 @@
 		return this.indexOf.apply(this, arguments) >= 0;
 	};
 
-	Array.prototype.isSame = function () {
+	Array.prototype.isEqual = function () {
 		var ar0 = Array.create(arguments[0]);
 		var ar1 = arguments[1];
 		var idx = -1;
@@ -751,7 +746,10 @@
 
 		} else if (arguments.length === 1) {
 			while (++idx < bnd) {
-				if (this[idx] !== ar0[idx]) {
+				if (Array.isArray(this[idx]) && Array.isArray(ar0[idx]) && this[idx].isEqual(ar0[idx])) {
+					continue;
+
+				} else if (this[idx] !== ar0[idx]) {
 					return false;
 				}
 			}
@@ -770,7 +768,7 @@
 		}
 	};
 
-	Array.prototype.isLike = function () {
+	Array.prototype.isMatch = function () {
 		var ar0 = Array.create(arguments[0]).toImmutable();
 		var ar1 = arguments[1];
 		var idx = -1;
@@ -817,7 +815,7 @@
 		}
 	};
 
-	Array.prototype.isPart = function () {
+	Array.prototype.subsetOf = function () {
 		var arr = this;
 		var ar0 = Array.create(arguments[0]);
 		var ar1 = arguments[1];
@@ -1145,10 +1143,10 @@
 	Array.prototype.add = function () {
 		var ar0 = arguments[0];
 		var ar1 = arguments[1];
-		if (arguments.length === 1) {
+		if (arguments.length === 1 || ar1 === this.length) {
 			this.push(ar0);
 
-		} else if (arguments.length === 2 && isInt(ar1)) {
+		} else if (isInt(ar1) && arguments.length === 2) {
 			if (ar1 >= 0 && ar1 <= this.length) {
 				this.splice(ar1, 0, ar0);
 
@@ -1165,10 +1163,10 @@
 	Array.prototype.addRange = function () {
 		var ar0 = arguments[0];
 		var ar1 = arguments[1];
-		if (arguments.length === 1) {
+		if (arguments.length === 1 || ar1 === this.length) {
 			Array.prototype.splice.apply(this, [this.length, 0].concat(ar0));
 
-		} else if (arguments.length === 2 && isInt(ar1)) {
+		} else if (isInt(ar1) && arguments.length === 2) {
 			if (ar1 >= 0 && ar1 <= this.length) {
 				if (ar0.length === 1) {
 					this.splice(ar1, 0, ar0[0]);
@@ -1222,7 +1220,7 @@
 	};
 
 	Array.prototype.removeRange = function () {
-		var ar0 = arguments[0];
+		var ar0 = Array.create(arguments[0]);
 		var idx = -1;
 		var jdx;
 		var bnd = ar0.length;
@@ -1319,7 +1317,7 @@
 		var idx = -1;
 		var bnd = this.length;
 		var out = this.toImmutable();
-		if (ar0 === undefined) {
+		if (arguments.length !== 2) {
 			throw new Error(ERR_INV);
 		}
 		if (!isInt(ar2) || ar2 < 0) {
@@ -1410,13 +1408,6 @@
 		return out;
 	};
 
-	var _reverse = Array.prototype.reverse;
-	Array.prototype.reverse = function () {
-		var out = this.toImmutable();
-		_reverse.call(out);
-		return out;
-	};
-
 	Array.prototype.sortBy = function () {
 		var ar0 = arguments[0];
 		var ar1 = arguments[1];
@@ -1424,22 +1415,50 @@
 		var ctx = this._s;
 		if (arguments.length <= 2) {
 			if (typeof ar0 === 'function') {
-				out = this.select(function (val, idx) {
-					return { v: val, r: ar0.call(ctx, val, idx, this), i: idx };
+				out = this.select(function (itm, idx) {
+					return { v: itm, r: ar0.call(ctx, itm, idx, this), i: idx };
 				});
 
 			} else if (typeof ar0 === 'string') {
 				if (ar0.length === 0) {
 					throw new Error(ERR_AES);
 				}
-				out = this.select(function (val) {
-					return { v: val, r: val[ar0] };
+				out = this.select(function (itm) {
+					return { v: itm, r: itm[ar0] };
 				});
+
+			} else if (Array.isArray(ar0)) {
+				if (typeof ar1 === 'string' && ar1.length > 0) {
+					var nam = ar1;
+					ar1 = function (itm) {
+						return itm[nam];
+					};
+				}
+				var end = this.length;
+				if (arguments.length === 1) {
+					out = this.select(function (itm, idx) {
+						var tmp = ar0.indexOf(itm);
+						return { v: itm, r: tmp >= 0 ? tmp : (end + idx) };
+					});
+
+				} else if (typeof ar1 === 'function') {
+					out = this.select(function (itm, idx) {
+						var tmp = ar0.indexOf(ar1.apply(ctx, arguments));
+						return { v: itm, r: tmp >= 0 ? tmp : (end + idx) };
+					});
+
+				} else {
+					throw new Error(ERR_INV);
+				}
+				ar1 = undefined;
 
 			} else {
 				throw new Error(ERR_INV);
 			}
-			if (ar1 === undefined || ar1 === true) {
+			if (this.length <= 0) {
+				return this;
+
+			} else if (ar1 === undefined || ar1 === true) {
 				out.sort(function (x, y) {
 					if (x.r === y.r) {
 						return x.i - y.i;
@@ -1499,7 +1518,8 @@
 			var idx;
 			var bnd = lst.length / 2;
 			var tmp;
-			var x, y;
+			var x;
+			var y;
 			out = this.clone();
 			out.sort(function (cur, ano) {
 				idx = -1;
@@ -1528,62 +1548,6 @@
 				return 0;
 			});
 			return out;
-		}
-	};
-
-	Array.prototype.sortOn = function () {
-		var ar0 = arguments[0];
-		var ar1 = arguments[1];
-		var bnd = ar0.count();
-		var ctx = this._s;
-		if (typeof ar1 === 'string' && ar1.length > 0) {
-			var nam = ar1;
-			ar1 = function (itm) {
-				return itm[nam];
-			};
-		}
-		if (this._a.length <= 1) {
-			return this;
-
-		} else if (arguments.length === 1) {
-			return this.sortBy(function (itm, idx) {
-				var tmp = ar0.indexOf(itm);
-				return tmp >= 0 ? tmp : (bnd + idx);
-			});
-
-		} else if (typeof ar1 === 'function' && arguments.length === 2) {
-			return this.sortBy(function (itm, idx) {
-				var tmp = ar0.indexOf(ar1.apply(ctx, arguments));
-				return tmp >= 0 ? tmp : (bnd + idx);
-			});
-
-		} else {
-			throw new Error(ERR_INV);
-		}
-	};
-
-	Array.prototype.groupOf = function () {
-		var ar0 = arguments[0];
-		var idx = -1;
-		var bnd = this.length;
-		var tmp;
-		var out;
-		if (isInt(ar0) && ar0 > 0 && arguments.length === 1) {
-			out = new Array(Math.ceil(bnd / ar0));
-			while (++idx < bnd) {
-				tmp = out[Math.floor(idx / ar0)];
-				if (tmp === undefined) {
-					tmp = out[Math.floor(idx / ar0)] = [];
-				}
-				tmp.push(this[idx]);
-			}
-			if (this._s !== undefined) {
-				out._s = this._s;
-			}
-			return out;
-
-		} else {
-			throw new Error(ERR_INV);
 		}
 	};
 
@@ -1644,11 +1608,35 @@
 		return out;
 	};
 
+	Array.prototype.groupOf = function () {
+		var ar0 = arguments[0];
+		var idx = -1;
+		var bnd = this.length;
+		var tmp;
+		var out;
+		if (isInt(ar0) && ar0 > 0 && arguments.length === 1) {
+			out = new Array(Math.ceil(bnd / ar0));
+			while (++idx < bnd) {
+				tmp = out[Math.floor(idx / ar0)];
+				if (tmp === undefined) {
+					tmp = out[Math.floor(idx / ar0)] = [];
+				}
+				tmp.push(this[idx]);
+			}
+			if (this._s !== undefined) {
+				out._s = this._s;
+			}
+			return out;
+
+		} else {
+			throw new Error(ERR_INV);
+		}
+	};
+
 	Array.prototype.joinBy = function () {
 		var ar0 = arguments[0];
 		var ar1 = arguments[1];
-		var ar2 = typeof arguments[2] === 'function' ? arguments[2] : undefined;
-		var ovr = typeof arguments[2] === 'boolean' ? arguments[2] : false;
+		var ar2 = arguments[2];
 		var idx = -1;
 		var jdx;
 		var bnd = this.length;
@@ -1674,17 +1662,12 @@
 						}
 					}
 					if (tmp !== null) {
-						if (ar2) {
-							ar2.call(ctx, this[idx], tmp, this);
+						for (nam in tmp) {
+							if (ar2) {
+								this[idx][nam] = tmp[nam];
 
-						} else {
-							for (nam in tmp) {
-								if (ovr === true) {
-									this[idx][nam] = tmp[nam];
-
-								} else if (this[idx][nam] === undefined) {
-									this[idx][nam] = tmp[nam];
-								}
+							} else if (this[idx][nam] === undefined) {
+								this[idx][nam] = tmp[nam];
 							}
 						}
 					}
@@ -1702,17 +1685,12 @@
 					}
 				}
 				if (tmp !== null) {
-					if (ar2) {
-						ar2.call(ctx, this[idx], tmp, this);
+					for (nam in tmp) {
+						if (ar2) {
+							this[idx][nam] = tmp[nam];
 
-					} else {
-						for (nam in tmp) {
-							if (ovr === true) {
-								this[idx][nam] = tmp[nam];
-
-							} else if (this[idx][nam] === undefined) {
-								this[idx][nam] = tmp[nam];
-							}
+						} else if (this[idx][nam] === undefined) {
+							this[idx][nam] = tmp[nam];
 						}
 					}
 				}
@@ -1731,10 +1709,10 @@
 		var bnd = this.length;
 		var out = 0;
 		var ctx = this._s;
-		if (ar0 === undefined) {
+		if (arguments.length === 0 || arguments.length > 2) {
 			throw new Error(ERR_INV);
 
-		} else if (typeof ar0 === 'string' && ar0.length > 0 && arguments.length === 2) {
+		} else if (typeof ar0 === 'string') {
 			while (++idx < bnd) {
 				if (this[idx][ar0] === ar1) {
 					out++;
@@ -2045,8 +2023,11 @@
 			if (ar0 === 'string') {
 				while (++idx < bnd) {
 					tmp = this[idx];
-					if (tmp !== undefined && tmp !== null) {
-						out[++jdx] = tmp.toString();
+					if (tmp !== undefined && tmp !== null && tmp.toString !== undefined) {
+						tmp = tmp.toString();
+						if (tmp !== '[object Object]' && /function\s*\(.*\)\s*{.*}/.test(tmp) === false) {
+							out[++jdx] = tmp.toString();
+						}
 					}
 				}
 
@@ -2066,10 +2047,32 @@
 					}
 				}
 
+			} else if (ar0 === 'boolean') {
+				while (++idx < bnd) {
+					tmp = this[idx];
+					if (tmp !== undefined && tmp !== null && tmp.toString !== undefined) {
+						tmp = tmp.toString().trim().toLowerCase();
+						if (tmp === 'true') {
+							out[++jdx] = true;
+
+						} else if (tmp === 'false') {
+							out[++jdx] = false;
+						}
+					}
+				}
+
 			} else if (ar0 === 'array') {
 				while (++idx < bnd) {
 					tmp = this[idx];
-					if (tmp instanceof Array) {
+					if (Array.isArray(tmp)) {
+						out[++jdx] = tmp;
+					}
+				}
+
+			} else if (ar0 === 'object') {
+				while (++idx < bnd) {
+					tmp = this[idx];
+					if (tmp !== null && typeof tmp === 'object' && !Array.isArray(tmp)) {
 						out[++jdx] = tmp;
 					}
 				}
@@ -2078,14 +2081,6 @@
 				while (++idx < bnd) {
 					tmp = this[idx];
 					if (typeof tmp === 'function') {
-						out[++jdx] = tmp;
-					}
-				}
-
-			} else if (ar0 === 'object') {
-				while (++idx < bnd) {
-					tmp = this[idx];
-					if (tmp !== null && typeof tmp === 'object' && !(tmp instanceof Array)) {
 						out[++jdx] = tmp;
 					}
 				}
@@ -2106,19 +2101,34 @@
 	};
 
 	Array.prototype.cross = function () {
-		var arr = this._x === true ? this : this.select(function (tmp) { return [tmp]; });
-		var ar0 = arguments[0];
+		var arr = this;
+		var ar0 = Array.create(arguments[0]);
 		var idx = -1;
 		var jdx;
 		var kdx = -1;
 		var bnd = this.length;
 		var cnd = ar0.length;
 		var out = new Array(bnd * cnd);
-		while (++idx < bnd) {
-			jdx = -1;
-			while (++jdx < cnd) {
-				out[++kdx] = [arr[idx]].add(ar0[jdx]);
+		if (arguments.length === 1) {
+			if (this._x === true) {
+				while (++idx < bnd) {
+					jdx = -1;
+					while (++jdx < cnd) {
+						out[++kdx] = arr[idx].slice(0).add(ar0[jdx]);
+					}
+				}
+
+			} else {
+				while (++idx < bnd) {
+					jdx = -1;
+					while (++jdx < cnd) {
+						out[++kdx] = [arr[idx]].add(ar0[jdx]);
+					}
+				}
 			}
+
+		} else {
+			throw new Error(ERR_INV);
 		}
 		out._x = true;
 		if (this._s !== undefined) {
@@ -2135,14 +2145,19 @@
 		var cnd = ar0.length;
 		var tmp;
 		var out = new Array(this.length);
-		if (ar0.all(function (itm) { return typeof itm === 'string'; })) {
-			while (++idx < bnd) {
-				tmp = {};
-				jdx = -1;
-				while (++jdx < cnd) {
-					tmp[ar0[jdx]] = this[idx][jdx];
+		if (arguments.length === 1) {
+			if (ar0.all(function (itm) { return typeof itm === 'string'; })) {
+				while (++idx < bnd) {
+					tmp = {};
+					jdx = -1;
+					while (++jdx < cnd) {
+						tmp[ar0[jdx]] = this[idx][jdx];
+					}
+					tmp = out[idx];
 				}
-				tmp = out[idx];
+
+			} else {
+				throw new TypeError(ERR_INV);
 			}
 
 		} else {
@@ -2160,7 +2175,7 @@
 		var ar2 = arguments[2];
 		var ctx = this._s;
 		if (arguments.length >= 2 && typeof ar0 === 'string' && ar0.length > 0 && (typeof ar1 === 'string' && ar1.length > 0 || typeof ar1 === 'function')) {
-			var skf = function (lst) {
+			return (function (lst) {
 				var idx = -1;
 				var bnd = lst.length;
 				var tmp;
@@ -2168,13 +2183,11 @@
 					if (typeof ar1 === 'string' && lst[idx][ar1] === ar2 || typeof ar1 === 'function' && ar1.call(ctx, lst[idx], idx, lst)) {
 						return lst[idx];
 
-					} else if (typeof lst[idx][ar0] === 'object' && lst[idx][ar0] instanceof Array && (tmp = skf(lst[idx][ar0])) !== undefined) {
+					} else if (Array.isArray(lst[idx][ar0]) && (tmp = arguments.callee(lst[idx][ar0])) !== undefined) {
 						return tmp;
 					}
 				}
-			};
-			var out = skf(this._a);
-			return out === undefined ? null : out;
+			})(this);
 
 		} else {
 			throw new Error(ERR_INV);
@@ -2194,22 +2207,25 @@
 			return true;
 
 		} else if (Array.isArray(ar0) && Array.isArray(ar1)) {
-			return ar0.length === ar1.length && ar0.all(function (val, idx) { return Object.isEqual(ar0[idx], ar1[idx]); });
+			return ar0.length === ar1.length && ar0.all(function (itm, idx) {
+				return Object.isEqual(ar0[idx], ar1[idx]);
+			});
 
 		} else if (Object.isObject(ar0) && Object.isObject(ar1)) {
-			var ls0 = [];
+			var nam;
+			var ls0 = Array.create();
 			for (nam in ar0) {
 				if (ar0[nam] !== undefined) {
 					ls0.push(nam);
 				}
 			}
-			var ls1 = [];
+			var ls1 = Array.create();
 			for (nam in ar1) {
 				if (ar1[nam] !== undefined) {
 					ls1.push(nam);
 				}
 			}
-			return ls0.isLike(ls1) && ls0.all(function (nam, idx) {
+			return ls0.isMatch(ls1) && ls0.all(function (nam, idx) {
 				return Object.isEqual(ar0[nam], ar1[nam]);
 			});
 
