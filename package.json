@@ -21,7 +21,6 @@
 	"homepage": "https://github.com/ThisIsManta/Enumerable#readme",
 	"devDependencies": {
 		"grunt": "~1.0.1",
-		"typescript": "^1.8.10",
 		"uglyfly-js": "^3.2.2"
 	},
 	"scripts": {

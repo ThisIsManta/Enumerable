@@ -579,19 +579,19 @@ describe('Array', function () {
 		});
 	});
 
-	describe('subsetOf()', function () {
+	describe('isSubset()', function () {
 		it('returns the boolean', function () {
 			a = [1, 2, 3];
-			expect(a.subsetOf([1])).toBe(false);
-			expect(a.subsetOf([1, 2, 3])).toBe(true);
-			expect(a.subsetOf([1, 3, 2])).toBe(true);
-			expect(a.subsetOf([1, 1, 1])).toBe(false);
-			expect(a.subsetOf([1, 2, 3, 4])).toBe(true);
-			expect(a.subsetOf([0, 1, 2], function (x, y) { return x === y + 1; })).toBe(true);
+			expect(a.isSubset([1])).toBe(false);
+			expect(a.isSubset([1, 2, 3])).toBe(true);
+			expect(a.isSubset([1, 3, 2])).toBe(true);
+			expect(a.isSubset([1, 1, 1])).toBe(false);
+			expect(a.isSubset([1, 2, 3, 4])).toBe(true);
+			expect(a.isSubset([0, 1, 2], function (x, y) { return x === y + 1; })).toBe(true);
 		});
 
 		it('throws an error', function () {
-			expect([].subsetOf.bind([])).toThrowError();
+			expect([].isSubset.bind([])).toThrowError();
 		});
 	});
 
@@ -1181,9 +1181,7 @@ describe('Array', function () {
 			expect(a.cast('array')).toEqual(a.cast(Array));
 
 			z = a.cast('object');
-			console.log('yes');
 			expect(z).toEqual([{}]);
-			console.log('no');
 			expect(a.cast('object')).toEqual(a.cast(Object));
 
 			z = a.cast('function');

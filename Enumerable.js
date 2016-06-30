@@ -166,7 +166,6 @@
 		var ar1 = arguments[1];
 		var idx = -1;
 		var bnd = this.length;
-		var nam;
 		var out = new Map();
 		var ctx = this._s;
 		if (arguments.length === 0) {
@@ -538,7 +537,6 @@
 		var ar0 = arguments[0];
 		var ar1 = arguments[1];
 		var idx = -1;
-		var jdx;
 		var bnd = this.length;
 		var out;
 		if (typeof ar0 === 'function') {
@@ -815,7 +813,7 @@
 		}
 	};
 
-	Array.prototype.subsetOf = function () {
+	Array.prototype.isSubset = function () {
 		var arr = this;
 		var ar0 = Array.create(arguments[0]);
 		var ar1 = arguments[1];
@@ -1222,7 +1220,6 @@
 	Array.prototype.removeRange = function () {
 		var ar0 = Array.create(arguments[0]);
 		var idx = -1;
-		var jdx;
 		var bnd = ar0.length;
 		if (arguments.length === 1) {
 			while (++idx < bnd) {
@@ -2225,7 +2222,7 @@
 					ls1.push(nam);
 				}
 			}
-			return ls0.isMatch(ls1) && ls0.all(function (nam, idx) {
+			return ls0.isMatch(ls1) && ls0.all(function (nam) {
 				return Object.isEqual(ar0[nam], ar1[nam]);
 			});
 
