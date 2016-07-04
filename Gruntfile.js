@@ -1,4 +1,35 @@
 module.exports = function (grunt) {
+	grunt.config.init({
+		less: {
+			demo: {
+				options: {
+					compress: true
+				},
+				files: {
+					'demo/index.css': 'demo/index.less'
+				}
+			}
+		},
+		watch: {
+			less: {
+				options: {
+					atBegin: true
+				},
+				files: ['demo/*.less'],
+				tasks: ['less']
+			},
+			demo: {
+				options: {
+					livereload: true
+				},
+				files: ['index.html', '*.js', 'demo/*']
+			}
+		}
+	});
+
+	grunt.task.loadNpmTasks('grunt-contrib-less');
+	grunt.task.loadNpmTasks('grunt-contrib-watch');
+
 	grunt.task.registerTask('license', function (path) {
 		var list = grunt.file.expand(path);
 		list.forEach(function (path) {

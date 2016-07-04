@@ -219,6 +219,16 @@
 		return out;
 	};
 
+	/**
+	 * <p><b>Returns</b> an object by constructing properties from all members.</p>
+	 * <code>
+	 * ['a', 'book'].toObject();
+	 * 
+	 * ['a', 'book'].toObject(function (x) {
+	 * 	return x.length;
+	 * });
+	 * </code>
+	 */
 	Array.prototype.toObject = function () {
 		var ar0 = arguments[0];
 		var ar1 = arguments[1];
@@ -301,6 +311,14 @@
 
 	var _toString = Array.prototype.toString;
 
+	/**
+	 * <b>Returns</b> a string by concatenating all members. This presumes all members are string.
+	 * <code>
+	 * ['La', 'Da', 'Dee'].toString();
+	 *
+	 * ['La', 'Da', 'Dee'].toString('-');
+	 * </code>
+	 */
 	Array.prototype.toString = function () {
 		var ar0 = arguments[0];
 		if (arguments.length === 0) {

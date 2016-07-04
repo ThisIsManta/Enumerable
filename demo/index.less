@@ -1,0 +1,127 @@
+html {
+	font-family: 'Roboto';
+	font-size: small;
+}
+
+@grey900: #212121;
+@grey700: #616161;
+@grey500: #9E9E9E;
+@grey300: #E0E0E0;
+@grey100: #F5F5F5;
+@grey50: #FAFAFA;
+
+@blue50: #E3F2FD;
+@blue100: #BBDEFB;
+@blue900: #0D47A1;
+
+body {
+	display: flex;
+	margin: 0;
+	background: white;
+
+	nav {
+		width: 240;
+		height: 100%;
+		border-right: 1px solid @grey300;
+		display: flex;
+		flex-direction: column;
+
+		#search {
+			width: 100%;
+			display: flex;
+			border-bottom: 1px solid @grey300;
+
+			input[type=text] {
+				border: none;
+				outline: none;
+				font-family: 'Roboto';
+				font-size: medium;
+				flex: 1;
+			}
+		}
+
+		ul {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+			flex: 1;
+
+			li {
+				display: block;
+
+				a {
+					display: block;
+					padding: 5px 10px;
+				}
+			}
+		}
+	}
+
+	main {
+		height: 100%;
+		flex: 1;
+		overflow: auto;
+		font-size: small;
+		color: @grey900;
+		background: @grey100;
+
+		> div {
+			max-width: 800px;
+			margin: auto;
+		}
+
+		h1 {
+			margin-left: 20px;
+		}
+
+		h1, h2 {
+			color: black;
+			font-weight: normal;
+		}
+
+		section {
+			background: white;
+			border: 1px solid @grey300;
+
+			padding: 5px 20px;
+
+			&+ section {
+				border-top: none;
+			}
+
+			> * {
+				padding: 0;
+				margin: 15px 0;
+			}
+
+			h2:first-child {
+				margin-top: 10px;
+			}
+
+			code {
+				display: block;
+				font-family: 'Roboto Mono';
+				border: 1px solid @blue100;
+				color: @blue900;
+				background: @blue50;
+				padding: 0 5px;
+				outline: none;
+
+				span[contenteditable=false] {
+					color: green;
+				}
+
+				i {
+					display: inline-block;
+					width: 1em;
+				}
+			}
+		}
+	}
+}
+
+.material-icons {
+	font-size: 1em;
+	vertical-align: top;
+	margin-top: 2px;
+}
