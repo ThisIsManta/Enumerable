@@ -230,7 +230,7 @@
 		if (arguments.length === 0) {
 			while (++idx < bnd) {
 				nam = this[idx];
-				out[nam.toString()] = nam;
+				out[nam.toString()] = true;
 			}
 
 		} else if (typeof ar0 === 'string') {
@@ -259,7 +259,12 @@
 				}
 
 			} else {
-				throw new Error(ERR_INV);
+				while (++idx < bnd) {
+					nam = this[idx][ar0];
+					if (nam !== undefined) {
+						out[nam] = ar1;
+					}
+				}
 			}
 
 		} else if (typeof ar0 === 'function') {
@@ -282,7 +287,10 @@
 				}
 
 			} else {
-				throw new Error(ERR_INV);
+				while (++idx < bnd) {
+					nam = ar0.call(ctx, this[idx], idx, this).toString();
+					out[nam] = ar1;
+				}
 			}
 
 		} else {
@@ -2331,5 +2339,25 @@
 
 	String.prototype.toKebabCase = function () {
 		return this.toEnglishCase().replace(CAS_APO, '').toLowerCase().splitWords().join('-');
+	};
+
+	String.prototype.latchOf = function (str, end) {
+		var num = 0;
+		var idx = -1;
+		var bnd = this.length;
+		while (++idx < bnd) {
+			if (this.substring(idx, idx + str.length) === str) {
+				num++;
+				idx += str.length - 1;
+
+			} else if (this.substring(idx, idx + end.length) === end) {
+				num--;
+				if (num === 0) {
+					return idx;
+				}
+				idx += end.length - 1;
+			}
+		}
+		return -1;
 	};
 })();
