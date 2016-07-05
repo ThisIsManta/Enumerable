@@ -18,6 +18,9 @@
 	var ERR_IWG = '[invokeWhich] must be called after [groupBy]';
 	var ERR_BID = 'a non-object type was not allowed';
 
+	/**
+	 * <p><b>Returns</b> a new array from the given parameter.</p>
+	 */
 	Array.create = function () {
 		var ar0 = arguments[0];
 		var ar1 = arguments[1];
@@ -318,6 +321,7 @@
 	 *
 	 * ['La', 'Da', 'Dee'].toString('-');
 	 * </code>
+	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join">Array.prototype.join</a></p>
 	 */
 	Array.prototype.toString = function () {
 		var ar0 = arguments[0];
@@ -880,11 +884,13 @@
 		var idx = -1;
 		var bnd = this.length;
 		if (arguments.length === 2) {
-			if (isInt(ar1) && ar1 >= 0 && ar1 <= bnd) {
-				idx = ar1 - 1;
+			if (isInt(ar1)) {
+				if (ar1 >= 0 && ar1 <= bnd) {
+					idx = ar1 - 1;
 
-			} else {
-				throw new RangeError(ERR_OOR);
+				} else {
+					throw new RangeError(ERR_OOR);
+				}
 			}
 		}
 		if (arguments.length >= 1) {
@@ -2296,6 +2302,10 @@
 		return XML_DEC[chr];
 	};
 
+	/**
+	 * <p>Escape XML</p>
+	 * <meta keywords="html,escape,character"/>
+	 */
 	String.prototype.toEncodedXML = function () {
 		return this.replace(XML_SYM, _encodeXML);
 	};
@@ -2352,11 +2362,11 @@
 	var CAS_APO = /['’]/g;
 
 	String.prototype.toCamelCase = function () {
-		return this.toEnglishCase().replace(CAS_APO, '').toLowerCase().splitWords().map(String.prototype.toCapitalWord).join('');
+		return this.toEnglishCase().replace(CAS_APO, '').splitWords().map(String.prototype.toCapitalWord).join('');
 	};
 
 	String.prototype.toKebabCase = function () {
-		return this.toEnglishCase().replace(CAS_APO, '').toLowerCase().splitWords().join('-');
+		return this.toEnglishCase().replace(CAS_APO, '').splitWords().join('-');
 	};
 
 	String.prototype.latchOf = function (str, end) {
@@ -2377,5 +2387,29 @@
 			}
 		}
 		return -1;
+	};
+
+	Function.prototype.debounce = function (dur) {
+		var tid, arg, ctx, stp, fnc = this;
+		return function () {
+			ctx = this;
+			arg = [].slice.call(arguments, 0);
+			stp = new Date();
+
+			var hdr = function () {
+				var tim = (new Date()) - stp;
+				if (tim < dur) {
+					tid = setTimeout(hdr, dur - tim);
+
+				} else {
+					tid = undefined;
+					fnc.apply(ctx, arg);
+				}
+			};
+
+			if (tid === undefined) {
+				tid = setTimeout(hdr, dur);
+			}
+		};
 	};
 })();
