@@ -1,97 +1,66 @@
 $(document).ready(function () {
-	$.get('Enumerable.js').then(function (full) {
-		eval(full);
+	var list = $('nav ul > li').toArray().select(function (elem) {
+		return {
+			link: $(elem),
+			card: $('[name="' + $(elem).find('a[href]').attr('href').substring('1') + '"]').parents('section'),
+			keys: $(elem).data('keys').split(',')
+		};
+	}).invoke(function (item) {
+		item.link.data('item', item);
+	});
 
-		var list = [];
+	$('#search input[type=text]:not(:disabled)').on('input', function (e) {
+		var text = e.currentTarget.value.trim();
+		if (text.length > 0) {
+			var tags = text.toLowerCase().split(/(\s|\.)/).distinct();
+			list.invoke(function (item) {
+				if (tags.all(function (tagx) {
+					return item.keys.any(function (keyx) {
+						return keyx.indexOf(tagx) === 0;
+					});
+				})) {
+					item.link.css('display', '');
+					item.card.css('display', '');
 
-		full = full.substring(full.indexOf('{') + 1, full.latchOf('{', '}'));
-
-		var indx = -1;
-		while ((indx = full.indexOf('/**', indx + 1)) >= 0) {
-			var pivt = full.indexOf('*/', indx);
-
-			var desc = full.substring(indx + 3, pivt).trim().split('\n').select(function (line) {
-				return line.substring(line.indexOf('*') + 2);
-			}).toString('\n');
-
-			var tabc;
-			var code = full.substring(pivt + 2, pivt + 2 + full.substring(pivt + 2).latchOf('{', '}') + 1).split('\n').skip(function (line) {
-				return line.trim().length === 0;
-			}).select(function (line, numb) {
-				if (numb === 0) {
-					tabc = line.match(/^\t*/)[0].length;
+				} else {
+					item.link.hide();
+					item.card.hide();
 				}
-				return line.substring(tabc);
-			}).toString('\n');
-
-			var name = code.match(/.*\s?=\s?function/)[0];
-			name = name.substring(0, name.indexOf('=')).trim();
-
-			list.push({
-				name: name,
-				desc: desc,
-				code: code
 			});
+
+		} else {
+			$('nav ul > li, main > section').css('display', '');
 		}
 
-		list.sortBy('name').groupBy(function (item) {
-			return item.name.split('.').first();
-		}).invoke(function (fami) {
-			$('<h1>' + fami.name + '</h1>').appendTo('main > div');
-			fami.invoke(function (item) {
-				var name = item.name.split('.');
-				name[name.length - 1] = '<b>' + name[name.length - 1] + '</b>';
-				name = name.join('.');
-				$('<li><a>' + name + '</a></li>').data('item', item).appendTo('nav ul');
+		localStorage.setItem('search', text);
+	}.debounce(300)).on('keydown', function (e) {
+		if (e.keyCode === 27 /* Escape */) {
+			$(e.currentTarget).val('').trigger('input');
+		}
+	}).val(localStorage.getItem('search') || '').trigger('input');
 
-				var $sect = $('<section>' + item.desc + '</section>');
-				$sect.prepend('<h2><a name="' + item.name.toLowerCase() + '">' + name + '</a></h2>');
+	$('nav ul > li').on('click', function (e) {
+		var item = $(e.currentTarget).data('item');
+		$('section').attr('gaze', null);
+		$('main').add(item.card).attr('gaze', true);
 
-				var $code = $sect.find('code');
-				$code.each(function () {
-					this.contentEditable = true;
-					this.spellcheck = false;
-					var temp = '';
-					var wait = false;
-					var last;
-					this.innerHTML = this.textContent.trim().split('\n').select(function (line) {
-						var outp = '';
-						if (/^var\s+\w+\s+=/.test(line) || /^\t/.test(line)) {
-							temp += line;
+		e.stopPropagation();
+	});
 
-						} else if (/({|\()$/.test(line)) {
-							temp += 'last = ' + line;
-							wait = true;
+	$('section').on('click', function (e) {
+		var $card = $(e.currentTarget);
+		var $main = $('main');
+		if ($card.attr('gaze') !== 'true') {
+			if ($main.attr('gaze') === 'true') {
+				$('section[gaze]').attr('gaze', null);
+			}
+			$main.add($card).attr('gaze', true);
+		}
+	});
 
-						} else if (/;$/.test(line)) {
-							if (wait === true) {
-								temp += line;
-								wait = false;
-
-							} else {
-								temp += 'last = ' + line;
-							}
-
-							console.debug(temp);
-							eval(temp);
-							if (last === undefined) {
-								last = 'undefined';
-
-							} else if (last === null) {
-								last = 'null';
-
-							} else {
-								last = JSON.stringify(last, null, '\t');
-							}
-
-							outp = '<br><span contenteditable="false">// ' + last + '</span>';
-						}
-						return line.replace(/^\t/, '&nbsp;&nbsp;') + outp;
-					}).toString('<br>');
-				});
-
-				$sect.appendTo('main > div');
-			});
-		});
+	$(document).on('click', function (e) {
+		if ($(e.target).parents('main').length === 0) {
+			$('main, section').attr('gaze', null);
+		}
 	});
 });

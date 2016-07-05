@@ -1,0 +1,45 @@
+<html><head>
+		<meta charset="UTF-8">
+
+		<title>Enumerable</title>
+
+		<link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700">
+		<link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono">
+		<link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+		<link type="text/css" rel="stylesheet" href="index.css">
+
+		<script src="https://cdn.jsdelivr.net/jquery/3.0.0/jquery.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/es6.shim/0.35.1/es6-shim.min.js"></script>
+		<script src="../Enumerable.js"></script>
+		<script src="index.js"></script>
+		<script>
+			if (window.location.protocol === 'file:') {
+				var script = document.createElement('script');
+				script.src = 'http://localhost:35729/livereload.js';
+				document.head.appendChild(script);
+			}
+		</script>
+	</head>
+	<body>
+		<div>
+			<nav>
+				<div id="search">
+					<input type="text" placeholder="Search">
+					<i class="material-icons">search</i>
+				</div>
+				<ul><li data-keys="array,create"><a href="#array.create">Array.<b>create</b></a></li><li data-keys="array,prototype,assign"><a href="#array.prototype.assign">Array.prototype.<b>assign</b></a></li><li data-keys="array,prototype,seek"><a href="#array.prototype.seek">Array.prototype.<b>seek</b></a></li><li data-keys="array,prototype,toobject,to,object"><a href="#array.prototype.toobject">Array.prototype.<b>toObject</b></a></li><li data-keys="array,prototype,tostring,to,string"><a href="#array.prototype.tostring">Array.prototype.<b>toString</b></a></li><li data-keys="string,prototype,toencodedxml,to,encoded,xml,html,escape,character"><a href="#string.prototype.toencodedxml">String.prototype.<b>toEncodedXML</b></a></li></ul>
+			</nav>
+			<main><h1><a name="array"></a>Array</h1><section><a name="array.create"></a><h2><div>Array.<b>create</b></div><a view="" class="material-icons auto-hide" href="https://github.com/ThisIsManta/Enumerable/blob/master/Enumerable.js#L24" title="View source code">code</a></h2><p><b>Returns</b> a new array from the given parameter.</p></section><section><a name="array.prototype.assign"></a><h2><div>Array.prototype.<b>assign</b></div><a view="" class="material-icons auto-hide" href="https://github.com/ThisIsManta/Enumerable/blob/master/Enumerable.js#L2172" title="View source code">code</a></h2>Do something</section><section><a name="array.prototype.seek"></a><h2><div>Array.prototype.<b>seek</b></div><a view="" class="material-icons auto-hide" href="https://github.com/ThisIsManta/Enumerable/blob/master/Enumerable.js#L2207" title="View source code">code</a></h2>Do something</section><section><a name="array.prototype.toobject"></a><h2><div>Array.prototype.<b>toObject</b></div><a view="" class="material-icons auto-hide" href="https://github.com/ThisIsManta/Enumerable/blob/master/Enumerable.js#L235" title="View source code">code</a></h2><p><b>Returns</b> an object by constructing properties from all members.</p>
+<code contenteditable="true" spellcheck="false">['a', 'book'].toObject();<br><s contenteditable="false">// {
+	"a": true,
+	"book": true
+}</s><br><br>['a', 'book'].toObject(function (x) {<br>&nbsp;&nbsp;return x.length;<br>});<br><s contenteditable="false">// {
+	"1": "a",
+	"4": "book"
+}</s></code></section><section><a name="array.prototype.tostring"></a><h2><div>Array.prototype.<b>toString</b></div><a view="" class="material-icons auto-hide" href="https://github.com/ThisIsManta/Enumerable/blob/master/Enumerable.js#L326" title="View source code">code</a></h2><b>Returns</b> a string by concatenating all members. This presumes all members are string.
+<code contenteditable="true" spellcheck="false">['La', 'Da', 'Dee'].toString();<br><s contenteditable="false">// "La,Da,Dee"</s><br><br>['La', 'Da', 'Dee'].toString('-');<br><s contenteditable="false">// "La-Da-Dee"</s></code>
+<p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join">Array.prototype.join</a></p></section><h1><a name="string"></a>String</h1><section><a name="string.prototype.toencodedxml"></a><h2><div>String.prototype.<b>toEncodedXML</b></div><a view="" class="material-icons auto-hide" href="https://github.com/ThisIsManta/Enumerable/blob/master/Enumerable.js#L2315" title="View source code">code</a></h2><p>Escape XML</p>
+<meta keywords="html,escape,character"></section></main>
+		</div>
+	
+</body></html>
