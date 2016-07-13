@@ -28,7 +28,7 @@
 					<input type="text" placeholder="Search">
 					<button class="material-icons" disabled="">search</button>
 				</div>
-				<ul><li data-keys="array,create,from"><a href="#array.create">Array.<b>create</b></a></li><li data-keys="array,prototype,clone,copy,slice"><a href="#array.prototype.clone">Array.prototype.<b>clone</b></a></li><li data-keys="array,prototype,invoke"><a href="#array.prototype.invoke">Array.prototype.<b>invoke</b></a></li><li data-keys="array,prototype,select,map"><a href="#array.prototype.select">Array.prototype.<b>select</b></a></li><li data-keys="array,prototype,toobject,to,object,hash,dictionary"><a href="#array.prototype.toobject">Array.prototype.<b>toObject</b></a></li><li data-keys="array,prototype,tostring,to,string,text,join,concat"><a href="#array.prototype.tostring">Array.prototype.<b>toString</b></a></li><li data-keys="array,prototype,where,filter"><a href="#array.prototype.where">Array.prototype.<b>where</b></a></li><li data-keys="string,prototype,toencodedxml,to,encoded,xml,html,escape,character"><a href="#string.prototype.toencodedxml">String.prototype.<b>toEncodedXML</b></a></li></ul>
+				<ul><li data-keys="array,create,from"><a href="#array.create">Array.<b>create</b></a></li><li data-keys="array,prototype,bind,context"><a href="#array.prototype.bind">Array.prototype.<b>bind</b></a></li><li data-keys="array,prototype,clone,copy,slice"><a href="#array.prototype.clone">Array.prototype.<b>clone</b></a></li><li data-keys="array,prototype,invoke"><a href="#array.prototype.invoke">Array.prototype.<b>invoke</b></a></li><li data-keys="array,prototype,select,map"><a href="#array.prototype.select">Array.prototype.<b>select</b></a></li><li data-keys="array,prototype,toobject,to,object,hash,dictionary,map"><a href="#array.prototype.toobject">Array.prototype.<b>toObject</b></a></li><li data-keys="array,prototype,tostring,to,string,text,join,concat"><a href="#array.prototype.tostring">Array.prototype.<b>toString</b></a></li><li data-keys="array,prototype,where,filter"><a href="#array.prototype.where">Array.prototype.<b>where</b></a></li><li data-keys="string,prototype,toencodedxml,to,encoded,xml,html,escape,character"><a href="#string.prototype.toencodedxml">String.prototype.<b>toEncodedXML</b></a></li></ul>
 			</nav>
 			<main><h1><a name="array"></a>Array</h1><section><a name="array.create"></a><h2><div>Array.<b>create</b></div><a view="" class="material-icons auto-hide" href="https://github.com/ThisIsManta/Enumerable/blob/master/Enumerable.js#L70" title="View source code">code</a></h2><p><b>Returns</b> an array from the given array-like or object. If the source is object and the last parameter is true, private properties and functions will be included in the new array.</p>
 <p><b>Accepts</b><br>
@@ -119,13 +119,22 @@
 	null
 ]</s></code>
 <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from">Array.from</a></p>
-<meta keywords="from"></section><section><a name="array.prototype.clone"></a><h2><div>Array.prototype.<b>clone</b></div><a view="" class="material-icons auto-hide" href="https://github.com/ThisIsManta/Enumerable/blob/master/Enumerable.js#L210" title="View source code">code</a></h2><p><b>Returns</b> a new array that has identical members to the current array.</p>
+<meta keywords="from"></section><section><a name="array.prototype.bind"></a><h2><div>Array.prototype.<b>bind</b></div><a view="" class="material-icons auto-hide" href="https://github.com/ThisIsManta/Enumerable/blob/master/Enumerable.js#L163" title="View source code">code</a></h2><p><b>Returns</b> the current array and stores the given object as a context for further use in functions. Passing an undefined or null will delete the existing context.</p>
+<p><b>Accepts</b><br>
+<u>(context: <i>object</i>)</u><br>
+</p>
+<code contenteditable="true" spellcheck="false">var a = { z: 0 };<br>[1, 2, 3].bind(a).invoke(function (x) { this.z += x; });<br><s contenteditable="false">// [
+	1,
+	2,
+	3
+]</s><br>console.log(a.z);<br><s contenteditable="false">// 6</s></code>
+<meta keywords="context"></section><section><a name="array.prototype.clone"></a><h2><div>Array.prototype.<b>clone</b></div><a view="" class="material-icons auto-hide" href="https://github.com/ThisIsManta/Enumerable/blob/master/Enumerable.js#L222" title="View source code">code</a></h2><p><b>Returns</b> a new array that has identical members to the current array.</p>
 <p><b>Accepts</b><br>
 <u>()</u> – This does a shallow copy on all members.<br>
 <u>(isDeep: <i>boolean</i>)</u><br>
 </p>
 <code contenteditable="true" spellcheck="false">var a = [{ q: { r: true } }];<br>var z = a.clone();<br>console.log(a === z);<br><s contenteditable="false">// false</s><br>console.log(a[0] === z[0]);<br><s contenteditable="false">// true</s><br>console.log(a[0].q === z[0].q);<br><s contenteditable="false">// true</s><br><br>z = a.clone(true);<br>console.log(a === z);<br><s contenteditable="false">// false</s><br>console.log(a[0] === z[0]);<br><s contenteditable="false">// false</s><br>console.log(a[0].q === z[0].q);<br><s contenteditable="false">// false</s></code>
-<meta keywords="copy,slice"></section><section><a name="array.prototype.invoke"></a><h2><div>Array.prototype.<b>invoke</b></div><a view="" class="material-icons auto-hide" href="https://github.com/ThisIsManta/Enumerable/blob/master/Enumerable.js#L618" title="View source code">code</a></h2><p><b>Returns</b> the current array after iterates on all members. Whenever the given iterator returns false, the invocation will be stopped immediately.</p>
+<meta keywords="copy,slice"></section><section><a name="array.prototype.invoke"></a><h2><div>Array.prototype.<b>invoke</b></div><a view="" class="material-icons auto-hide" href="https://github.com/ThisIsManta/Enumerable/blob/master/Enumerable.js#L630" title="View source code">code</a></h2><p><b>Returns</b> the current array after iterates on all members. Whenever the given iterator returns false, the invocation will be stopped immediately.</p>
 <p><b>Accepts</b><br>
 <u>(iterator: <i>function</i>)</u><br>
 <u>(startIndex: <i>number</i>, iterator: <i>function</i>)</u><br>
@@ -157,7 +166,7 @@
 	"name": "Brad",
 	"work": "Dancer"
 }</s></code>
-<p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach">Array.prototype.forEach</a></p></section><section><a name="array.prototype.select"></a><h2><div>Array.prototype.<b>select</b></div><a view="" class="material-icons auto-hide" href="https://github.com/ThisIsManta/Enumerable/blob/master/Enumerable.js#L547" title="View source code">code</a></h2><p><b>Returns</b> a new array with the results of all members.</p>
+<p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach">Array.prototype.forEach</a></p></section><section><a name="array.prototype.select"></a><h2><div>Array.prototype.<b>select</b></div><a view="" class="material-icons auto-hide" href="https://github.com/ThisIsManta/Enumerable/blob/master/Enumerable.js#L559" title="View source code">code</a></h2><p><b>Returns</b> a new array with the results of all members.</p>
 <p><b>Accepts</b><br>
 <u>(valueGenerator: <i>function&lt;anything&gt;</i>)</u><br>
 <u>(nameProjector: <i>string</i>)</u><br>
@@ -183,7 +192,7 @@
 	}
 ]</s></code>
 <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map">Array.prototype.map</a></p>
-<meta keywords="map"></section><section><a name="array.prototype.toobject"></a><h2><div>Array.prototype.<b>toObject</b></div><a view="" class="material-icons auto-hide" href="https://github.com/ThisIsManta/Enumerable/blob/master/Enumerable.js#L315" title="View source code">code</a></h2><p><b>Returns</b> an object with properties that are derived from all members. The members must support toString() function.</p>
+<meta keywords="map"></section><section><a name="array.prototype.toobject"></a><h2><div>Array.prototype.<b>toObject</b></div><a view="" class="material-icons auto-hide" href="https://github.com/ThisIsManta/Enumerable/blob/master/Enumerable.js#L327" title="View source code">code</a></h2><p><b>Returns</b> an object with properties that are derived from all members. The members must support toString() function.</p>
 <p><b>Accepts</b><br>
 <u>()</u><br>
 <u>(nameProjector: <i>string</i>)</u><br>
@@ -204,14 +213,14 @@
 	"B": "b",
 	"C": "c"
 }</s></code>
-<meta keywords="hash,dictionary"></section><section><a name="array.prototype.tostring"></a><h2><div>Array.prototype.<b>toString</b></div><a view="" class="material-icons auto-hide" href="https://github.com/ThisIsManta/Enumerable/blob/master/Enumerable.js#L443" title="View source code">code</a></h2><p><b>Returns</b> a string that is the result of concatenating all members. This overrides the native toString function.</p>
+<meta keywords="hash,dictionary,map"></section><section><a name="array.prototype.tostring"></a><h2><div>Array.prototype.<b>toString</b></div><a view="" class="material-icons auto-hide" href="https://github.com/ThisIsManta/Enumerable/blob/master/Enumerable.js#L455" title="View source code">code</a></h2><p><b>Returns</b> a string that is the result of concatenating all members. This overrides the native toString function.</p>
 <p><b>Accepts</b><br>
 <u>()</u> – This uses a comma as a separator.<br>
 <u>(separator: <i>string</i>)</u><br>
 </p>
 <code contenteditable="true" spellcheck="false">[1, 2, 3].toString();<br><s contenteditable="false">// "1,2,3"</s><br><br>[1, 2, 3].toString('-');<br><s contenteditable="false">// "1-2-3"</s></code>
 <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join">Array.prototype.join</a></p>
-<meta keywords="text,join,concat"></section><section><a name="array.prototype.where"></a><h2><div>Array.prototype.<b>where</b></div><a view="" class="material-icons auto-hide" href="https://github.com/ThisIsManta/Enumerable/blob/master/Enumerable.js#L479" title="View source code">code</a></h2><p><b>Returns</b> a new array with only members that meet the given condition.</p>
+<meta keywords="text,join,concat"></section><section><a name="array.prototype.where"></a><h2><div>Array.prototype.<b>where</b></div><a view="" class="material-icons auto-hide" href="https://github.com/ThisIsManta/Enumerable/blob/master/Enumerable.js#L491" title="View source code">code</a></h2><p><b>Returns</b> a new array with only members that meet the given condition.</p>
 <p><b>Accepts</b><br>
 <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
 <u>(condition: <i>object</i>)</u><br>
@@ -246,7 +255,7 @@
 	}
 ]</s></code>
 <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter">Array.prototype.filter</a></p>
-<meta keywords="filter"></section><h1><a name="string"></a>String</h1><section><a name="string.prototype.toencodedxml"></a><h2><div>String.prototype.<b>toEncodedXML</b></div><a view="" class="material-icons auto-hide" href="https://github.com/ThisIsManta/Enumerable/blob/master/Enumerable.js#L2502" title="View source code">code</a></h2><p>Escape XML</p>
+<meta keywords="filter"></section><h1><a name="string"></a>String</h1><section><a name="string.prototype.toencodedxml"></a><h2><div>String.prototype.<b>toEncodedXML</b></div><a view="" class="material-icons auto-hide" href="https://github.com/ThisIsManta/Enumerable/blob/master/Enumerable.js#L2514" title="View source code">code</a></h2><p>Escape XML</p>
 <meta keywords="html,escape,character"></section></main>
 		</div>
 

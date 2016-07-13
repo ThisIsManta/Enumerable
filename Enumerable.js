@@ -148,15 +148,27 @@
 		return out;
 	};
 
+	/**
+	 * <p><b>Returns</b> the current array and stores the given object as a context for further use in functions. Passing an undefined or null will delete the existing context.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(context: <i>object</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * var a = { z: 0 };
+	 * [1, 2, 3].bind(a).invoke(function (x) { this.z += x; });
+	 * console.log(a.z);
+	 * </code>
+	 * <meta keywords="context"/>
+	 */
 	Array.prototype.bind = function (ctx) {
-		if (arguments.length === 1 && ctx === undefined || ctx === null || ctx === window) {
+		if (arguments.length === 0) {
+			throw new TypeError(ERR_BID);
+
+		} else if (ctx === undefined || ctx === null) {
 			delete this._s;
 
 		} else if (typeof ctx === 'object') {
 			this._s = ctx;
-
-		} else {
-			throw new TypeError(ERR_BID);
 		}
 		return this;
 	};
@@ -310,7 +322,7 @@
 	 * 	return x.toUpperCase();
 	 * });
 	 * </code>
-	 * <meta keywords="hash,dictionary"/>
+	 * <meta keywords="hash,dictionary,map"/>
 	 */
 	Array.prototype.toObject = function () {
 		var ar0 = arguments[0];
