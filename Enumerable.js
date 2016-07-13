@@ -19,7 +19,53 @@
 	var ERR_BID = 'a non-object type was not allowed';
 
 	/**
-	 * <p><b>Returns</b> a new array from the given parameter.</p>
+	 * <p><b>Returns</b> an array from the given array-like or object. If the source is object and the last parameter is true, private properties and functions will be included in the new array.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>()</u> – This creates an empty array.<br>
+	 * <u>(source: <i>array</i>)</u> – The parameter can be an object that has "length" property.<br>
+	 * <u>(source: <i>string</i>)</u><br>
+	 * <u>(source: <i>string</i>, separator: <i>string</i>)</u><br>
+	 * <u>(source: <i>object</i>, includeEverything: <i>boolean</i>)</u><br>
+	 * <u>(source: <i>object</i>, nameProperty: <i>string</i>, includeEverything: <i>boolean</i>)</u><br>
+	 * <u>(source: <i>object</i>, nameProperty: <i>string</i>, valueProperty: <i>string</i>, includeEverything: <i>boolean</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * Array.create();
+	 * 
+	 * var a = [1, 2, 3];
+	 * var z = Array.create(a);
+	 * console.log(z);
+	 * 
+	 * console.log(a === z);
+	 * 
+	 * Array.create('Alex,Brad,Chad');
+	 * 
+	 * Array.create('Alex,Brad,Chad', ',');
+	 * 
+	 * Array.create({
+	 * 	"0": 'Alex',
+	 * 	"1": 'Brad',
+	 * 	"2": 'Chad',
+	 * 	length: 3
+	 * });
+	 * 
+	 * var b = {
+	 * 	Alex: 'Singer',
+	 * 	Brad: 'Dancer',
+	 * 	Chad: 'Singer',
+	 * 	_private: true,
+	 * 	someWork: function () {}
+	 * };
+	 * Array.create(b);
+	 * 
+	 * Array.create(b, 'name', 'work');
+	 * 
+	 * Array.create(b, 'name', 'work', true);
+	 * 
+	 * Array.create(3, null);
+	 * </code>
+	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from">Array.from</a></p>
+	 * <meta keywords="from"/>
 	 */
 	Array.create = function () {
 		var ar0 = arguments[0];
@@ -115,35 +161,57 @@
 		return this;
 	};
 
+	var _clone = function (obj) {
+		if (typeof obj === 'object' && obj !== null) {
+			var out;
+			var idx;
+			if (obj instanceof Array) {
+				var bnd = obj.length;
+				out = new Array(bnd);
+				idx = -1;
+				while (++idx < bnd) {
+					out[idx] = _clone(obj[idx]);
+				}
+				return out;
+
+			} else {
+				out = {};
+				for (idx in obj) {
+					out[idx] = _clone(obj[idx]);
+				}
+				return out;
+			}
+
+		} else {
+			return obj;
+		}
+	};
+
+	/**
+	 * <p><b>Returns</b> a new array that has identical members to the current array.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>()</u> – This does a shallow copy on all members.<br>
+	 * <u>(isDeep: <i>boolean</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * var a = [{ q: { r: true } }];
+	 * var z = a.clone();
+	 * console.log(a === z);
+	 * console.log(a[0] === z[0]);
+	 * console.log(a[0].q === z[0].q);
+	 * 
+	 * z = a.clone(true);
+	 * console.log(a === z);
+	 * console.log(a[0] === z[0]);
+	 * console.log(a[0].q === z[0].q);
+	 * </code>
+	 * <meta keywords="copy,slice"/>
+	 */
 	Array.prototype.clone = function () {
 		var ar0 = !!arguments[0];
 		var out;
 		if (ar0 === true) {
-			out = (function (obj) {
-				if (typeof obj === 'object' && obj !== null) {
-					var out;
-					var idx;
-					if (obj instanceof Array) {
-						var bnd = obj.length;
-						out = new Array(bnd);
-						idx = -1;
-						while (++idx < bnd) {
-							out[idx] = arguments.callee(obj[idx]);
-						}
-						return out;
-
-					} else {
-						out = {};
-						for (idx in obj) {
-							out[idx] = arguments.callee(obj[idx]);
-						}
-						return out;
-					}
-
-				} else {
-					return obj;
-				}
-			})(this);
+			out = _clone(this);
 
 		} else {
 			out = this.slice(0);
@@ -223,14 +291,26 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> an object by constructing properties from all members.</p>
+	 * <p><b>Returns</b> an object with properties that are derived from all members. The members must support toString() function.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>()</u><br>
+	 * <u>(nameProjector: <i>string</i>)</u><br>
+	 * <u>(nameProjector: <i>string</i>, valueProjector: <i>string</i>)</u><br>
+	 * <u>(nameProjector: <i>string</i>, valueProjector: <i>function&lt;anything&gt;</i>)</u><br>
+	 * <u>(nameProjector: <i>string</i>, staticValue: <i>anything</i>)</u><br>
+	 * <u>(nameProjector: <i>function&lt;string&gt;</i>)</u><br>
+	 * <u>(nameProjector: <i>function&lt;string&gt;</i>, valueProjector: <i>function&lt;anything&gt;</i>)</u><br>
+	 * <u>(nameProjector: <i>function&lt;string&gt;</i>, valueProjector: <i>string</i>)</u><br>
+	 * <u>(nameProjector: <i>function&lt;string&gt;</i>, staticValue: <i>anything</i>)</u><br>
+	 * </p>
 	 * <code>
-	 * ['a', 'book'].toObject();
-	 * 
-	 * ['a', 'book'].toObject(function (x) {
-	 * 	return x.length;
+	 * ['a', 'b', 'c'].toObject();
+	 *
+	 * ['a', 'b', 'c'].toObject(function (x) {
+	 * 	return x.toUpperCase();
 	 * });
 	 * </code>
+	 * <meta keywords="hash,dictionary"/>
 	 */
 	Array.prototype.toObject = function () {
 		var ar0 = arguments[0];
@@ -243,39 +323,51 @@
 		if (arguments.length === 0) {
 			while (++idx < bnd) {
 				nam = this[idx];
-				out[nam.toString()] = true;
+				out[nam.toString()] = nam;
 			}
 
 		} else if (typeof ar0 === 'string') {
 			if (arguments.length === 1) {
 				while (++idx < bnd) {
 					nam = this[idx][ar0];
+					if (nam === null) {
+						nam = 'null';
+					}
 					if (nam !== undefined) {
-						out[nam] = this[idx];
+						out[nam.toString()] = this[idx];
 					}
 				}
 
 			} else if (typeof ar1 === 'string') {
 				while (++idx < bnd) {
 					nam = this[idx][ar0];
+					if (nam === null) {
+						nam = 'null';
+					}
 					if (nam !== undefined) {
-						out[nam] = this[idx][ar1];
+						out[nam.toString()] = this[idx][ar1];
 					}
 				}
 
 			} else if (typeof ar1 === 'function') {
 				while (++idx < bnd) {
 					nam = this[idx][ar0];
+					if (nam === null) {
+						nam = 'null';
+					}
 					if (nam !== undefined) {
-						out[nam] = ar1.call(ctx, this[idx], idx, this);
+						out[nam.toString()] = ar1.call(ctx, this[idx], idx, this);
 					}
 				}
 
 			} else {
 				while (++idx < bnd) {
 					nam = this[idx][ar0];
+					if (nam === null) {
+						nam = 'null';
+					}
 					if (nam !== undefined) {
-						out[nam] = ar1;
+						out[nam.toString()] = ar1;
 					}
 				}
 			}
@@ -283,26 +375,46 @@
 		} else if (typeof ar0 === 'function') {
 			if (arguments.length === 1) {
 				while (++idx < bnd) {
-					nam = ar0.call(ctx, this[idx], idx, this).toString();
-					out[nam] = this[idx];
+					nam = ar0.call(ctx, this[idx], idx, this);
+					if (nam === null) {
+						nam = 'null';
+					}
+					if (nam !== undefined) {
+						out[nam.toString()] = this[idx];
+					}
 				}
 
 			} else if (typeof ar1 === 'string') {
 				while (++idx < bnd) {
-					nam = ar0.call(ctx, this[idx], idx, this).toString();
-					out[nam] = this[idx][ar1];
+					nam = ar0.call(ctx, this[idx], idx, this);
+					if (nam === null) {
+						nam = 'null';
+					}
+					if (nam !== undefined) {
+						out[nam.toString()] = this[idx][ar1];
+					}
 				}
 
 			} else if (typeof ar1 === 'function') {
 				while (++idx < bnd) {
-					nam = ar0.call(ctx, this[idx], idx, this).toString();
-					out[nam] = ar1.call(ctx, this[idx], idx, this);
+					nam = ar0.call(ctx, this[idx], idx, this);
+					if (nam === null) {
+						nam = 'null';
+					}
+					if (nam !== undefined) {
+						out[nam.toString()] = ar1.call(ctx, this[idx], idx, this);
+					}
 				}
 
 			} else {
 				while (++idx < bnd) {
-					nam = ar0.call(ctx, this[idx], idx, this).toString();
-					out[nam] = ar1;
+					nam = ar0.call(ctx, this[idx], idx, this);
+					if (nam === null) {
+						nam = 'null';
+					}
+					if (nam !== undefined) {
+						out[nam.toString()] = ar1;
+					}
 				}
 			}
 
@@ -315,13 +427,18 @@
 	var _toString = Array.prototype.toString;
 
 	/**
-	 * <b>Returns</b> a string by concatenating all members. This presumes all members are string.
+	 * <p><b>Returns</b> a string that is the result of concatenating all members. This overrides the native toString function.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>()</u> – This uses a comma as a separator.<br>
+	 * <u>(separator: <i>string</i>)</u><br>
+	 * </p>
 	 * <code>
-	 * ['La', 'Da', 'Dee'].toString();
+	 * [1, 2, 3].toString();
 	 *
-	 * ['La', 'Da', 'Dee'].toString('-');
+	 * [1, 2, 3].toString('-');
 	 * </code>
 	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join">Array.prototype.join</a></p>
+	 * <meta keywords="text,join,concat"/>
 	 */
 	Array.prototype.toString = function () {
 		var ar0 = arguments[0];
@@ -336,6 +453,29 @@
 		}
 	};
 
+	/**
+	 * <p><b>Returns</b> a new array with only members that meet the given condition.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
+	 * <u>(condition: <i>object</i>)</u><br>
+	 * <u>(nameProjector: <i>string</i>, expectedValue: <i>anything</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * var a = [
+	 * 	{ name: 'Alex', work: 'Singer' },
+	 * 	{ name: 'Brad', work: 'Dancer' },
+	 * 	{ name: 'Chad', work: 'Singer' }
+	 * ];
+	 * 
+	 * a.where(function (x) { return x.work === 'Singer'; });
+	 * 
+	 * a.where({ work: 'Singer' });
+	 * 
+	 * a.where('work', 'Singer');
+	 * </code>
+	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter">Array.prototype.filter</a></p>
+	 * <meta keywords="filter"/>
+	 */
 	Array.prototype.where = function () {
 		var ar0 = arguments[0];
 		var ar1 = arguments[1];
@@ -381,6 +521,29 @@
 		return out;
 	};
 
+	/**
+	 * <p><b>Returns</b> a new array with the results of all members.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(valueGenerator: <i>function&lt;anything&gt;</i>)</u><br>
+	 * <u>(nameProjector: <i>string</i>)</u><br>
+	 * <u>(nameProjector: <i>array&lt;string&gt;</i>)</u> – This creates an object containing the given property name(s).<br>
+	 * </p>
+	 * <code>
+	 * var a = [
+	 * 	{ name: 'Alex', work: 'Singer' },
+	 * 	{ name: 'Brad', work: 'Dancer' },
+	 * 	{ name: 'Chad', work: 'Singer' }
+	 * ];
+	 * 
+	 * a.select(function (x) { return x.name; });
+	 * 
+	 * a.select('name');
+	 * 
+	 * a.select(['name']);
+	 * </code>
+	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map">Array.prototype.map</a></p>
+	 * <meta keywords="map"/>
+	 */
 	Array.prototype.select = function () {
 		var ar0 = arguments[0];
 		var idx = -1;
@@ -422,6 +585,36 @@
 		return out;
 	};
 
+	/**
+	 * <p><b>Returns</b> the current array after iterates on all members. Whenever the given iterator returns false, the invocation will be stopped immediately.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(iterator: <i>function</i>)</u><br>
+	 * <u>(startIndex: <i>number</i>, iterator: <i>function</i>)</u><br>
+	 * <u>(startIndex: <i>number</i>, stopIndex: <i>number</i>, iterator: <i>function</i>)</u><br>
+	 * <u>(startIndex: <i>number</i>, stopIndex: <i>number</i>, stepCount: <i>number</i>, iterator: <i>function</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * var a = [
+	 * 	{ name: 'Alex', work: 'Singer' },
+	 * 	{ name: 'Brad', work: 'Dancer' },
+	 * 	{ name: 'Chad', work: 'Singer' }
+	 * ];
+	 * 
+	 * a.invoke(function (x) { console.log(x); });
+	 * 
+	 * a.invoke(1, function (x) { console.log(x); });
+	 * 
+	 * a.invoke(1, 3, 2, function (x) { console.log(x); });
+	 * 
+	 * a.invoke(function (x, i) {
+	 * 	console.log(x);
+	 * 	if (i === 1) {
+	 * 		return false;
+	 * 	}
+	 * });
+	 * </code>
+	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach">Array.prototype.forEach</a></p>
+	 */
 	Array.prototype.invoke = function () {
 		var fni = Array.prototype.slice.call(arguments).indexOf(function (itm) { return typeof itm === 'function'; });
 		var idx = fni >= 1 ? arguments[0] : 0;

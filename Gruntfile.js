@@ -95,10 +95,22 @@ module.exports = function (grunt) {
 			var $menu = $('nav > ul').empty();
 			var $main = $('main').empty();
 
+			var tran = function (data) {
+				if (data === undefined) {
+					return 'undefined';
+
+				} else if (data === null) {
+					return 'null';
+
+				} else {
+					return JSON.stringify(data, null, '\t');
+				}
+			};
+
 			list.sortBy('name').groupBy(function (item) {
 				return item.name.split('.').first();
 			}).invoke(function (fami) {
-				$('<h1><a name="' + fami.name.toLowerCase() + '"/>' + fami.name + '</h1>').appendTo($main); 
+				$('<h1><a name="' + fami.name.toLowerCase() + '"/>' + fami.name + '</h1>').appendTo($main);
 				fami.invoke(function (item) {
 					var keys = item.name.split('.').select(function (keyx) {
 						return (keyx + '-' + keyx.toKebabCase()).toLowerCase().split('-');
@@ -125,41 +137,62 @@ module.exports = function (grunt) {
 
 					var $code = $card.find('code');
 					$code.each(function () {
-						var temp = '';
+						var buff = '';
 						var wait = false;
-						var last;
+						var varx = false;
+						var temp;
+
 						$(this).replaceWith('<code contenteditable="true" spellcheck="false">' + this.textContent.trim().split('\n').select(function (line) {
 							var outp = '';
-							if (/^var\s+\w+\s+=/.test(line) || /^\t/.test(line)) {
-								temp += line;
+							if (/^var\s+\w+\s+=/.test(line) || /^\w+\s*=\s*/.test(line)) {
+								buff += line;
+								if (!/;$/.test(line)) {
+									varx = true;
+								}
 
-							} else if (/({|\()$/.test(line)) {
-								temp += 'last = ' + line;
+							} else if (varx === true) {
+								buff += line;
+								if (!/^\t/.test(line) && /;$/.test(line)) {
+									varx = false;
+								}
+
+							} else if (/^\t/.test(line)) {
+								buff += line;
+
+							} else if (/[\[\({,]$/.test(line)) {
+								buff += 'temp = ' + line;
 								wait = true;
 
 							} else if (/;$/.test(line)) {
 								if (wait === true) {
-									temp += line;
+									buff += line;
 									wait = false;
 
 								} else {
-									temp += 'last = ' + line;
+									buff += 'temp = ' + line;
 								}
 
-								eval(temp);
-								if (last === undefined) {
-									last = 'undefined';
+								var _log = console.log;
+								var _out = [];
+								console.log = function (argx) {
+									_out.push(tran(argx));
+								};
 
-								} else if (last === null) {
-									last = 'null';
+								eval(buff);
+
+								console.log = _log;
+
+								if (_out.length > 0) {
+									temp = _out.join('<br>// ');
+									buff += '_out = [];';
 
 								} else {
-									last = JSON.stringify(last, null, '\t');
+									temp = tran(temp);
 								}
 
-								outp = '<br><s contenteditable="false">// ' + last + '</s>';
+								outp = '<br><s contenteditable="false">// ' + temp + '</s>';
 							}
-							return line.replace(/^\t/, '&nbsp;&nbsp;') + outp;
+							return line.replace(/\t/g, '&nbsp;&nbsp;') + outp;
 						}).toString('<br>') + '</code>');
 					});
 

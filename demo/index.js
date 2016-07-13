@@ -9,8 +9,9 @@ $(document).ready(function () {
 		item.link.data('item', item);
 	});
 
-	$('#search input[type=text]:not(:disabled)').on('input', function (e) {
-		var text = e.currentTarget.value.trim();
+	var $srch = $('#search input[type=text]');
+	function updateSearchBox() {
+		var text = $srch.val().trim();
 		if (text.length > 0) {
 			var tags = text.toLowerCase().split(/(\s|\.)/).distinct();
 			list.invoke(function (item) {
@@ -28,16 +29,31 @@ $(document).ready(function () {
 				}
 			});
 
+			$('#search button').prop('disabled', false).text('close');
+
 		} else {
 			$('nav ul > li, main > section').css('display', '');
+
+			$('#search button').prop('disabled', true).text('search');
 		}
 
 		localStorage.setItem('search', text);
-	}.debounce(300)).on('keydown', function (e) {
+	}
+
+	$srch.on('input', updateSearchBox.debounce(300));
+	
+	$srch.on('keydown', function (e) {
 		if (e.keyCode === 27 /* Escape */) {
-			$(e.currentTarget).val('').trigger('input');
+			$(e.currentTarget).val('');
+			updateSearchBox();
 		}
-	}).val(localStorage.getItem('search') || '').trigger('input');
+	}).val(localStorage.getItem('search') || '');
+	updateSearchBox();
+
+	$('#search button').on('click', function (e) {
+		$srch.val('');
+		updateSearchBox();
+	});
 
 	$('nav ul > li').on('click', function (e) {
 		var item = $(e.currentTarget).data('item');

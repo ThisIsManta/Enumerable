@@ -8,6 +8,7 @@ html {
 @grey100: #F5F5F5;
 @grey200: #EEEEEE;
 @grey300: #E0E0E0;
+@grey400: #BDBDBD;
 @grey500: #9E9E9E;
 @grey600: #757575;
 @grey700: #616161;
@@ -32,7 +33,13 @@ html {
 @green500: #4CAF50;
 @green700: #388E3C;
 
+@red50: #FFEBEE;
+@red100: #FFCDD2;
+@red300: #E57373;
 @red401: #FF1744;
+@red500: #F44336;
+@red700: #D32F2F;
+@red900: #B71C1C;
 
 @pink300: #F06292;
 @pink500: #E91E63;
@@ -73,11 +80,30 @@ nav {
 			font-size: medium;
 			color: black;
 			flex: 1;
+
+			&::-webkit-input-placeholder {
+				color: @grey400;
+			}
 		}
 
-		i {
+		button {
 			padding: 8px;
+			margin: auto;
 			font-size: 2em;
+			color: @grey400;
+			background: none;
+			border: none;
+			outline: none;
+			cursor: default;
+
+			&:not(:disabled) {
+				color: @grey900;
+				cursor: pointer;
+
+				&:hover {
+					color: black;
+				}
+			}
 		}
 	}
 
@@ -141,7 +167,7 @@ main {
 		background: white;
 		padding: 0 16px 16px 16px;
 		cursor: default;
-		transition: 300ms opacity;		
+		transition: 300ms opacity;
 
 		.auto-hide {
 			opacity: 0;
@@ -179,7 +205,7 @@ main {
 				margin-left: 4px;
 				font-size: 1.2em;
 				vertical-align: top;
-				color: black;
+				color: @grey900;
 
 				&:hover {
 					color: black;
@@ -200,6 +226,16 @@ main {
 			s {
 				color: @green500;
 				text-decoration: none;
+			}
+		}
+
+		u {
+			font-family: 'Roboto Condensed';
+			text-decoration: none;
+
+			i {
+				color: @red900;
+				font-style: normal;
 			}
 		}
 
