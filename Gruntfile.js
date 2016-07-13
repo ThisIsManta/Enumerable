@@ -106,7 +106,7 @@ module.exports = function (grunt) {
 					return '\'' + data + '\'';
 
 				} else {
-					return JSON.stringify(data, null, ' ').replace(/\[\n\s/g, '[').replace(/\s\]/g, ']').replace(/\"([^"]+)\":/g, '$1:');
+					return JSON.stringify(data, null, ' ').replace(/\[(\n|\s)+/g, '[').replace(/(\n|\s)+\]/g, ']').replace(/\"([^"]+)\":/g, '$1:');
 				}
 			};
 
@@ -144,57 +144,68 @@ module.exports = function (grunt) {
 						var wait = false;
 						var varx = false;
 						var temp;
+						var disb = $(this).attr('disabled');
 
 						$(this).replaceWith('<code contenteditable="true" spellcheck="false">' + (this.childNodes.length === 1 && this.childNodes[0].nodeType === 8 ? this.childNodes[0] : this).textContent.trim().split('\n').select(function (line) {
 							var outp = '';
-							if (/^var\s+\w+\s+=/.test(line) || /^\w+\s*=\s*/.test(line)) {
-								buff += line;
-								if (!/;$/.test(line)) {
-									varx = true;
-								}
 
-							} else if (varx === true) {
-								buff += line;
-								if (!/^\t/.test(line) && /;$/.test(line)) {
-									varx = false;
-								}
-
-							} else if (/^\t/.test(line)) {
-								buff += line;
-
-							} else if (/[\[\({,]$/.test(line)) {
-								buff += 'temp = ' + line;
-								wait = true;
-
-							} else if (/;$/.test(line)) {
-								if (wait === true) {
+							if (!disb) {
+								if (/^var\s+\w+\s+=/.test(line) || /^\w+\s*=\s*/.test(line)) {
 									buff += line;
-									wait = false;
+									if (!/;$/.test(line)) {
+										varx = true;
+									}
 
-								} else {
+								} else if (varx === true) {
+									buff += line;
+									if (!/^\t/.test(line) && /;$/.test(line)) {
+										varx = false;
+									}
+
+								} else if (/^\t/.test(line)) {
+									buff += line;
+
+								} else if (/[\[\({,]$/.test(line)) {
 									buff += 'temp = ' + line;
+									wait = true;
+
+								} else if (/;$/.test(line)) {
+									if (wait === true) {
+										buff += line;
+										wait = false;
+
+									} else {
+										buff += 'temp = ' + line;
+									}
+
+									var _log = console.log;
+									var _out = [];
+									console.log = function (argx) {
+										_out.push(tran(argx));
+									};
+
+									eval(buff);
+
+									console.log = _log;
+
+									if (_out.length > 0) {
+										temp = _out.select(function (itm) {
+											return itm.toEncodedXML();
+										}).join('<br>// ');
+										buff += '_out = [];';
+
+									} else {
+										temp = tran(temp).toEncodedXML();
+									}
+
+									outp = '<br><s contenteditable="false">// ' + temp + '</s>';
 								}
-
-								var _log = console.log;
-								var _out = [];
-								console.log = function (argx) {
-									_out.push(tran(argx));
-								};
-
-								eval(buff);
-
-								console.log = _log;
-
-								if (_out.length > 0) {
-									temp = _out.join('<br>// ');
-									buff += '_out = [];';
-
-								} else {
-									temp = tran(temp);
-								}
-
-								outp = '<br><s contenteditable="false">// ' + temp.toEncodedXML() + '</s>';
 							}
+
+							if (line.contains('//')) {
+								line = line.replace('//', '<s contenteditable="false">//') + '</s>';
+							}
+
 							return line.replace(/&/g, '&amp;').replace(/\t/g, '&nbsp;&nbsp;') + outp;
 						}).toString('<br>') + '</code>');
 					});

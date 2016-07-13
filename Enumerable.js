@@ -25,9 +25,9 @@
 	 * <u>(source: <i>array</i>)</u> – The parameter can be an object that has "length" property.<br>
 	 * <u>(source: <i>string</i>)</u><br>
 	 * <u>(source: <i>string</i>, separator: <i>string</i>)</u><br>
-	 * <u>(source: <i>object</i>, includeEverything: <i>boolean</i>)</u><br>
-	 * <u>(source: <i>object</i>, nameProperty: <i>string</i>, includeEverything: <i>boolean</i>)</u><br>
-	 * <u>(source: <i>object</i>, nameProperty: <i>string</i>, valueProperty: <i>string</i>, includeEverything: <i>boolean</i>)</u><br>
+	 * <u>(source: <i>object</i>, [includeEverything: <i>boolean</i>])</u><br>
+	 * <u>(source: <i>object</i>, nameProperty: <i>string</i>, [includeEverything: <i>boolean</i>])</u><br>
+	 * <u>(source: <i>object</i>, nameProperty: <i>string</i>, valueProperty: <i>string</i>, [includeEverything: <i>boolean</i>])</u><br>
 	 * </p>
 	 * <code>
 	 * Array.create();
@@ -676,6 +676,39 @@
 		return this;
 	};
 
+	/**
+	 * <p><b>Returns</b> a new <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a> then iterates on all members asynchronously. Whenever the given iterator returns false, the invocation will be stopped immediately. Each iteration has a delay of 2 milliseconds. The default batch count is 1.</p>
+	 * <p>This is very useful when doing some work without freezing UI.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(iterator: <i>function</i>, [batchCount: <i>number</i>])</u><br>
+	 * <u>(startIndex: <i>number</i>, iterator: <i>function</i>, [batchCount: <i>number</i>])</u><br>
+	 * <u>(startIndex: <i>number</i>, stopIndex: <i>number</i>, iterator: <i>function</i>, [batchCount: <i>number</i>])</u><br>
+	 * <u>(startIndex: <i>number</i>, stopIndex: <i>number</i>, stepCount: <i>number</i>, iterator: <i>function</i>, [batchCount: <i>number</i>])</u><br>
+	 * </p>
+	 * <code disabled>
+	 * [1, 2, 3].invokeAsync(function (x) { console.log(x); });
+	 * console.log('4');
+	 * setTimeout(function () {
+	 * 	console.log('5');
+	 * });
+	 * // 4
+	 * // 1
+	 * // 5
+	 * // 2
+	 * // 3
+	 * 
+	 * [1, 2, 3].invokeAsync(function (x) { console.log(x); }, 2);
+	 * console.log('4');
+	 * setTimeout(function () {
+	 * 	console.log('5');
+	 * });
+	 * // 4
+	 * // 1
+	 * // 2
+	 * // 5
+	 * // 3
+	 * </code>
+	 */
 	Array.prototype.invokeAsync = function () {
 		var fni = Array.prototype.slice.call(arguments).indexOf(function (itm) { return typeof itm === 'function'; });
 		var idx = fni >= 1 ? arguments[0] : 0;
@@ -744,6 +777,25 @@
 		return pwn;
 	};
 
+
+	/**
+	 * <p><b>Returns</b> the current array after iterates on the members that meet the given group. This must be called after <a href="#array.prototype.groupby">groupBy</a> method. Whenever the given iterator returns false, the invocation will be stopped immediately.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(groupName: <i>anything</i>, iterator: <i>function</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * var a = [
+	 * 	{ name: 'Alex', work: 'Singer' },
+	 * 	{ name: 'Brad', work: 'Dancer' },
+	 * 	{ name: 'Chad', work: 'Singer' }
+	 * ];
+	 * 
+	 * var g = a.groupBy('work');
+	 * console.log(g);
+	 * 
+	 * g.invokeWhich('Singer', function (x) { console.log(x); });
+	 * </code>
+	 */
 	Array.prototype.invokeWhich = function () {
 		var ar0 = arguments[0];
 		var ar1 = arguments[1];
@@ -768,6 +820,29 @@
 		return this;
 	};
 
+	/**
+	 * <p><b>Returns</b> a new array with only members that are in the given range. If the condition function is given, the range is starting from zero to the index which the condition returns false.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
+	 * <u>(startIndex: <i>number</i>)</u><br>
+	 * <u>(startIndex: <i>number</i>, stopIndex: <i>number</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * var a = [
+	 * 	{ name: 'Alex', work: 'Singer' },
+	 * 	{ name: 'Brad', work: 'Dancer' },
+	 * 	{ name: 'Chad', work: 'Singer' }
+	 * ];
+	 * 
+	 * a.take(function (x) { return x.work === 'Singer'; });
+	 * 
+	 * a.take(1);
+	 * 
+	 * a.take(1, 2);
+	 * </code>
+	 * <p><b>See also</b> <a href="#array.prototype.where">Array.prototype.where</a></p>
+	 * <meta keywords="head,skip,where,filter"/>
+	 */
 	Array.prototype.take = function () {
 		var ar0 = arguments[0];
 		var ar1 = arguments[1];
@@ -811,6 +886,29 @@
 		return out;
 	};
 
+	/**
+	 * <p><b>Returns</b> a new array with only members that are not in the given range. If the condition function is given, the range is starting from the index which the condition returns false. This is a reverse implementation of <a href="#array.prototype.take">take</a>.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
+	 * <u>(startIndex: <i>number</i>)</u><br>
+	 * <u>(startIndex: <i>number</i>, stopIndex: <i>number</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * var a = [
+	 * 	{ name: 'Alex', work: 'Singer' },
+	 * 	{ name: 'Brad', work: 'Dancer' },
+	 * 	{ name: 'Chad', work: 'Singer' }
+	 * ];
+	 * 
+	 * a.skip(function (x) { return x.work === 'Singer'; });
+	 * 
+	 * a.skip(1);
+	 * 
+	 * a.skip(1, 2);
+	 * </code>
+	 * <p><b>See also</b> <a href="#array.prototype.where">Array.prototype.where</a></p>
+	 * <meta keywords="take,where,filter"/>
+	 */
 	Array.prototype.skip = function () {
 		var ar0 = arguments[0];
 		var ar1 = arguments[1];
@@ -858,6 +956,19 @@
 		return out;
 	};
 
+	/**
+	 * <p><b>Returns</b> a new array with all members that have nested array members flatten.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>()</u> – This does a shallow flattening on all members.<br>
+	 * <u>(isDeep: <i>boolean</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * var a = [1, [2, [3]]];
+	 * a.flatten();
+	 * 
+	 * a.flatten(true);
+	 * </code>
+	 */
 	Array.prototype.flatten = function () {
 		var ar0 = !!arguments[0];
 		var idx = -1;
@@ -891,6 +1002,35 @@
 		return out;
 	};
 
+	/**
+	 * <p><b>Returns</b> true if and only if one or more members match the given condition.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>()</u> – This returns true if the current array is not empty.<br>
+	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
+	 * <u>(nameProjector: <i>string</i>, expectedValue: <i>anything</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * var a = [
+	 * 	{ name: 'Alex', work: 'Singer' },
+	 * 	{ name: 'Brad', work: 'Dancer' },
+	 * 	{ name: 'Chad', work: 'Singer' }
+	 * ];
+	 * 
+	 * a.any();
+	 * 
+	 * a.any(function (x) { return x.work === 'Singer'; });
+	 * 
+	 * a.any(function (x) { return x.work === 'Doctor'; });
+	 * 
+	 * a.any('work', 'Singer');
+	 * 
+	 * a.any('work', 'Doctor');
+	 * 
+	 * [].any();
+	 * </code>
+	 * <p><b>See also</b> <a href="#array.prototype.all">Array.prototype.all</a>, <a href="#array.prototype.where">Array.prototype.where</a></p>
+	 * <meta keywords="some"/>
+	 */
 	Array.prototype.any = function () {
 		var ar0 = arguments[0];
 		var ar1 = arguments[1];
@@ -928,6 +1068,30 @@
 		}
 	};
 
+	/**
+	 * <p><b>Returns</b> true if and only if all members match the given condition.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
+	 * <u>(nameProjector: <i>string</i>, expectedValue: <i>anything</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * var a = [
+	 * 	{ name: 'Alex', work: 'Singer', year: 22 },
+	 * 	{ name: 'Brad', work: 'Dancer', year: 18 },
+	 * 	{ name: 'Chad', work: 'Singer', year: 26 }
+	 * ];
+	 * 
+	 * a.all(function (x) { return x.year <= 30; });
+	 * 
+	 * a.all(function (x) { return x.year >= 20; });
+	 * 
+	 * a.all('work', 'Singer');
+	 * 
+	 * a.all('work', 'Doctor');
+	 * </code>
+	 * <p><b>See also</b> <a href="#array.prototype.any">Array.prototype.any</a>, <a href="#array.prototype.where">Array.prototype.where</a></p>
+	 * <meta keywords="every"/>
+	 */
 	Array.prototype.all = function () {
 		var ar0 = arguments[0];
 		var ar1 = arguments[1];
@@ -965,6 +1129,31 @@
 		}
 	};
 
+	/**
+	 * <p><b>Returns</b> true if and only if all members match the given condition.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
+	 * <u>(expectedValue: <i>anything</i>)</u><br>
+	 * <u>(expectedValue: <i>anything</i>, startIndex: <i>number</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * var a = [
+	 * 	{ name: 'Alex', work: 'Singer' },
+	 * 	{ name: 'Brad', work: 'Dancer' },
+	 * 	{ name: 'Chad', work: 'Singer' }
+	 * ];
+	 * 
+	 * a.has(function (x) { return x.name === 'Alex'; });
+	 * 
+	 * a.has(function (x) { return x.name === 'Zedd'; });
+	 * 
+	 * a.has(a[1]);
+	 * 
+	 * a.all(a[1], 2);
+	 * </code>
+	 * <p><b>See also</b> <a href="#array.prototype.indexof">Array.prototype.indexOf</a>, <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes">Array.prototype.includes</a></p>
+	 * <meta keywords="contains,includes,indexof"/>
+	 */
 	Array.prototype.has = function () {
 		return this.indexOf.apply(this, arguments) >= 0;
 	};
@@ -2635,7 +2824,7 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> a string that has all <a href="https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references#Predefined_entities_in_XML">XML characters</a> escaped.</p>
+	 * <p><b>Returns</b> a string that has all <a href="https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references#Predefined_entities_in_XML">XML characters</a> escaped. This is a reverse implementation of <a href="#array.prototype.toencodedxml">toEncodedXML</a></p>
 	 * <code><!--
 	 * 'Alex &amp; Brad say &quot;0 &lt; 1 but 2 &gt; 1&quot;'.toDecodedXML();
 	 * --></code>
