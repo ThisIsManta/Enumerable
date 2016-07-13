@@ -439,7 +439,7 @@
 	var _toString = Array.prototype.toString;
 
 	/**
-	 * <p><b>Returns</b> a string that is the result of concatenating all members. This overrides the native toString function.</p>
+	 * <p><b>Returns</b> a string that is the result of concatenating all members. This overrides the native toString method.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u> – This uses a comma as a separator.<br>
 	 * <u>(separator: <i>string</i>)</u><br>
@@ -1156,6 +1156,27 @@
 
 	var _find = Array.prototype.find;
 
+	/**
+	 * <p><b>Returns</b> the first member that meets the given condition, otherwise undefined. This overrides the native find method.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(condition: <i>function</i>)</u><br>
+	 * <u>(nameProjector: <i>string</i>, expectedValue: <i>anything</i>)</u>
+	 * </p>
+	 * <code>
+	 * var a = [
+	 * 	{ name: 'Alex', work: 'Singer' },
+	 * 	{ name: 'Brad', work: 'Dancer' },
+	 * 	{ name: 'Chad', work: 'Singer' }
+	 * ];
+	 * a.find(function (x) { return x.work === 'Singer'; });
+	 * 
+	 * a.find('work', 'Dancer');
+	 * 
+	 * a.find('work', 'Doctor');
+	 * </code>
+	 * <p><b>See also</b> <a href="#array.prototype.first">Array.prototype.first</a>, <a href="#array.prototype.firstornull">Array.prototype.firstOrNull</a></p>
+	 * <meta keywords="first"/>
+	 */
 	Array.prototype.find = function () {
 		var ar0 = arguments[0];
 		var ar1 = arguments[1];
@@ -1177,24 +1198,26 @@
 		}
 	};
 
-	Array.prototype.firstOrNull = function () {
-		if (this.length === 0) {
-			return null;
-
-		} else if (arguments.length === 0) {
-			return this[0];
-
-		} else {
-			var idx = this.indexOf.apply(this, arguments);
-			if (idx >= 0) {
-				return this[idx];
-
-			} else {
-				return null;
-			}
-		}
-	};
-
+	/**
+	 * <p><b>Returns</b> the first member that meets the given condition, otherwise throws an exception. This also throws an exception if the current array is empty.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>()</u> – This returns the first member.<br>
+	 * <u>(condition: <i>function</i>)</u><br>
+	 * <u>(condition: <i>function</i>, startIndex: <i>number</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * var a = [
+	 * 	{ name: 'Alex', work: 'Singer' },
+	 * 	{ name: 'Brad', work: 'Dancer' },
+	 * 	{ name: 'Chad', work: 'Singer' }
+	 * ];
+	 * a.first();
+	 * 
+	 * a.first(function (x) { return x.work === 'Singer'; });
+	 * </code>
+	 * <p><b>See also</b> <a href="#array.prototype.find">Array.prototype.find</a>, <a href="#array.prototype.firstornull">Array.prototype.firstOrNull</a></p>
+	 * <meta keywords="find"/>
+	 */
 	Array.prototype.first = function () {
 		if (this.length === 0) {
 			throw new Error(ERR_AEA);
@@ -1213,15 +1236,37 @@
 		}
 	};
 
-	Array.prototype.lastOrNull = function () {
+	/**
+	 * <p><b>Returns</b> the first member that meets the given condition, otherwise null.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>()</u> – This returns the first member.<br>
+	 * <u>(condition: <i>function</i>)</u><br>
+	 * <u>(condition: <i>function</i>, startIndex: <i>number</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * var a = [
+	 * 	{ name: 'Alex', work: 'Singer' },
+	 * 	{ name: 'Brad', work: 'Dancer' },
+	 * 	{ name: 'Chad', work: 'Singer' }
+	 * ];
+	 * a.firstOrNull();
+	 * 
+	 * a.firstOrNull(function (x) { return x.work === 'Singer'; });
+	 * 
+	 * a.firstOrNull(function (x) { return x.work === 'Doctor'; });
+	 * </code>
+	 * <p><b>See also</b> <a href="#array.prototype.find">Array.prototype.find</a>, <a href="#array.prototype.first">Array.prototype.first</a></p>
+	 * <meta keywords="find"/>
+	 */
+	Array.prototype.firstOrNull = function () {
 		if (this.length === 0) {
 			return null;
 
 		} else if (arguments.length === 0) {
-			return this[this.length - 1];
+			return this[0];
 
 		} else {
-			var idx = this.lastIndexOf.apply(this, arguments);
+			var idx = this.indexOf.apply(this, arguments);
 			if (idx >= 0) {
 				return this[idx];
 
@@ -1245,6 +1290,24 @@
 
 			} else {
 				throw new Error(ERR_MZM);
+			}
+		}
+	};
+
+	Array.prototype.lastOrNull = function () {
+		if (this.length === 0) {
+			return null;
+
+		} else if (arguments.length === 0) {
+			return this[this.length - 1];
+
+		} else {
+			var idx = this.lastIndexOf.apply(this, arguments);
+			if (idx >= 0) {
+				return this[idx];
+
+			} else {
+				return null;
 			}
 		}
 	};
@@ -2432,12 +2495,49 @@
 		return typeof valu === 'number' && isFinite(valu) && Math.floor(valu) === valu && Math.abs(valu) <= Number.MAX_SAFE_INTEGER;
 	};
 
+	/**
+	 * <p><b>Returns</b> true if and only if the given parameter has a type of object, not an array and not null, otherwise false.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(assertedValue: <i>anything</i>)</u>
+	 * </p>
+	 * <code>
+	 * Object.isObject({});
+	 * 
+	 * Object.isObject(new Object());
+	 * 
+	 * Object.isObject([]);
+	 * 
+	 * Object.isObject(null);
+	 * 
+	 * Object.isObject(undefined);
+	 * </code>
+	 */
 	Object.isObject = function (ar0) {
 		return typeof ar0 === 'object' && ar0 !== null && (ar0 instanceof Array) === false;
 	};
 
+	/**
+	 * <p><b>Returns</b> true if and only if the given parameters are identical, otherwise false. This performs deep array/object comparison.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(firstValue: <i>anything</i>, secondValue: <i>anything</i>)</u>
+	 * </p>
+	 * <code>
+	 * Object.isEqual({ a: { b: true } }, { a: { b: true } });
+	 * 
+	 * Object.isEqual({ a: { b: true } }, { a: { b: true, c: false } });
+	 * 
+	 * Object.isEqual([1, 2, 3], [1, 2, 3]);
+	 * 
+	 * Object.isEqual([1, 2, 3], [4, 5, 6]);
+	 * 
+	 * Object.isEqual(NaN, NaN);
+	 * </code>
+	 */
 	Object.isEqual = function (ar0, ar1) {
-		if (ar0 === ar1) {
+		if (arguments.length !== 2) {
+			throw new Error(ERR_INV);
+
+		} else if (ar0 === ar1) {
 			return true;
 
 		} else if (Array.isArray(ar0) && Array.isArray(ar1)) {
@@ -2471,14 +2571,29 @@
 		}
 	};
 
+	/**
+	 * <p><b>Returns</b> true if and only if the given string is part of the current string, otherwise false.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(text: <i>string</i>)</u>
+	 * </p>
+	 * <code>
+	 * 'this is what you came for'.contains('what');
+	 * 
+	 * 'this is what you came for'.contains('WHAT');
+	 * </code>
+	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes">String.prototype.includes</a></p>
+	 * <meta keywords="include,indexof"/>
+	 */
 	String.prototype.contains = function (val) {
 		return this.indexOf(val) >= 0;
 	};
 
-	String.prototype.toRegExp = function (flg) {
-		return new RegExp(this.replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1'), flg);
-	};
-
+	/**
+	 * <p><b>Returns</b> a number that is the result of hashing. The result is always an interger that can be less than zero.</p>
+	 * <code>
+	 * 'this is what you came for'.toHashCode();
+	 * </code>
+	 */
 	String.prototype.toHashCode = function () {
 		var idx = -1;
 		var bnd = this.length;
@@ -2495,11 +2610,11 @@
 		}
 	};
 
-	var XML_PAR = [['<', '&lt;'], ['>', '&gt;'], ['&', '&amp;'], ['"', '&quot;'], ['\'', '&apos;']];
+	var XML_PAR = [['<', '&lt;'], ['>', '&gt;'], ['&', '&amp;'], ['"', '&quot;']];
 	var XML_ENC = XML_PAR.toObject('0', '1');
 	var XML_DEC = XML_PAR.toObject('1', '0');
-	var XML_SYM = ('[' + XML_PAR.select('0') + ']').toRegExp('g');
-	var XML_COD = ('(' + XML_PAR.select('1').join('|') + ')').toRegExp('g');
+	var XML_SYM = new RegExp('[' + XML_PAR.select('0').join('').replace(/\\/g, '\\\\') + ']', 'g');
+	var XML_COD = new RegExp('(' + XML_PAR.select('1').join('|').replace(/\\/g, '\\\\') + ')', 'g');
 	var _encodeXML = function (chr) {
 		return XML_ENC[chr];
 	};
@@ -2508,24 +2623,36 @@
 	};
 
 	/**
-	 * <p>Escape XML</p>
+	 * <p><b>Returns</b> a string that has all <a href="https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references#Predefined_entities_in_XML">XML characters</a> unescaped.</p>
+	 * <code>
+	 * 'Alex & Brad say "0 < 1 but 2 > 1"'.toEncodedXML();
+	 * </code>
+	 * <p><b>See also</b> <a href="#string.prototype.todecodedxml">toDecodedXML</a></p>
 	 * <meta keywords="html,escape,character"/>
 	 */
 	String.prototype.toEncodedXML = function () {
 		return this.replace(XML_SYM, _encodeXML);
 	};
 
+	/**
+	 * <p><b>Returns</b> a string that has all <a href="https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references#Predefined_entities_in_XML">XML characters</a> escaped.</p>
+	 * <code><!--
+	 * 'Alex &amp; Brad say &quot;0 &lt; 1 but 2 &gt; 1&quot;'.toDecodedXML();
+	 * --></code>
+	 * <p><b>See also</b> <a href="#string.prototype.toencodedxml">toEncodedXML</a></p>
+	 * <meta keywords="html,escape,unescape,character"/>
+	 */
 	String.prototype.toDecodedXML = function () {
 		return this.replace(XML_COD, _decodeXML);
 	};
 
 	var WRD_CPH = /[a-z][A-Z]|[A-Z]{2,}[a-z]|[0-9][a-zA-Z]|[a-zA-Z][0-9]|[^a-zA-Z0-9 ]/;
-	var WRD_CPX =
+	var WRD_CPL =
 		/[A-Z\xc0-\xd6\xd8-\xde]?[a-z\xdf-\xf6\xf8-\xff]+(?:['’](?:d|ll|m|re|s|t|ve))?(?=[\xac\xb1\xd7\xf7\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\xbf\u2000-\u206f \t\x0b\f\xa0\ufeff\n\r\u2028\u2029\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000]|[A-Z\xc0-\xd6\xd8-\xde]|$)|(?:[A-Z\xc0-\xd6\xd8-\xde]|[^\ud800-\udfff\xac\xb1\xd7\xf7\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\xbf\u2000-\u206f \t\x0b\f\xa0\ufeff\n\r\u2028\u2029\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000\d+\u2700-\u27bfa-z\xdf-\xf6\xf8-\xffA-Z\xc0-\xd6\xd8-\xde])+(?:['’](?:D|LL|M|RE|S|T|VE))?(?=[\xac\xb1\xd7\xf7\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\xbf\u2000-\u206f \t\x0b\f\xa0\ufeff\n\r\u2028\u2029\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000]|[A-Z\xc0-\xd6\xd8-\xde](?:[a-z\xdf-\xf6\xf8-\xff]|[^\ud800-\udfff\xac\xb1\xd7\xf7\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\xbf\u2000-\u206f \t\x0b\f\xa0\ufeff\n\r\u2028\u2029\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000\d+\u2700-\u27bfa-z\xdf-\xf6\xf8-\xffA-Z\xc0-\xd6\xd8-\xde])|$)|[A-Z\xc0-\xd6\xd8-\xde]?(?:[a-z\xdf-\xf6\xf8-\xff]|[^\ud800-\udfff\xac\xb1\xd7\xf7\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\xbf\u2000-\u206f \t\x0b\f\xa0\ufeff\n\r\u2028\u2029\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000\d+\u2700-\u27bfa-z\xdf-\xf6\xf8-\xffA-Z\xc0-\xd6\xd8-\xde])+(?:['’](?:d|ll|m|re|s|t|ve))?|[A-Z\xc0-\xd6\xd8-\xde]+(?:['’](?:D|LL|M|RE|S|T|VE))?|\d+|(?:[\u2700-\u27bf]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff])[\ufe0e\ufe0f]?(?:[\u0300-\u036f\ufe20-\ufe23\u20d0-\u20f0]|\ud83c[\udffb-\udfff])?(?:\u200d(?:[^\ud800-\udfff]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff])[\ufe0e\ufe0f]?(?:[\u0300-\u036f\ufe20-\ufe23\u20d0-\u20f0]|\ud83c[\udffb-\udfff])?)*/g;
 	var WRD_BSC = /[a-zA-Z0-9]+/g;
 
 	String.prototype.splitWords = function () {
-		return this.match(WRD_CPH.test(this.toString()) ? WRD_CPX : WRD_BSC) || [];
+		return this.match(WRD_CPH.test(this.toString()) ? WRD_CPL : WRD_BSC) || [];
 	};
 
 	var CAS_LAT = /[\xc0-\xd6\xd8-\xde\xdf-\xf6\xf8-\xff]/g;
@@ -2566,12 +2693,28 @@
 
 	var CAS_APO = /['’]/g;
 
+	/**
+	 * <p><b>Returns</b> a string that has words concatenated and cases converted to <a href="https://en.wikipedia.org/wiki/CamelCase">camel case</a>.</p>
+	 * <code>
+	 * '_this-is*what you   CAME^For$'.toCamelCase();
+	 * </code>
+	 */
 	String.prototype.toCamelCase = function () {
-		return this.toEnglishCase().replace(CAS_APO, '').splitWords().map(String.prototype.toCapitalWord).join('');
+		var txt = this.toEnglishCase().replace(CAS_APO, '').splitWords().map(String.prototype.toCapitalWord).join('');
+		if (txt.length > 0) {
+			txt = txt[0].toLowerCase() + txt.substring(1);
+		}
+		return txt;
 	};
 
-	String.prototype.toKebabCase = function () {
-		return this.toEnglishCase().replace(CAS_APO, '').splitWords().join('-');
+	/**
+	 * <p><b>Returns</b> a string that has dash(es) separated and cases converted to small.</p>
+	 * <code>
+	 * '_this-is*what you   CAME^For$'.toTrainCase();
+	 * </code>
+	 */
+	String.prototype.toTrainCase = function () {
+		return this.toEnglishCase().replace(CAS_APO, '').splitWords().join('-').toLowerCase();
 	};
 
 	String.prototype.latchOf = function (str, end) {

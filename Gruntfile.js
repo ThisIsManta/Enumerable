@@ -102,8 +102,11 @@ module.exports = function (grunt) {
 				} else if (data === null) {
 					return 'null';
 
+				} else if (typeof data === 'string') {
+					return '\'' + data + '\'';
+
 				} else {
-					return JSON.stringify(data, null, '\t');
+					return JSON.stringify(data, null, ' ').replace(/\[\n\s/g, '[').replace(/\s\]/g, ']').replace(/\"([^"]+)\":/g, '$1:');
 				}
 			};
 
@@ -113,7 +116,7 @@ module.exports = function (grunt) {
 				$('<h1><a name="' + fami.name.toLowerCase() + '"/>' + fami.name + '</h1>').appendTo($main);
 				fami.invoke(function (item) {
 					var keys = item.name.split('.').select(function (keyx) {
-						return (keyx + '-' + keyx.toKebabCase()).toLowerCase().split('-');
+						return (keyx + '-' + keyx.toTrainCase()).toLowerCase().split('-');
 					}).flatten().norm();
 					keys.addRange(($(item.desc).filter('meta[keywords]').attr('keywords') || '').toLowerCase().split(',').norm());
 					keys = keys.distinct();
@@ -142,7 +145,7 @@ module.exports = function (grunt) {
 						var varx = false;
 						var temp;
 
-						$(this).replaceWith('<code contenteditable="true" spellcheck="false">' + this.textContent.trim().split('\n').select(function (line) {
+						$(this).replaceWith('<code contenteditable="true" spellcheck="false">' + (this.childNodes.length === 1 && this.childNodes[0].nodeType === 8 ? this.childNodes[0] : this).textContent.trim().split('\n').select(function (line) {
 							var outp = '';
 							if (/^var\s+\w+\s+=/.test(line) || /^\w+\s*=\s*/.test(line)) {
 								buff += line;
@@ -190,9 +193,9 @@ module.exports = function (grunt) {
 									temp = tran(temp);
 								}
 
-								outp = '<br><s contenteditable="false">// ' + temp + '</s>';
+								outp = '<br><s contenteditable="false">// ' + temp.toEncodedXML() + '</s>';
 							}
-							return line.replace(/\t/g, '&nbsp;&nbsp;') + outp;
+							return line.replace(/&/g, '&amp;').replace(/\t/g, '&nbsp;&nbsp;') + outp;
 						}).toString('<br>') + '</code>');
 					});
 
