@@ -93,7 +93,6 @@ describe('Array', function () {
 			expect([].bind(c)._s).toBe(c);
 			expect([].bind(c).bind({})._s).not.toBe(c);
 			expect([].bind(null)._s).toBeUndefined();
-			expect([].bind(window)._s).toBeUndefined();
 		});
 
 		it('throws an error', function () {
@@ -216,7 +215,8 @@ describe('Array', function () {
 			a = [{ v: 1 }, { v: 2 }, { v: 3 }];
 			z = a.where('v', 2);
 			expect(z).not.toBe(a);
-			expect(z).toEqual([{ v: 2 }]);
+			window.aaa=z;
+			expect(Object.isEqual(z, [{ v: 2 }])).toBe(true);
 			expect(z).toEqual(a.where({ v: 2 }));
 			expect(z).toEqual(a.where(function (x) { return x.v === 2; }));
 		});
@@ -563,19 +563,19 @@ describe('Array', function () {
 		});
 	});
 
-	describe('isMatch()', function () {
+	describe('isAlike()', function () {
 		it('returns the boolean', function () {
 			a = [1, 2, 3];
-			expect(a.isMatch([1])).toBe(false);
-			expect(a.isMatch([1, 2, 3])).toBe(true);
-			expect(a.isMatch([1, 3, 2])).toBe(true);
-			expect(a.isMatch([1, 1, 1])).toBe(false);
-			expect(a.isMatch([1, 2, 3, 4])).toBe(false);
-			expect(a.isMatch([0, 1, 2], function (x, y) { return x === y + 1; })).toBe(true);
+			expect(a.isAlike([1])).toBe(false);
+			expect(a.isAlike([1, 2, 3])).toBe(true);
+			expect(a.isAlike([1, 3, 2])).toBe(true);
+			expect(a.isAlike([1, 1, 1])).toBe(false);
+			expect(a.isAlike([1, 2, 3, 4])).toBe(false);
+			expect(a.isAlike([0, 1, 2], function (x, y) { return x === y + 1; })).toBe(true);
 		});
 
 		it('throws an error', function () {
-			expect([].isMatch.bind([])).toThrowError();
+			expect([].isAlike.bind([])).toThrowError();
 		});
 	});
 
@@ -598,46 +598,58 @@ describe('Array', function () {
 	describe('indexOf()', function () {
 		it('returns the number', function () {
 			a = [1, 2, 1];
+			f = function (x) { return x === 1; };
 			expect(a.indexOf(1)).toBe(0);
 			expect(a.indexOf(4)).toBe(-1);
 			expect(a.indexOf(1, 0)).toBe(0);
 			expect(a.indexOf(1, 1)).toBe(2);
-			expect(a.indexOf(1, 1)).toBe(2);
-			expect(a.indexOf(function (x) { return x === 1; })).toBe(0);
+			expect(a.indexOf(1, -1)).toBe(2);
+			expect(a.indexOf(1, -2)).toBe(2);
+			expect(a.indexOf(1, -3)).toBe(0);
+			expect(a.indexOf(1, -4)).toBe(0);
+			expect(a.indexOf(f)).toBe(0);
 			expect(a.indexOf(function (x) { return x === 4; })).toBe(-1);
-			expect(a.indexOf(function (x) { return x === 1; }, 0)).toBe(0);
-			expect(a.indexOf(function (x) { return x === 1; }, 1)).toBe(2);
-			expect(a.indexOf(function (x) { return x === 1; }, 1)).toBe(2);
+			expect(a.indexOf(f, 0)).toBe(0);
+			expect(a.indexOf(f, 1)).toBe(2);
+			expect(a.indexOf(f, -1)).toBe(2);
+			expect(a.indexOf(f, -2)).toBe(2);
+			expect(a.indexOf(f, -3)).toBe(0);
+			expect(a.indexOf(f, -4)).toBe(0);
 		});
 
 		it('throws an error', function () {
 			a = [1, 2, 3];
 			expect(a.indexOf.bind(a)).toThrowError();
-			expect(a.indexOf.bind(a, 1, -1)).toThrowError(RangeError);
-			expect(a.indexOf.bind(a, 1, 4)).toThrowError(RangeError);
+			expect(a.indexOf.bind(a, 1, 4)).not.toThrowError();
 		});
 	});
 
 	describe('lastIndexOf()', function () {
 		it('returns the number', function () {
 			a = [1, 2, 1];
+			f = function (x) { return x === 1; };
 			expect(a.lastIndexOf(1)).toBe(2);
 			expect(a.lastIndexOf(4)).toBe(-1);
 			expect(a.lastIndexOf(1, 3)).toBe(2);
 			expect(a.lastIndexOf(1, 1)).toBe(0);
-			expect(a.lastIndexOf(1, 1)).toBe(0);
-			expect(a.lastIndexOf(function (x) { return x === 1; })).toBe(2);
+			expect(a.lastIndexOf(1, -1)).toBe(2);
+			expect(a.lastIndexOf(1, -2)).toBe(0);
+			expect(a.lastIndexOf(1, -3)).toBe(0);
+			expect(a.lastIndexOf(1, -4)).toBe(-1);
+			expect(a.lastIndexOf(f)).toBe(2);
 			expect(a.lastIndexOf(function (x) { return x === 4; })).toBe(-1);
-			expect(a.lastIndexOf(function (x) { return x === 1; }, 3)).toBe(2);
-			expect(a.lastIndexOf(function (x) { return x === 1; }, 1)).toBe(0);
-			expect(a.lastIndexOf(function (x) { return x === 1; }, 1)).toBe(0);
+			expect(a.lastIndexOf(f, 3)).toBe(2);
+			expect(a.lastIndexOf(f, 1)).toBe(0);
+			expect(a.lastIndexOf(f, -1)).toBe(2);
+			expect(a.lastIndexOf(f, -2)).toBe(0);
+			expect(a.lastIndexOf(f, -3)).toBe(0);
+			expect(a.lastIndexOf(f, -4)).toBe(-1);
 		});
 
 		it('throws an error', function () {
 			a = [1, 2, 3];
 			expect(a.lastIndexOf.bind(a)).toThrowError();
-			expect(a.lastIndexOf.bind(a, 1, -1)).toThrowError(RangeError);
-			expect(a.lastIndexOf.bind(a, 1, 4)).toThrowError(RangeError);
+			expect(a.lastIndexOf.bind(a, 1, 4)).not.toThrowError();
 		});
 	});
 

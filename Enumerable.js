@@ -64,7 +64,7 @@
 	 * 
 	 * Array.create(3, null);
 	 * </code>
-	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from">Array.from</a></p>
+	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from">Array.from()</a></p>
 	 * <meta keywords="from"/>
 	 */
 	Array.create = function () {
@@ -303,7 +303,7 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> an object with properties that are derived from all members. The members must support toString() function.</p>
+	 * <p><b>Returns</b> an object with properties that are derived from all members. The members must have <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toString">toString()</a> method.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u><br>
 	 * <u>(nameProjector: <i>string</i>)</u><br>
@@ -449,7 +449,7 @@
 	 *
 	 * [1, 2, 3].toString('-');
 	 * </code>
-	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join">Array.prototype.join</a></p>
+	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join">Array.prototype.join()</a></p>
 	 * <meta keywords="text,join,concat"/>
 	 */
 	Array.prototype.toString = function () {
@@ -485,7 +485,7 @@
 	 * 
 	 * a.where('work', 'Singer');
 	 * </code>
-	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter">Array.prototype.filter</a></p>
+	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter">Array.prototype.filter()</a></p>
 	 * <meta keywords="filter"/>
 	 */
 	Array.prototype.where = function () {
@@ -553,7 +553,7 @@
 	 * 
 	 * a.select(['name']);
 	 * </code>
-	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map">Array.prototype.map</a></p>
+	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map">Array.prototype.map()</a></p>
 	 * <meta keywords="map"/>
 	 */
 	Array.prototype.select = function () {
@@ -625,7 +625,7 @@
 	 * 	}
 	 * });
 	 * </code>
-	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach">Array.prototype.forEach</a></p>
+	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach">Array.prototype.forEach()</a></p>
 	 */
 	Array.prototype.invoke = function () {
 		var fni = Array.prototype.slice.call(arguments).indexOf(function (itm) { return typeof itm === 'function'; });
@@ -779,7 +779,7 @@
 
 
 	/**
-	 * <p><b>Returns</b> the current array after iterates on the members that meet the given group. This must be called after <a href="#array.prototype.groupby">groupBy</a> method. Whenever the given iterator returns false, the invocation will be stopped immediately.</p>
+	 * <p><b>Returns</b> the current array after iterates on the members that meet the given group. This must be called after <a href="#array.prototype.groupby">Array.prototype.groupBy()</a> method. Whenever the given iterator returns false, the invocation will be stopped immediately.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(groupName: <i>anything</i>, iterator: <i>function</i>)</u><br>
 	 * </p>
@@ -840,7 +840,7 @@
 	 * 
 	 * a.take(1, 2);
 	 * </code>
-	 * <p><b>See also</b> <a href="#array.prototype.where">Array.prototype.where</a></p>
+	 * <p><b>See also</b> <a href="#array.prototype.where">Array.prototype.where()</a></p>
 	 * <meta keywords="head,skip,where,filter"/>
 	 */
 	Array.prototype.take = function () {
@@ -887,7 +887,7 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> a new array with only members that are not in the given range. If the condition function is given, the range is starting from the index which the condition returns false. This is a reverse implementation of <a href="#array.prototype.take">take</a>.</p>
+	 * <p><b>Returns</b> a new array with only members that are not in the given range. If the condition function is given, the range is starting from the index which the condition returns false. This is a reverse implementation of <a href="#array.prototype.take">Array.prototype.take()</a> method.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
 	 * <u>(startIndex: <i>number</i>)</u><br>
@@ -906,7 +906,7 @@
 	 * 
 	 * a.skip(1, 2);
 	 * </code>
-	 * <p><b>See also</b> <a href="#array.prototype.where">Array.prototype.where</a></p>
+	 * <p><b>See also</b> <a href="#array.prototype.where">Array.prototype.where()</a></p>
 	 * <meta keywords="take,where,filter"/>
 	 */
 	Array.prototype.skip = function () {
@@ -1028,7 +1028,7 @@
 	 * 
 	 * [].any();
 	 * </code>
-	 * <p><b>See also</b> <a href="#array.prototype.all">Array.prototype.all</a>, <a href="#array.prototype.where">Array.prototype.where</a></p>
+	 * <p><b>See also</b> <a href="#array.prototype.all">Array.prototype.all()</a>, <a href="#array.prototype.where">Array.prototype.where()</a></p>
 	 * <meta keywords="some"/>
 	 */
 	Array.prototype.any = function () {
@@ -1089,7 +1089,7 @@
 	 * 
 	 * a.all('work', 'Doctor');
 	 * </code>
-	 * <p><b>See also</b> <a href="#array.prototype.any">Array.prototype.any</a>, <a href="#array.prototype.where">Array.prototype.where</a></p>
+	 * <p><b>See also</b> <a href="#array.prototype.any">Array.prototype.any()</a>, <a href="#array.prototype.where">Array.prototype.where()</a></p>
 	 * <meta keywords="every"/>
 	 */
 	Array.prototype.all = function () {
@@ -1149,15 +1149,35 @@
 	 * 
 	 * a.has(a[1]);
 	 * 
-	 * a.all(a[1], 2);
+	 * a.has(a[1], 0);
+	 * 
+	 * a.has(a[1], 2);
 	 * </code>
-	 * <p><b>See also</b> <a href="#array.prototype.indexof">Array.prototype.indexOf</a>, <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes">Array.prototype.includes</a></p>
+	 * <p><b>See also</b> <a href="#array.prototype.indexof">Array.prototype.indexOf()</a>, <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes">Array.prototype.includes()</a></p>
 	 * <meta keywords="contains,includes,indexof"/>
 	 */
 	Array.prototype.has = function () {
 		return this.indexOf.apply(this, arguments) >= 0;
 	};
 
+	/**
+	 * <p><b>Returns</b> true if and only if all members match the given array.</p>
+	 * <p>The difference between this method and <a href="#object.isequal">Object.isEqual()</a> is, this method does a shallow comparison for reference object only.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(another: <i>array</i>)</u><br>
+	 * <u>(another: <i>array</i>, comparer: <i>function&lt;boolean&gt;</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * [1, 2, 3].isEqual([1, 2, 3]);
+	 * 
+	 * [1, 2, 3].isEqual([1, 3, 2]);
+	 * 
+	 * [1, 2, {}].isEqual([1, 2, {}]);
+	 * 
+	 * [1, 2, {}].isEqual([1, 2, {}], function (x, y) { return Object.isEqual(x, y); });
+	 * </code>
+	 * <p><b>See also</b> <a href="#object.isequal">Object.isEqual()</a></p>
+	 */
 	Array.prototype.isEqual = function () {
 		var ar0 = Array.create(arguments[0]);
 		var ar1 = arguments[1];
@@ -1190,7 +1210,26 @@
 		}
 	};
 
-	Array.prototype.isMatch = function () {
+	/**
+	 * <p><b>Returns</b> true if and only if all members match the given array.</p>
+	 * <p>The difference between this method and <a href="#array.prototype.isequal">Array.prototype.isEqual()</a> is, this method does not check the order of members.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(another: <i>array</i>)</u><br>
+	 * <u>(another: <i>array</i>, comparer: <i>function&lt;boolean&gt;</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * [1, 2, 3].isAlike([1, 2, 3]);
+	 * 
+	 * [1, 2, 3].isAlike([1, 3, 2]);
+	 * 
+	 * [1, 2, {}].isAlike([1, {}, 2]);
+	 * 
+	 * [1, 2, {}].isAlike([1, {}, 2], function (x, y) { return Object.isEqual(x, y); });
+	 * </code>
+	 * <p><b>See also</b> <a href="#array.prototype.isequal">Array.prototype.isEqual()</a></p>
+	 * <meta keywords="equal"/>
+	 */
+	Array.prototype.isAlike = function () {
 		var ar0 = Array.create(arguments[0]).toImmutable();
 		var ar1 = arguments[1];
 		var idx = -1;
@@ -1237,6 +1276,26 @@
 		}
 	};
 
+	/**
+	 * <p><b>Returns</b> true if and only if the current array is a proper subset of the given array.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(another: <i>array</i>)</u><br>
+	 * <u>(another: <i>array</i>, comparer: <i>function&lt;boolean&gt;</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * [1, 2, 3].isSubset([1, 2, 3]);
+	 * 
+	 * [1, 2, 3].isSubset([1, 3, 2]);
+	 * 
+	 * [1, 2, 3].isSubset([1, 2]);
+	 * 
+	 * [1, 2].isSubset([1, 2, 3]);
+	 * 
+	 * [1, 2, {}].isSubset([1, {}, 2]);
+	 * 
+	 * [1, 2, {}].isSubset([1, {}, 2], function (x, y) { return Object.isEqual(x, y); });
+	 * </code>
+	 */
 	Array.prototype.isSubset = function () {
 		var arr = this;
 		var ar0 = Array.create(arguments[0]);
@@ -1272,75 +1331,111 @@
 		return true;
 	};
 
+	var _indexOf = Array.prototype.indexOf;
+
+	/**
+	 * <p><b>Returns</b> a number of index that match the given condition, otherwise -1. This extends the native <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf">Array.prototype.indexOf()</a> method.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
+	 * <u>(condition: <i>function&lt;boolean&gt;</i>, startIndex: <i>number</i>)</u><br>
+	 * <u>(expectedValue: <i>anything</i>)</u><br>
+	 * <u>(expectedValue: <i>anything</i>, startIndex: <i>number</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * [1, 2, 3, 2].indexOf(2);
+	 * 
+	 * [1, 2, 3, 2].indexOf(2, 2);
+	 * 
+	 * [1, 2, 3, 2].indexOf(function (x) { return x === 2; });
+	 * 
+	 * [1, 2, 3, 2].indexOf(function (x) { return x === 2; }, 2);
+	 * </code>
+	 */
 	Array.prototype.indexOf = function () {
 		var ar0 = arguments[0];
 		var ar1 = arguments[1];
 		var idx = -1;
 		var bnd = this.length;
-		if (arguments.length === 2) {
-			if (isInt(ar1)) {
-				if (ar1 >= 0 && ar1 <= bnd) {
-					idx = ar1 - 1;
-
-				} else {
-					throw new RangeError(ERR_OOR);
-				}
-			}
-		}
 		if (arguments.length >= 1) {
 			if (typeof ar0 === 'function') {
+				if (isInt(ar1)) {
+					if (ar1 >= 0) {
+						idx = ar1 - 1;
+
+					} else {
+						idx = bnd + ar1 - 1;
+					}
+				}
+				if (idx < 0) {
+					idx = -1;
+				}
 				while (++idx < bnd) {
 					if (ar0.call(this._s, this[idx], idx, this)) {
 						return idx;
 					}
 				}
+				return -1;
 
 			} else {
-				while (++idx < bnd) {
-					if (this[idx] === ar0) {
-						return idx;
-					}
-				}
+				return _indexOf.apply(this, arguments);
 			}
 
 		} else {
 			throw new Error(ERR_INV);
 		}
-		return -1;
 	};
 
+	var _lastIndexOf = Array.prototype.lastIndexOf;
+
+	/**
+	 * <p><b>Returns</b> a number of index that match the given condition, otherwise -1. This extends the native <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/lastIndexOf">Array.prototype.lastIndexOf()</a> method.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
+	 * <u>(condition: <i>function&lt;boolean&gt;</i>, startIndex: <i>number</i>)</u><br>
+	 * <u>(expectedValue: <i>anything</i>)</u><br>
+	 * <u>(expectedValue: <i>anything</i>, startIndex: <i>number</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * [1, 2, 3, 2].lastIndexOf(2);
+	 * 
+	 * [1, 2, 3, 2].lastIndexOf(2, 2);
+	 * 
+	 * [1, 2, 3, 2].lastIndexOf(function (x) { return x === 2; });
+	 * 
+	 * [1, 2, 3, 2].lastIndexOf(function (x) { return x === 2; }, 2);
+	 * </code>
+	 */
 	Array.prototype.lastIndexOf = function () {
 		var ar0 = arguments[0];
 		var ar1 = arguments[1];
 		var idx = this.length;
-		if (arguments.length === 2) {
-			if (isInt(ar1) && ar1 >= 0 && ar1 <= idx) {
-				idx = ar1;
-
-			} else {
-				throw new RangeError(ERR_OOR);
-			}
-		}
 		if (arguments.length >= 1) {
 			if (typeof ar0 === 'function') {
+				if (isInt(ar1)) {
+					if (ar1 >= 0) {
+						idx = ar1;
+
+					} else {
+						idx = this.length + ar1 + 1;
+					}
+				}
+				if (idx < 0) {
+					idx = this.length;
+				}
 				while (--idx >= 0) {
 					if (ar0.call(this._s, this[idx], idx, this)) {
 						return idx;
 					}
 				}
+				return -1;
 
 			} else {
-				while (--idx >= 0) {
-					if (this[idx] === ar0) {
-						return idx;
-					}
-				}
+				return _lastIndexOf.apply(this, arguments);
 			}
 
 		} else {
 			throw new Error(ERR_INV);
 		}
-		return -1;
 	};
 
 	var _find = Array.prototype.find;
@@ -1363,7 +1458,7 @@
 	 * 
 	 * a.find('work', 'Doctor');
 	 * </code>
-	 * <p><b>See also</b> <a href="#array.prototype.first">Array.prototype.first</a>, <a href="#array.prototype.firstornull">Array.prototype.firstOrNull</a></p>
+	 * <p><b>See also</b> <a href="#array.prototype.first">Array.prototype.first()</a>, <a href="#array.prototype.firstornull">Array.prototype.firstOrNull()</a></p>
 	 * <meta keywords="first"/>
 	 */
 	Array.prototype.find = function () {
@@ -1404,7 +1499,7 @@
 	 * 
 	 * a.first(function (x) { return x.work === 'Singer'; });
 	 * </code>
-	 * <p><b>See also</b> <a href="#array.prototype.find">Array.prototype.find</a>, <a href="#array.prototype.firstornull">Array.prototype.firstOrNull</a></p>
+	 * <p><b>See also</b> <a href="#array.prototype.find">Array.prototype.find()</a>, <a href="#array.prototype.firstornull">Array.prototype.firstOrNull()</a></p>
 	 * <meta keywords="find"/>
 	 */
 	Array.prototype.first = function () {
@@ -1444,7 +1539,7 @@
 	 * 
 	 * a.firstOrNull(function (x) { return x.work === 'Doctor'; });
 	 * </code>
-	 * <p><b>See also</b> <a href="#array.prototype.find">Array.prototype.find</a>, <a href="#array.prototype.first">Array.prototype.first</a></p>
+	 * <p><b>See also</b> <a href="#array.prototype.find">Array.prototype.find()</a>, <a href="#array.prototype.first">Array.prototype.first()</a></p>
 	 * <meta keywords="find"/>
 	 */
 	Array.prototype.firstOrNull = function () {
@@ -2721,6 +2816,7 @@
 	 * 
 	 * Object.isEqual(NaN, NaN);
 	 * </code>
+	 * <p><b>See also</b> <a href="#array.prototype.isequal">Array.prototype.isEqual()</a></p>
 	 */
 	Object.isEqual = function (ar0, ar1) {
 		if (arguments.length !== 2) {
@@ -2748,7 +2844,7 @@
 					ls1.push(nam);
 				}
 			}
-			return ls0.isMatch(ls1) && ls0.all(function (nam) {
+			return ls0.isAlike(ls1) && ls0.all(function (nam) {
 				return Object.isEqual(ar0[nam], ar1[nam]);
 			});
 
@@ -2770,7 +2866,7 @@
 	 * 
 	 * 'this is what you came for'.contains('WHAT');
 	 * </code>
-	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes">String.prototype.includes</a></p>
+	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes">String.prototype.includes()</a></p>
 	 * <meta keywords="include,indexof"/>
 	 */
 	String.prototype.contains = function (val) {
@@ -2816,7 +2912,7 @@
 	 * <code>
 	 * 'Alex & Brad say "0 < 1 but 2 > 1"'.toEncodedXML();
 	 * </code>
-	 * <p><b>See also</b> <a href="#string.prototype.todecodedxml">toDecodedXML</a></p>
+	 * <p><b>See also</b> <a href="#string.prototype.todecodedxml">String.prototype.toDecodedXML()</a></p>
 	 * <meta keywords="html,escape,character"/>
 	 */
 	String.prototype.toEncodedXML = function () {
@@ -2824,11 +2920,11 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> a string that has all <a href="https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references#Predefined_entities_in_XML">XML characters</a> escaped. This is a reverse implementation of <a href="#array.prototype.toencodedxml">toEncodedXML</a></p>
+	 * <p><b>Returns</b> a string that has all <a href="https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references#Predefined_entities_in_XML">XML characters</a> escaped. This is a reverse implementation of <a href="#array.prototype.toencodedxml">String.prototype.toEncodedXML/=()</a></p>
 	 * <code><!--
 	 * 'Alex &amp; Brad say &quot;0 &lt; 1 but 2 &gt; 1&quot;'.toDecodedXML();
 	 * --></code>
-	 * <p><b>See also</b> <a href="#string.prototype.toencodedxml">toEncodedXML</a></p>
+	 * <p><b>See also</b> <a href="#string.prototype.toencodedxml">String.prototype.toEncodedXML()</a></p>
 	 * <meta keywords="html,escape,unescape,character"/>
 	 */
 	String.prototype.toDecodedXML = function () {
@@ -2887,6 +2983,7 @@
 	 * <code>
 	 * '_this-is*what you   CAME^For$'.toCamelCase();
 	 * </code>
+	 * <p><b>See also</b> <a href="#string.prototype.totraincase">String.prototype.toTrainCase()</a></p>
 	 */
 	String.prototype.toCamelCase = function () {
 		var txt = this.toEnglishCase().replace(CAS_APO, '').splitWords().map(String.prototype.toCapitalWord).join('');
@@ -2901,6 +2998,7 @@
 	 * <code>
 	 * '_this-is*what you   CAME^For$'.toTrainCase();
 	 * </code>
+	 * <p><b>See also</b> <a href="#string.prototype.tocamelcase">String.prototype.toCamelCase()</a></p>
 	 */
 	String.prototype.toTrainCase = function () {
 		return this.toEnglishCase().replace(CAS_APO, '').splitWords().join('-').toLowerCase();
