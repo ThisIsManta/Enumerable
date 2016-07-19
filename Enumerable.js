@@ -149,7 +149,7 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> the current array and stores the given object as a context for further use in functions. Passing an undefined or null will delete the existing context.</p>
+	 * <p><b>Returns</b> the current array and stores the given object as a context for further use in functions. Passing an <i>undefined</i> or <i>null</i> will delete the existing context.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(context: <i>object</i>)</u><br>
 	 * </p>
@@ -217,7 +217,7 @@
 	 * console.log(a[0] === z[0]);
 	 * console.log(a[0].q === z[0].q);
 	 * </code>
-	 * <meta keywords="copy,slice"/>
+	 * <meta keywords="copy,slice,duplicate"/>
 	 */
 	Array.prototype.clone = function () {
 		var ar0 = !!arguments[0];
@@ -303,7 +303,7 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> an object with properties that are derived from all members. The members must have <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toString">toString()</a> method.</p>
+	 * <p><b>Returns</b> an object with properties that are derived from all members. The members must implement <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toString">toString()</a> method.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u><br>
 	 * <u>(nameProjector: <i>string</i>)</u><br>
@@ -485,7 +485,7 @@
 	 * 
 	 * a.where('work', 'Singer');
 	 * </code>
-	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter">Array.prototype.filter()</a></p>
+	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter">Array.prototype.filter()</a>, <a>Array.prototype.norm()</a></p>
 	 * <meta keywords="filter"/>
 	 */
 	Array.prototype.where = function () {
@@ -536,7 +536,7 @@
 	/**
 	 * <p><b>Returns</b> a new array with the results of all members.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>(valueGenerator: <i>function&lt;anything&gt;</i>)</u><br>
+	 * <u>(valueProjector: <i>function&lt;anything&gt;</i>)</u><br>
 	 * <u>(nameProjector: <i>string</i>)</u><br>
 	 * <u>(nameProjector: <i>array&lt;string&gt;</i>)</u> – This creates an object containing the given property name(s).<br>
 	 * </p>
@@ -779,7 +779,7 @@
 
 
 	/**
-	 * <p><b>Returns</b> the current array after iterates on the members that meet the given group. This must be called after <a href="#array.prototype.groupby">Array.prototype.groupBy()</a> method. Whenever the given iterator returns false, the invocation will be stopped immediately.</p>
+	 * <p><b>Returns</b> the current array after iterates on the members that meet the given group. This must be called after <a>Array.prototype.groupBy()</a> method. Whenever the given iterator returns false, the invocation will be stopped immediately.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(groupName: <i>anything</i>, iterator: <i>function</i>)</u><br>
 	 * </p>
@@ -795,6 +795,7 @@
 	 * 
 	 * g.invokeWhich('Singer', function (x) { console.log(x); });
 	 * </code>
+	 * <p><b>See also</b> <a>Array.prototype.groupBy()</a></p>
 	 */
 	Array.prototype.invokeWhich = function () {
 		var ar0 = arguments[0];
@@ -840,7 +841,7 @@
 	 * 
 	 * a.take(1, 2);
 	 * </code>
-	 * <p><b>See also</b> <a href="#array.prototype.where">Array.prototype.where()</a></p>
+	 * <p><b>See also</b> <a>Array.prototype.where()</a></p>
 	 * <meta keywords="head,skip,where,filter"/>
 	 */
 	Array.prototype.take = function () {
@@ -887,7 +888,7 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> a new array with only members that are not in the given range. If the condition function is given, the range is starting from the index which the condition returns false. This is a reverse implementation of <a href="#array.prototype.take">Array.prototype.take()</a> method.</p>
+	 * <p><b>Returns</b> a new array with only members that are not in the given range. If the condition function is given, the range is starting from the index which the condition returns false. This is a reverse implementation of <a>Array.prototype.take()</a> method.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
 	 * <u>(startIndex: <i>number</i>)</u><br>
@@ -906,7 +907,7 @@
 	 * 
 	 * a.skip(1, 2);
 	 * </code>
-	 * <p><b>See also</b> <a href="#array.prototype.where">Array.prototype.where()</a></p>
+	 * <p><b>See also</b> <a>Array.prototype.where()</a></p>
 	 * <meta keywords="take,where,filter"/>
 	 */
 	Array.prototype.skip = function () {
@@ -1028,7 +1029,7 @@
 	 * 
 	 * [].any();
 	 * </code>
-	 * <p><b>See also</b> <a href="#array.prototype.all">Array.prototype.all()</a>, <a href="#array.prototype.where">Array.prototype.where()</a></p>
+	 * <p><b>See also</b> <a>Array.prototype.all()</a>, <a>Array.prototype.where()</a></p>
 	 * <meta keywords="some"/>
 	 */
 	Array.prototype.any = function () {
@@ -1089,7 +1090,7 @@
 	 * 
 	 * a.all('work', 'Doctor');
 	 * </code>
-	 * <p><b>See also</b> <a href="#array.prototype.any">Array.prototype.any()</a>, <a href="#array.prototype.where">Array.prototype.where()</a></p>
+	 * <p><b>See also</b> <a>Array.prototype.any()</a>, <a>Array.prototype.where()</a></p>
 	 * <meta keywords="every"/>
 	 */
 	Array.prototype.all = function () {
@@ -1153,7 +1154,7 @@
 	 * 
 	 * a.has(a[1], 2);
 	 * </code>
-	 * <p><b>See also</b> <a href="#array.prototype.indexof">Array.prototype.indexOf()</a>, <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes">Array.prototype.includes()</a></p>
+	 * <p><b>See also</b> <a>Array.prototype.indexOf()</a>, <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes">Array.prototype.includes()</a></p>
 	 * <meta keywords="contains,includes,indexof"/>
 	 */
 	Array.prototype.has = function () {
@@ -1162,7 +1163,7 @@
 
 	/**
 	 * <p><b>Returns</b> true if and only if all members match the given array.</p>
-	 * <p>The difference between this method and <a href="#object.isequal">Object.isEqual()</a> is, this method does a shallow comparison for reference object only.</p>
+	 * <p>The difference between this method and <a>Object.isEqual()</a> is, this method does a shallow comparison for reference object only.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(another: <i>array</i>)</u><br>
 	 * <u>(another: <i>array</i>, comparer: <i>function&lt;boolean&gt;</i>)</u><br>
@@ -1176,7 +1177,7 @@
 	 * 
 	 * [1, 2, {}].isEqual([1, 2, {}], function (x, y) { return Object.isEqual(x, y); });
 	 * </code>
-	 * <p><b>See also</b> <a href="#object.isequal">Object.isEqual()</a></p>
+	 * <p><b>See also</b> <a>Object.isEqual()</a></p>
 	 */
 	Array.prototype.isEqual = function () {
 		var ar0 = Array.create(arguments[0]);
@@ -1212,7 +1213,7 @@
 
 	/**
 	 * <p><b>Returns</b> true if and only if all members match the given array.</p>
-	 * <p>The difference between this method and <a href="#array.prototype.isequal">Array.prototype.isEqual()</a> is, this method does not check the order of members.</p>
+	 * <p>The difference between this method and <a>Array.prototype.isEqual()</a> is, this method does not check the order of members.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(another: <i>array</i>)</u><br>
 	 * <u>(another: <i>array</i>, comparer: <i>function&lt;boolean&gt;</i>)</u><br>
@@ -1226,7 +1227,7 @@
 	 * 
 	 * [1, 2, {}].isAlike([1, {}, 2], function (x, y) { return Object.isEqual(x, y); });
 	 * </code>
-	 * <p><b>See also</b> <a href="#array.prototype.isequal">Array.prototype.isEqual()</a></p>
+	 * <p><b>See also</b> <a>Array.prototype.isEqual()</a></p>
 	 * <meta keywords="equal"/>
 	 */
 	Array.prototype.isAlike = function () {
@@ -1441,7 +1442,7 @@
 	var _find = Array.prototype.find;
 
 	/**
-	 * <p><b>Returns</b> the first member that meets the given condition, otherwise undefined. This overrides the native find method.</p>
+	 * <p><b>Returns</b> the first member that meets the given condition, otherwise <i>undefined</i>. This overrides the native find method.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
 	 * <u>(nameProjector: <i>string</i>, expectedValue: <i>anything</i>)</u>
@@ -1458,8 +1459,8 @@
 	 * 
 	 * a.find('work', 'Doctor');
 	 * </code>
-	 * <p><b>See also</b> <a href="#array.prototype.first">Array.prototype.first()</a>, <a href="#array.prototype.firstornull">Array.prototype.firstOrNull()</a></p>
-	 * <meta keywords="first"/>
+	 * <p><b>See also</b> <a>Array.prototype.first()</a>, <a>Array.prototype.firstOrNull()</a></p>
+	 * <meta keywords="first,search"/>
 	 */
 	Array.prototype.find = function () {
 		var ar0 = arguments[0];
@@ -1501,7 +1502,7 @@
 	 * 
 	 * a.first(function (x) { return x.work === 'Doctor'; });
 	 * </code>
-	 * <p><b>See also</b> <a href="#array.prototype.find">Array.prototype.find()</a>, <a href="#array.prototype.firstornull">Array.prototype.firstOrNull()</a></p>
+	 * <p><b>See also</b> <a>Array.prototype.find()</a>, <a>Array.prototype.firstOrNull()</a></p>
 	 * <meta keywords="find"/>
 	 */
 	Array.prototype.first = function () {
@@ -1541,7 +1542,7 @@
 	 * 
 	 * a.firstOrNull(function (x) { return x.work === 'Doctor'; });
 	 * </code>
-	 * <p><b>See also</b> <a href="#array.prototype.find">Array.prototype.find()</a>, <a href="#array.prototype.first">Array.prototype.first()</a></p>
+	 * <p><b>See also</b> <a>Array.prototype.find()</a>, <a>Array.prototype.first()</a></p>
 	 * <meta keywords="find"/>
 	 */
 	Array.prototype.firstOrNull = function () {
@@ -1581,7 +1582,7 @@
 	 * 
 	 * a.last(function (x) { return x.work === 'Doctor'; });
 	 * </code>
-	 * <p><b>See also</b> <a href="#array.prototype.find">Array.prototype.find()</a>, <a href="#array.prototype.lastornull">Array.prototype.lastOrNull()</a></p>
+	 * <p><b>See also</b> <a>Array.prototype.find()</a>, <a>Array.prototype.lastOrNull()</a></p>
 	 * <meta keywords="find"/>
 	 */
 	Array.prototype.last = function () {
@@ -1621,7 +1622,7 @@
 	 * 
 	 * a.lastOrNull(function (x) { return x.work === 'Doctor'; });
 	 * </code>
-	 * <p><b>See also</b> <a href="#array.prototype.find">Array.prototype.find()</a>, <a href="#array.prototype.last">Array.prototype.last()</a></p>
+	 * <p><b>See also</b> <a>Array.prototype.find()</a>, <a>Array.prototype.last()</a></p>
 	 * <meta keywords="find"/>
 	 */
 	Array.prototype.lastOrNull = function () {
@@ -1663,7 +1664,7 @@
 	 * 
 	 * a.single(function (x) { return x.work === 'Doctor'; });
 	 * </code>
-	 * <p><b>See also</b> <a href="#array.prototype.find">Array.prototype.find()</a>, <a href="#array.prototype.singleornull">Array.prototype.singleOrNull()</a></p>
+	 * <p><b>See also</b> <a>Array.prototype.find()</a>, <a>Array.prototype.singleOrNull()</a></p>
 	 * <meta keywords="find"/>
 	 */
 	Array.prototype.single = function () {
@@ -1719,7 +1720,7 @@
 	 * 
 	 * a.singleOrNull(function (x) { return x.work === 'Doctor'; });
 	 * </code>
-	 * <p><b>See also</b> <a href="#array.prototype.find">Array.prototype.find()</a>, <a href="#array.prototype.single">Array.prototype.single()</a></p>
+	 * <p><b>See also</b> <a>Array.prototype.find()</a>, <a>Array.prototype.single()</a></p>
 	 * <meta keywords="find"/>
 	 */
 	Array.prototype.singleOrNull = function () {
@@ -1857,7 +1858,7 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> the current array which has the given member added. This mutates the current array.</p>
+	 * <p><b>Returns</b> the current array that has the given member added. This mutates the current array.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(value: <i>anything</i>)</u> – This appends the given value to the current array.<br>
 	 * <u>(value: <i>anything</i>, targetIndex: <i>number</i>)</u><br>
@@ -1871,7 +1872,7 @@
 	 * 
 	 * console.log(a);
 	 * </code>
-	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push">Array.prototype.push()</a>, <a href="#array.prototype.addrange">Array.prototype.addRange()</a></p>
+	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push">Array.prototype.push()</a>, <a>Array.prototype.addRange()</a></p>
 	 * <meta keywords="push,append,insert,splice"/>
 	 */
 	Array.prototype.add = function () {
@@ -1895,7 +1896,7 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> the current array which has the given members added. This mutates the current array.</p>
+	 * <p><b>Returns</b> the current array that has the given members added. This mutates the current array.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(values: <i>array&lt;anything&gt;</i>)</u> – This appends the given value to the current array.<br>
 	 * <u>(values: <i>array&lt;anything&gt;</i>, targetIndex: <i>number</i>)</u><br>
@@ -1909,7 +1910,7 @@
 	 * 
 	 * console.log(a);
 	 * </code>
-	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push">Array.prototype.push()</a>, <a href="#array.prototype.add">Array.prototype.add()</a></p>
+	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push">Array.prototype.push()</a>, <a>Array.prototype.add()</a></p>
 	 * <meta keywords="push,append,insert,splice"/>
 	 */
 	Array.prototype.addRange = function () {
@@ -1938,7 +1939,7 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> the current array which has the given member removed. This mutates the current array.</p>
+	 * <p><b>Returns</b> the current array that has the given member removed. This mutates the current array.</p>
 	 * <p>This removes the first occurrence of the given value from the current array.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(value: <i>anything</i>)</u><br>
@@ -1955,7 +1956,7 @@
 	 * 
 	 * console.log(a);
 	 * </code>
-	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice">Array.prototype.splice()</a>, <a href="#array.prototype.removeall">Array.prototype.removeAll()</a>, <a href="#array.prototype.removeat">Array.prototype.removeAt()</a>, <a href="#array.prototype.removerange">Array.prototype.removeRange()</a></p>
+	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice">Array.prototype.splice()</a>, <a>Array.prototype.removeAll()</a>, <a>Array.prototype.removeAt()</a>, <a>Array.prototype.removeRange()</a></p>
 	 * <meta keywords="splice"/>
 	 */
 	Array.prototype.remove = function () {
@@ -1977,7 +1978,7 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> the current array which has the given index removed. This mutates the current array.</p>
+	 * <p><b>Returns</b> the current array that has the given index removed. This mutates the current array.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(targetIndex: <i>number</i>)</u><br>
 	 * </p>
@@ -1988,7 +1989,7 @@
 	 * 
 	 * console.log(a);
 	 * </code>
-	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice">Array.prototype.splice()</a>, <a href="#array.prototype.remove">Array.prototype.remove()</a>, <a href="#array.prototype.removeall">Array.prototype.removeAll()</a>, <a href="#array.prototype.removerange">Array.prototype.removeRange()</a></p>
+	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice">Array.prototype.splice()</a>, <a>Array.prototype.remove()</a>, <a>Array.prototype.removeAll()</a>, <a>Array.prototype.removeRange()</a></p>
 	 * <meta keywords="splice"/>
 	 */
 	Array.prototype.removeAt = function () {
@@ -2008,7 +2009,7 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> the current array which has the given members removed. This mutates the current array.</p>
+	 * <p><b>Returns</b> the current array that has the given members removed. This mutates the current array.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(values: <i>array&lt;anything&gt;</i>)</u><br>
 	 * </p>
@@ -2021,7 +2022,7 @@
 	 * 
 	 * console.log(a);
 	 * </code>
-	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice">Array.prototype.splice()</a>, <a href="#array.prototype.remove">Array.prototype.remove()</a>, <a href="#array.prototype.removeall">Array.prototype.removeAll()</a>, <a href="#array.prototype.removeat">Array.prototype.removeAt()</a></p>
+	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice">Array.prototype.splice()</a>, <a>Array.prototype.remove()</a>, <a>Array.prototype.removeAll()</a>, <a>Array.prototype.removeAt()</a></p>
 	 * <meta keywords="splice"/>
 	 */
 	Array.prototype.removeRange = function () {
@@ -2040,7 +2041,7 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> the current array which has the given member removed. This mutates the current array.</p>
+	 * <p><b>Returns</b> the current array that has the given member removed. This mutates the current array.</p>
 	 * <p>This removes all occurrences of the given value from the current array.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u> – This removes all members.<br>
@@ -2054,7 +2055,7 @@
 	 * 
 	 * console.log(a);
 	 * </code>
-	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice">Array.prototype.splice()</a>, <a href="#array.prototype.remove">Array.prototype.remove()</a>, <a href="#array.prototype.removeat">Array.prototype.removeAt()</a>, <a href="#array.prototype.removerange">Array.prototype.removeRange()</a></p>
+	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice">Array.prototype.splice()</a>, <a>Array.prototype.remove()</a>, <a>Array.prototype.removeAt()</a>, <a>Array.prototype.removeRange()</a></p>
 	 * <meta keywords="splice"/>
 	 */
 	Array.prototype.removeAll = function () {
@@ -2077,18 +2078,18 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> a new nested array which has the current array split at the given member.</p>
+	 * <p><b>Returns</b> a new nested array with members have the current array split at the given member.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(valueProjector: <i>function&lt;boolean&gt;</i>)</u><br>
 	 * <u>(value: <i>anything</i>)</u><br>
-	 * <u>(nameProjector: <i>string</i>, targetValue: <i>anything</i>)</u><br>
+	 * <u>(nameProjector: <i>string</i>, valueProperty: <i>anything</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * [1, 2, 3, 2].split(3);
 	 * 
 	 * [1, 2, 3, 2].split(function (x) { return x === 3; });
 	 * </code>
-	 * <p><b>See also</b> <a href="#array.prototype.splitat">Array.prototype.splitAt()</a></p>
+	 * <p><b>See also</b> <a>Array.prototype.splitAt()</a>, <a>Array.prototype.groupOf()</a></p>
 	 */
 	Array.prototype.split = function () {
 		var ar0 = arguments[0];
@@ -2137,14 +2138,14 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> a new nested array which has the current array split at the given index. This always creates two arrays inside without removing any member.</p>
+	 * <p><b>Returns</b> a new nested array with members have the current array split at the given index. This always creates two internal arrays without removing any members.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(targetIndex: <i>number</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * [1, 2, 3, 2].splitAt(2);
 	 * </code>
-	 * <p><b>See also</b> <a href="#array.prototype.split">Array.prototype.split()</a></p>
+	 * <p><b>See also</b> <a>Array.prototype.split()</a></p>
 	 */
 	Array.prototype.splitAt = function () {
 		var ar0 = arguments[0];
@@ -2167,6 +2168,25 @@
 		}
 	};
 
+	/**
+	 * <p><b>Returns</b> a new array with members have the given member replaced.</p>
+	 * <p>This replaces all occurrences of the given value from the current array, unless the limit is specified.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(targetValue: <i>anything</i>, replacement: <i>anything</i>)</u><br>
+	 * <u>(targetValue: <i>anything</i>, replacement: <i>anything</i>, limit: <i>number</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * a = [1, 2, 3, 2];
+	 * 
+	 * a.replace(2, 4);
+	 * 
+	 * a.replace(2, 4, 1);
+	 * 
+	 * console.log(a);
+	 * </code>
+	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice">Array.prototype.splice()</a>, <a>Array.prototype.replaceAt()</a></p>
+	 * <meta keywords="splice"/>
+	 */
 	Array.prototype.replace = function () {
 		var ar0 = arguments[0];
 		var ar1 = arguments[1];
@@ -2174,31 +2194,49 @@
 		var idx = -1;
 		var bnd = this.length;
 		var out = this.toImmutable();
-		if (arguments.length !== 2) {
-			throw new Error(ERR_INV);
-		}
-		if (!isInt(ar2) || ar2 < 0) {
-			ar2 = Infinity;
-		}
-		if (typeof ar0 === 'function') {
-			while (++idx < bnd && ar2 > 0) {
-				if (ar0.call(this._s, out[idx], idx, out)) {
-					out[idx] = ar1;
-					ar2--;
+		if (arguments.length >= 2) {
+			if (!isInt(ar2) || ar2 < 0) {
+				ar2 = Infinity;
+			}
+			if (typeof ar0 === 'function') {
+				while (++idx < bnd && ar2 > 0) {
+					if (ar0.call(this._s, out[idx], idx, out)) {
+						out[idx] = ar1;
+						ar2--;
+					}
+				}
+
+			} else {
+				while (++idx < bnd && ar2 > 0) {
+					if (out[idx] === ar0) {
+						out[idx] = ar1;
+						ar2--;
+					}
 				}
 			}
 
 		} else {
-			while (++idx < bnd && ar2 > 0) {
-				if (out[idx] === ar0) {
-					out[idx] = ar1;
-					ar2--;
-				}
-			}
+			throw new Error(ERR_INV);
 		}
 		return out;
 	};
 
+	/**
+	 * <p><b>Returns</b> a new array with members have the given index replaced.</p>
+	 * <p>This replaces all occurrences of the given value from the current array, unless the limit is specified.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(targetIndex: <i>number</i>, replacement: <i>anything</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * a = [1, 2, 3, 2];
+	 * 
+	 * a.replaceAt(1, 4);
+	 * 
+	 * console.log(a);
+	 * </code>
+	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice">Array.prototype.splice()</a>, <a>Array.prototype.replace()</a></p>
+	 * <meta keywords="splice"/>
+	 */
 	Array.prototype.replaceAt = function () {
 		var ar0 = arguments[0];
 		var ar1 = arguments[1];
@@ -2215,63 +2253,165 @@
 		return out;
 	};
 
+	/**
+	 * <p><b>Returns</b> a new array with members appear in the current array and members appear exclusively in the given array .</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(values: <i>array&lt;anything&gt;</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * [1, 2, 3, 2].union([1, 4, 5]);
+	 * </code>
+	 * <meta keywords="set"/>
+	 */
 	Array.prototype.union = function () {
-		var ar0 = arguments[0];
+		var ar0 = Array.create(arguments[0]);
 		var idx = -1;
 		var jdx = this.length - 1;
 		var bnd = ar0.length;
 		var out = this.toImmutable();
-		while (++idx < bnd) {
-			if (!this.has(ar0[idx])) {
-				out[++jdx] = ar0[idx];
+		if (arguments.length === 1) {
+			while (++idx < bnd) {
+				if (!this.has(ar0[idx])) {
+					out[++jdx] = ar0[idx];
+				}
 			}
+			return out;
+
+		} else {
+			throw new Error(ERR_INV);
 		}
-		return out;
 	};
 
+	/**
+	 * <p><b>Returns</b> a new array with members appear in both the current array and the given members.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(values: <i>array&lt;anything&gt;</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * [1, 2, 3, 2].intersect([1, 4, 5]);
+	 * </code>
+	 * <meta keywords="set"/>
+	 */
 	Array.prototype.intersect = function () {
-		var ar0 = arguments[0];
+		var ar0 = Array.create(arguments[0]);
 		var idx = -1;
 		var jdx = -1;
 		var bnd = this.length;
 		var out = [];
-		while (++idx < bnd) {
-			if (ar0.has(this[idx])) {
-				out[++jdx] = this[idx];
+		if (arguments.length === 1) {
+			while (++idx < bnd) {
+				if (ar0.has(this[idx])) {
+					out[++jdx] = this[idx];
+				}
 			}
+			out._m = false;
+			if (this._s !== undefined) {
+				out._s = this._s;
+			}
+			return out;
+
+		} else {
+			throw new Error(ERR_INV);
 		}
-		out._m = false;
-		if (this._s !== undefined) {
-			out._s = this._s;
-		}
-		return out;
 	};
 
+	/**
+	 * <p><b>Returns</b> a new array with members appear in the current array but not the given members.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(values: <i>array&lt;anything&gt;</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * [1, 2, 3, 2].difference([1, 4, 5]);
+	 * </code>
+	 * <meta keywords="set"/>
+	 */
 	Array.prototype.difference = function () {
-		var ar0 = arguments[0];
+		var ar0 = Array.create(arguments[0]);
 		var idx = -1;
 		var jdx = -1;
 		var bnd = this.length;
 		var out = [];
-		while (++idx < bnd) {
-			if (!ar0.has(this[idx])) {
-				out[++jdx] = this[idx];
+		if (arguments.length === 1) {
+			while (++idx < bnd) {
+				if (!ar0.has(this[idx])) {
+					out[++jdx] = this[idx];
+				}
 			}
+			out._m = false;
+			if (this._s !== undefined) {
+				out._s = this._s;
+			}
+			return out;
+
+		} else {
+			throw new Error(ERR_INV);
 		}
-		out._m = false;
-		if (this._s !== undefined) {
-			out._s = this._s;
-		}
-		return out;
 	};
 
+	/**
+	 * <p><b>Returns</b> a new array with members sorted by the given condition.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(nameProjector: <i>string</i>)</u><br>
+	 * <u>(nameProjector: <i>string</i>, reverse: <i>boolean</i>, ...)</u><br>
+	 * <u>(nameProjector: <i>function&lt;string&gt;</i>)</u><br>
+	 * <u>(nameProjector: <i>function&lt;string&gt;</i>, reverse: <i>boolean</i>, ...)</u><br>
+	 * <u>(orderSpecifiers: <i>array&lt;anything&gt;</i>)</u><br>
+	 * <u>(nameProjector: <i>string</i>, orderSpecifiers: <i>array&lt;anything&gt;</i>)</u><br>
+	 * <u>(nameProjector: <i>function&lt;string&gt;</i>, orderSpecifiers: <i>array&lt;anything&gt;</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * var a = [
+	 * 	{ name: 'Alex', work: 'Singer' },
+	 * 	{ name: 'Brad', work: 'Dancer' },
+	 * 	{ name: 'Chad', work: 'Singer' }
+	 * ];
+	 * 
+	 * a.sortBy('work');
+	 * 
+	 * a.sortBy(function (x) { return x.work; });
+	 * 
+	 * a.sortBy(function (x) { return x.work; }, true);
+	 * 
+	 * a.sortBy('work', true, 'name', true);
+	 * 
+	 * a.sortBy([a[0], a[2], a[1]]);
+	 * 
+	 * a.sortBy('work', ['Singer', 'Dancer']);
+	 * </code>
+	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort">Array.prototype.sort()</a></p>
+	 */
 	Array.prototype.sortBy = function () {
 		var ar0 = arguments[0];
 		var ar1 = arguments[1];
 		var out;
 		var ctx = this._s;
 		if (arguments.length <= 2) {
-			if (typeof ar0 === 'function') {
+			if (Array.isArray(ar0)) {
+				if (typeof ar0 === 'string' && ar0.length > 0) {
+					var nam = ar0;
+					ar0 = function (itm) {
+						return itm[nam];
+					};
+				}
+				var end = this.length;
+				if (arguments.length === 1) {
+					out = this.select(function (itm, idx) {
+						var tmp = ar0.indexOf(itm);
+						return { v: itm, r: tmp >= 0 ? tmp : (end + idx) };
+					});
+
+				} else if (typeof ar0 === 'function') {
+					out = this.select(function (itm, idx) {
+						var tmp = ar1.indexOf(ar0.apply(ctx, arguments));
+						return { v: itm, r: tmp >= 0 ? tmp : (end + idx) };
+					});
+
+				} else {
+					throw new Error(ERR_INV);
+				}
+				ar0 = undefined;
+
+			} else if (typeof ar0 === 'function') {
 				out = this.select(function (itm, idx) {
 					return { v: itm, r: ar0.call(ctx, itm, idx, this), i: idx };
 				});
@@ -2284,38 +2424,13 @@
 					return { v: itm, r: itm[ar0] };
 				});
 
-			} else if (Array.isArray(ar0)) {
-				if (typeof ar1 === 'string' && ar1.length > 0) {
-					var nam = ar1;
-					ar1 = function (itm) {
-						return itm[nam];
-					};
-				}
-				var end = this.length;
-				if (arguments.length === 1) {
-					out = this.select(function (itm, idx) {
-						var tmp = ar0.indexOf(itm);
-						return { v: itm, r: tmp >= 0 ? tmp : (end + idx) };
-					});
-
-				} else if (typeof ar1 === 'function') {
-					out = this.select(function (itm, idx) {
-						var tmp = ar0.indexOf(ar1.apply(ctx, arguments));
-						return { v: itm, r: tmp >= 0 ? tmp : (end + idx) };
-					});
-
-				} else {
-					throw new Error(ERR_INV);
-				}
-				ar1 = undefined;
-
 			} else {
 				throw new Error(ERR_INV);
 			}
 			if (this.length <= 0) {
 				return this;
 
-			} else if (ar1 === undefined || ar1 === true) {
+			} else if (ar1 !== true) {
 				out.sort(function (x, y) {
 					if (x.r === y.r) {
 						return x.i - y.i;
@@ -2331,7 +2446,7 @@
 					}
 				});
 
-			} else if (ar1 === false) {
+			} else {
 				out.sort(function (x, y) {
 					if (x.r === y.r) {
 						return x.i - y.i;
@@ -2346,9 +2461,6 @@
 						return y.r - x.r;
 					}
 				});
-
-			} else {
-				throw new Error(ERR_INV);
 			}
 			return out.select('v');
 
@@ -2370,7 +2482,7 @@
 				}
 			});
 			if (lst.length % 2 === 1) {
-				lst.push(true);
+				lst.push(false);
 			}
 			var idx;
 			var bnd = lst.length / 2;
@@ -2400,7 +2512,7 @@
 					} else {
 						tmp = (x < y) ? -1 : 1;
 					}
-					return tmp * (lst[idx * 2 + 1] ? 1 : -1);
+					return tmp * (lst[idx * 2 + 1] === true ? -1 : 1);
 				}
 				return 0;
 			});
@@ -2408,6 +2520,25 @@
 		}
 	};
 
+	/**
+	 * <p><b>Returns</b> a new nested array with members groupped by the given condition.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(nameProjector: <i>string</i>)</u><br>
+	 * <u>(nameProjector: <i>function&lt;string&gt;</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * var a = [
+	 * 	{ name: 'Alex', work: 'Singer' },
+	 * 	{ name: 'Brad', work: 'Dancer' },
+	 * 	{ name: 'Chad', work: 'Singer' }
+	 * ];
+	 * 
+	 * a.groupBy('work');
+	 * 
+	 * a.groupBy(function (x) { return x.work; });
+	 * </code>
+	 * <p><b>See also</b> <a>Array.prototype.invokeWhich()</a></p>
+	 */
 	Array.prototype.groupBy = function () {
 		var ar0 = arguments[0];
 		var idx = -1;
@@ -2465,6 +2596,22 @@
 		return out;
 	};
 
+	/**
+	 * <p><b>Returns</b> a new nested array with members groupped into the given number.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(count: <i>number</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * var a = [
+	 * 	{ name: 'Alex', work: 'Singer' },
+	 * 	{ name: 'Brad', work: 'Dancer' },
+	 * 	{ name: 'Chad', work: 'Singer' }
+	 * ];
+	 * 
+	 * a.groupOf(2);
+	 * </code>
+	 * <p><b>See also</b> <a>Array.prototype.split()</a></p>
+	 */
 	Array.prototype.groupOf = function () {
 		var ar0 = arguments[0];
 		var idx = -1;
@@ -2490,8 +2637,30 @@
 		}
 	};
 
+	/**
+	 * <p><b>Returns</b> a new array with members merged with the given values. All members must be an object. Although this does not mutate the current array, the members of the current array may be changed.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(values: <i>array&lt;anything&gt;</i>, nameProjector: <i>string</i></u><br>
+	 * <u>(values: <i>array&lt;anything&gt;</i>, nameProjector: <i>string</i>, overwrite: <i>boolean</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * var a = [
+	 * 	{ name: 'Alex', work: 'Singer' },
+	 * 	{ name: 'Brad', work: 'Dancer' },
+	 * 	{ name: 'Chad', work: 'Singer' }
+	 * ];
+	 * 
+	 * var b = [
+	 * 	{ name: 'Alex', year: 22 },
+	 * 	{ name: 'Brad', year: 18 }
+	 * ];
+	 * 
+	 * a.joinBy(b, 'name');
+	 * </code>
+	 * <p><b>See also</b> <a>Array.prototype.split()</a></p>
+	 */
 	Array.prototype.joinBy = function () {
-		var ar0 = arguments[0];
+		var ar0 = Array.create(arguments[0]);
 		var ar1 = arguments[1];
 		var ar2 = arguments[2];
 		var idx = -1;
@@ -2559,6 +2728,27 @@
 		return this;
 	};
 
+	/**
+	 * <p><b>Returns</b> a number of members that match the given condition.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(nameProjector: <i>string</i>, valueProperty: <i>anything</i>)</u><br>
+	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
+	 * <u>(targetValue: <i>anything</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * [1, 2, 3, 2].countBy(2);
+	 * 
+	 * var a = [
+	 * 	{ name: 'Alex', work: 'Singer' },
+	 * 	{ name: 'Brad', work: 'Dancer' },
+	 * 	{ name: 'Chad', work: 'Singer' }
+	 * ];
+	 * 
+	 * a.countBy('work', 'Singer');
+	 * 
+	 * a.countBy(function (x) { return x.work === 'Singer'; });
+	 * </code>
+	 */
 	Array.prototype.countBy = function () {
 		var ar0 = arguments[0];
 		var ar1 = arguments[1];
@@ -2566,7 +2756,7 @@
 		var bnd = this.length;
 		var out = 0;
 		var ctx = this._s;
-		if (arguments.length === 0 || arguments.length > 2) {
+		if (arguments.length < 1 || arguments.length > 2) {
 			throw new Error(ERR_INV);
 
 		} else if (typeof ar0 === 'string') {
@@ -2593,6 +2783,28 @@
 		return out;
 	};
 
+	/**
+	 * <p><b>Returns</b> the member that has the smallest according to the given condition.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>()</u><br>
+	 * <u>(nameProjector: <i>string</i>)</u><br>
+	 * <u>(valueProjector: <i>function&lt;number&gt;</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * [1, 2, 3, 2].min();
+	 * 
+	 * var a = [
+	 * 	{ name: 'Alex', year: 22 },
+	 * 	{ name: 'Brad', year: 18 },
+	 * 	{ name: 'Chad', year: 26 }
+	 * ];
+	 * 
+	 * a.min('year');
+	 * 
+	 * a.min(function (x) { return x.year; });
+	 * </code>
+	 * <p><b>See also</b> <a>Array.prototype.max()</a>, <a>Array.prototype.mod()</a></p>
+	 */
 	Array.prototype.min = function () {
 		var ar0 = arguments[0];
 		var idx = 0;
@@ -2654,6 +2866,29 @@
 		}
 	};
 
+	/**
+	 * <p><b>Returns</b> the member that has the largest according to the given condition.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>()</u><br>
+	 * <u>(nameProjector: <i>string</i>)</u><br>
+	 * <u>(valueProjector: <i>function&lt;number&gt;</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * [1, 2, 3, 2].max();
+	 * 
+	 * var a = [
+	 * 	{ name: 'Alex', year: 22 },
+	 * 	{ name: 'Brad', year: 18 },
+	 * 	{ name: 'Chad', year: 26 }
+	 * ];
+	 * 
+	 * a.max('year');
+	 * 
+	 * a.max(function (x) { return x.year; });
+	 * </code>
+	 * <p><b>See also</b> <a>Array.prototype.min()</a>, <a>Array.prototype.mod()</a></p>
+	 * <p><b>See also</b> <a>Array.prototype.split()</a></p>
+	 */
 	Array.prototype.max = function () {
 		var ar0 = arguments[0];
 		var idx = 0;
@@ -2715,6 +2950,29 @@
 		}
 	};
 
+	/**
+	 * <p><b>Returns</b> the member that appears most often according to the given condition.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>()</u><br>
+	 * <u>(nameProjector: <i>string</i>)</u><br>
+	 * <u>(valueProjector: <i>function&lt;number&gt;</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * [1, 2, 3, 2].mod();
+	 * 
+	 * var a = [
+	 * 	{ name: 'Alex', year: 22 },
+	 * 	{ name: 'Brad', year: 18 },
+	 * 	{ name: 'Chad', year: 26 }
+	 * ];
+	 * 
+	 * a.mod('year');
+	 * 
+	 * a.mod(function (x) { return x.year; });
+	 * </code>
+	 * <p><b>See also</b> <a>Array.prototype.min()</a>, <a>Array.prototype.max()</a></p>
+	 * <meta keywords="mode"/>
+	 */
 	Array.prototype.mod = function () {
 		var ar0 = arguments[0];
 		var hsh = {};
@@ -2772,6 +3030,29 @@
 		}
 	};
 
+	/**
+	 * <p><b>Returns</b> a total number that represents all the members.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>()</u><br>
+	 * <u>(nameProjector: <i>string</i>)</u><br>
+	 * <u>(valueProjector: <i>function&lt;number&gt;</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * [1, 2, 3, 2].sum();
+	 * 
+	 * var a = [
+	 * 	{ name: 'Alex', year: 22 },
+	 * 	{ name: 'Brad', year: 18 },
+	 * 	{ name: 'Chad', year: 26 }
+	 * ];
+	 * 
+	 * a.sum('year');
+	 * 
+	 * a.sum(function (x) { return x.year; });
+	 * </code>
+	 * <p><b>See also</b> <a>Array.prototype.avg()</a></p>
+	 * <meta keywords="total"/>
+	 */
 	Array.prototype.sum = function () {
 		var ar0 = arguments[0];
 		var idx = 0;
@@ -2820,10 +3101,46 @@
 		}
 	};
 
+	/**
+	 * <p><b>Returns</b> an average number that represents all the members.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>()</u><br>
+	 * <u>(nameProjector: <i>string</i>)</u><br>
+	 * <u>(valueProjector: <i>function&lt;number&gt;</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * [1, 2, 3, 2].avg();
+	 * 
+	 * var a = [
+	 * 	{ name: 'Alex', year: 22 },
+	 * 	{ name: 'Brad', year: 18 },
+	 * 	{ name: 'Chad', year: 26 }
+	 * ];
+	 * 
+	 * a.avg('year');
+	 * 
+	 * a.avg(function (x) { return x.year; });
+	 * </code>
+	 * <p><b>See also</b> <a>Array.prototype.avg()</a></p>
+	 * <meta keywords="mean,average"/>
+	 */
 	Array.prototype.avg = function () {
 		return this.sum.apply(this, arguments) / this.length;
 	};
 
+	/**
+	 * <p><b>Returns</b> a new array with members that have <i>undefined</i>, <i>null</i>, <i>false</i>, <i>0</i>, empty string, white-space-only string and non-finite numbers removed.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>()</u><br>
+	 * <u>(nameProjector: <i>string</i>)</u><br>
+	 * <u>(valueProjector: <i>function&lt;number&gt;</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * [undefined, null, false, 0, 1, '', ' ', Infinity].norm();
+	 * </code>
+	 * <p><b>See also</b> <a>Array.prototype.where()</a></p>
+	 * <meta keywords="where,filter,compact,clean"/>
+	 */
 	Array.prototype.norm = function () {
 		var ar0 = arguments[0];
 		var idx = -1;
@@ -2865,6 +3182,27 @@
 		return out;
 	};
 
+	/**
+	 * <p><b>Returns</b> a new array with members that have been converted to the target type. If the member cannot be converted, this will skip the member and continue converting.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>()</u><br>
+	 * <u>(typeName: <i>string</i>)</u> – The possible values are <i>string</i>, <i>number</i>, <i>boolean</i>, <i>array</i>, <i>object</i> and <i>function</i>.<br>
+	 * <u>(typeClass: <i>anything</i>)</u> – The possible values are <i>String</i>, <i>Number</i>, <i>Boolean</i>, <i>Array</i>, <i>Object</i> and <i>Function</i>.<br>
+	 * </p>
+	 * <code>
+	 * [1, 2, 3].cast('string');
+	 * 
+	 * ['1', '2', '3'].cast(Number);
+	 * 
+	 * ['true', 'TRUE', 'False', 'FaLsE', 0, 1].cast('boolean');
+	 * 
+	 * [{ "0": 1, "1": 2, "2": 3, length: 3 }].cast(Array);
+	 * 
+	 * [1, 2, 3].cast('object');
+	 * </code>
+	 * <p><b>See also</b> <a>Array.prototype.where()</a></p>
+	 * <meta keywords="select"/>
+	 */
 	Array.prototype.cast = function () {
 		var ar0 = arguments[0];
 		var idx = -1;
@@ -2923,6 +3261,10 @@
 					tmp = this[idx];
 					if (Array.isArray(tmp)) {
 						out[++jdx] = tmp;
+
+					} else if (tmp !== undefined && tmp !== null && typeof tmp !== 'function' && isInt(tmp.length)) {
+						console.log(tmp);
+						out[++jdx] = Array.create(tmp);
 					}
 				}
 
@@ -2957,8 +3299,17 @@
 		}
 	};
 
+	/**
+	 * <p><b>Returns</b> a new array with members that are the results of <a href="https://en.wikipedia.org/wiki/Cartesian_product">Cartesian product</a>.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(values: <i>array&lt;anything&gt;</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * [1, 2, 3].cross([4, 5]);
+	 * </code>
+	 * <meta keywords="product,set,tuple"/>
+	 */
 	Array.prototype.cross = function () {
-		var arr = this;
 		var ar0 = Array.create(arguments[0]);
 		var idx = -1;
 		var jdx;
@@ -2971,7 +3322,7 @@
 				while (++idx < bnd) {
 					jdx = -1;
 					while (++jdx < cnd) {
-						out[++kdx] = arr[idx].slice(0).add(ar0[jdx]);
+						out[++kdx] = this[idx].slice(0).add(ar0[jdx]);
 					}
 				}
 
@@ -2979,7 +3330,7 @@
 				while (++idx < bnd) {
 					jdx = -1;
 					while (++jdx < cnd) {
-						out[++kdx] = [arr[idx]].add(ar0[jdx]);
+						out[++kdx] = [this[idx]].add(ar0[jdx]);
 					}
 				}
 			}
@@ -2994,8 +3345,18 @@
 		return out;
 	};
 
+	/**
+	 * <p><b>Returns</b> a new array with members that are constructed by the given array as property names and the current array as values.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(propertyNames: <i>array&lt;string&gt;</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * [[1, 2], [3]].assign(['a', 'b']);
+	 * </code>
+	 * <meta keywords="table"/>
+	 */
 	Array.prototype.assign = function () {
-		var ar0 = arguments[0];
+		var ar0 = Array.create(arguments[0]);
 		var idx = -1;
 		var jdx;
 		var bnd = this.length;
@@ -3010,7 +3371,9 @@
 					while (++jdx < cnd) {
 						tmp[ar0[jdx]] = this[idx][jdx];
 					}
-					tmp = out[idx];
+					if (tmp !== undefined) {
+						out[idx] = tmp;
+					}
 				}
 
 			} else {
@@ -3026,6 +3389,36 @@
 		return out;
 	};
 
+	/**
+	 * <p><b>Returns</b> the member that matches the given condition. This searches through a nest tree-structured array.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(treeProjector: <i>string</i>, nameProjector: <i>string</i>, expectedValue: <i>anything</i>)</u><br>
+	 * <u>(treeProjector: <i>string</i>, condition: <i>function&lt;boolean&gt;</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * a = [
+	 * 	{ name: 'Dave', work: 'CFO' },
+	 * 	{ name: 'Josh', work: 'CTO', team: [
+	 * 		{ name: 'Alex' },
+	 * 		{ name: 'Adam', team: [
+	 * 			{ name: 'Brad' },
+	 * 			{ name: 'Bill' }
+	 * 		] }
+	 * 	] },
+	 * 	{ name: 'Kris', work: 'COO', team: [
+	 * 		{ name: 'Tony' },
+	 * 		{ name: 'Mike' }
+	 * 	] }
+	 * ];
+	 * 
+	 * a.seek('team', 'name', 'Bill');
+	 * 
+	 * a.seek('team', 'name', 'Todd');
+	 * 
+	 * a.seek('team', function (x) { return x.name === 'Mike'; });
+	 * </code>
+	 * <meta keywords="find,search,tree"/>
+	 */
 	Array.prototype.seek = function () {
 		var ar0 = arguments[0];
 		var ar1 = arguments[1];
@@ -3092,7 +3485,7 @@
 	 * 
 	 * Object.isEqual(NaN, NaN);
 	 * </code>
-	 * <p><b>See also</b> <a href="#array.prototype.isequal">Array.prototype.isEqual()</a></p>
+	 * <p><b>See also</b> <a>Array.prototype.isEqual()</a></p>
 	 */
 	Object.isEqual = function (ar0, ar1) {
 		if (arguments.length !== 2) {
@@ -3133,9 +3526,9 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> true if and only if the given string is part of the current string, otherwise false.</p>
+	 * <p><b>Returns</b> <i>true</i> if and only if the given string is part of the current string, otherwise false.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>(text: <i>string</i>)</u>
+	 * <u>(expectedValue: <i>string</i>)</u>
 	 * </p>
 	 * <code>
 	 * 'this is what you came for'.contains('what');
@@ -3188,7 +3581,7 @@
 	 * <code>
 	 * 'Alex & Brad say "0 < 1 but 2 > 1"'.toEncodedXML();
 	 * </code>
-	 * <p><b>See also</b> <a href="#string.prototype.todecodedxml">String.prototype.toDecodedXML()</a></p>
+	 * <p><b>See also</b> <a>String.prototype.toDecodedXML()</a></p>
 	 * <meta keywords="html,escape,character"/>
 	 */
 	String.prototype.toEncodedXML = function () {
@@ -3196,11 +3589,11 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> a string that has all <a href="https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references#Predefined_entities_in_XML">XML characters</a> escaped. This is a reverse implementation of <a href="#array.prototype.toencodedxml">String.prototype.toEncodedXML/=()</a></p>
+	 * <p><b>Returns</b> a string that has all <a href="https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references#Predefined_entities_in_XML">XML characters</a> escaped. This is a reverse implementation of <a>String.prototype.toEncodedXML/=()</a></p>
 	 * <code><!--
 	 * 'Alex &amp; Brad say &quot;0 &lt; 1 but 2 &gt; 1&quot;'.toDecodedXML();
 	 * --></code>
-	 * <p><b>See also</b> <a href="#string.prototype.toencodedxml">String.prototype.toEncodedXML()</a></p>
+	 * <p><b>See also</b> <a>String.prototype.toEncodedXML()</a></p>
 	 * <meta keywords="html,escape,unescape,character"/>
 	 */
 	String.prototype.toDecodedXML = function () {
@@ -3259,7 +3652,7 @@
 	 * <code>
 	 * '_this-is*what you   CAME^For$'.toCamelCase();
 	 * </code>
-	 * <p><b>See also</b> <a href="#string.prototype.totraincase">String.prototype.toTrainCase()</a></p>
+	 * <p><b>See also</b> <a>String.prototype.toTrainCase()</a></p>
 	 */
 	String.prototype.toCamelCase = function () {
 		var txt = this.toEnglishCase().replace(CAS_APO, '').splitWords().map(String.prototype.toCapitalWord).join('');
@@ -3274,7 +3667,7 @@
 	 * <code>
 	 * '_this-is*what you   CAME^For$'.toTrainCase();
 	 * </code>
-	 * <p><b>See also</b> <a href="#string.prototype.tocamelcase">String.prototype.toCamelCase()</a></p>
+	 * <p><b>See also</b> <a>String.prototype.toCamelCase()</a></p>
 	 */
 	String.prototype.toTrainCase = function () {
 		return this.toEnglishCase().replace(CAS_APO, '').splitWords().join('-').toLowerCase();

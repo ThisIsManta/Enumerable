@@ -110,7 +110,14 @@ module.exports = function (grunt) {
 				}
 			};
 
-			list.sortBy('name').groupBy(function (item) {
+			list.sortBy(function (item) {
+				if (item.name.contains('.prototype.')) {
+					return item.name.substring(0, item.name.lastIndexOf('.') + 2);
+
+				} else {
+					return item.name;
+				}
+			}).groupBy(function (item) {
 				return item.name.split('.').first();
 			}).invoke(function (fami) {
 				$('<h1><a name="' + fami.name.toLowerCase() + '"/>' + fami.name + '</h1>').appendTo($main);

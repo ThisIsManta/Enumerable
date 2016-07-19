@@ -2,6 +2,7 @@ $(document).ready(function () {
 	var list = $('nav ul > li').toArray().select(function (elem) {
 		return {
 			fami: $(elem).text().split('.').first(),
+			name: $(elem).text(),
 			link: $(elem),
 			card: seekCard($(elem).find('a[href]').attr('href').substring('1')),
 			keys: $(elem).data('keys').split(',')
@@ -97,6 +98,14 @@ $(document).ready(function () {
 	$(document).on('click', function (e) {
 		if ($(e.target).parents('main').length === 0) {
 			$('main, section').attr('gaze', null);
+		}
+	});
+
+	$('a').each(function () {
+		var $elem = $(this);
+		var name = $elem.text().trim().replace(/\(\)$/, '');
+		if ($elem.attr('href') === undefined && list.find('name', name) !== undefined) {
+			$elem.attr('href', '#' + name.toLowerCase());
 		}
 	});
 

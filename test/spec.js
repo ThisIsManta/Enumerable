@@ -215,7 +215,6 @@ describe('Array', function () {
 			a = [{ v: 1 }, { v: 2 }, { v: 3 }];
 			z = a.where('v', 2);
 			expect(z).not.toBe(a);
-			window.aaa=z;
 			expect(Object.isEqual(z, [{ v: 2 }])).toBe(true);
 			expect(z).toEqual(a.where({ v: 2 }));
 			expect(z).toEqual(a.where(function (x) { return x.v === 2; }));
@@ -938,39 +937,27 @@ describe('Array', function () {
 		it('returns the new array', function () {
 			a = [{ v: 3 }, { v: 1 }, { v: 2 }];
 			z = a.sortBy('v');
-			expect(z[0]).toBe(a[1]);
-			expect(z[1]).toBe(a[2]);
-			expect(z[2]).toBe(a[0]);
-
-			z = a.sortBy('v', true);
-			expect(z[0]).toBe(a[1]);
-			expect(z[1]).toBe(a[2]);
-			expect(z[2]).toBe(a[0]);
+			expect(z).toEqual([a[1], a[2], a[0]]);
 
 			z = a.sortBy('v', false);
-			expect(z[0]).toBe(a[0]);
-			expect(z[1]).toBe(a[2]);
-			expect(z[2]).toBe(a[1]);
+			expect(z).toEqual([a[1], a[2], a[0]]);
+
+			z = a.sortBy('v', true);
+			expect(z).toEqual([a[0], a[2], a[1]]);
 
 			z = a.sortBy(function (x) { return x.v; });
-			expect(z[0]).toBe(a[1]);
-			expect(z[1]).toBe(a[2]);
-			expect(z[2]).toBe(a[0]);
-
-			z = a.sortBy(function (x) { return x.v; }, true);
-			expect(z[0]).toBe(a[1]);
-			expect(z[1]).toBe(a[2]);
-			expect(z[2]).toBe(a[0]);
+			expect(z).toEqual([a[1], a[2], a[0]]);
 
 			z = a.sortBy(function (x) { return x.v; }, false);
-			expect(z[0]).toBe(a[0]);
-			expect(z[1]).toBe(a[2]);
-			expect(z[2]).toBe(a[1]);
+			expect(z).toEqual([a[1], a[2], a[0]]);
+
+			z = a.sortBy(function (x) { return x.v; }, true);
+			expect(z).toEqual([a[0], a[2], a[1]]);
 
 			z =
 
 				a = [{ v: 3, k: 1 }, { v: 1, k: 2 }, { v: 2, k: 1 }, { v: 4, k: 2 }, { v: 4, k: 2, c: 1 }];
-			z = a.sortBy('k', true, function (x) { return x.v; }, false);
+			z = a.sortBy('k', false, function (x) { return x.v; }, true);
 			expect(z.length).toBe(5);
 			expect(z[0].v).toBe(3);
 			expect(z[1].v).toBe(2);
@@ -1186,7 +1173,7 @@ describe('Array', function () {
 			expect(a.cast('boolean')).toEqual(a.cast(Boolean));
 
 			z = a.cast('array');
-			expect(z).toEqual([[]]);
+			expect(z).toEqual([['a'], ['1', '2', '3'], ['F', 'A', 'L', 'S', 'E'], []]);
 			expect(a.cast('array')).toEqual(a.cast(Array));
 
 			z = a.cast('object');
@@ -1224,19 +1211,10 @@ describe('Array', function () {
 
 	describe('assign()', function () {
 		it('returns the new array', function () {
-			a = [1, 2];
-			b = [3, 4];
-			z = a.cross(b);
-			expect(a.length).toBe(2);
-			expect(b.length).toBe(2);
-			expect(z).toEqual([[1, 3], [1, 4], [2, 3], [2, 4]]);
-
-			c = [5];
-			z = a.cross(b).cross(c);
-			expect(a.length).toBe(2);
-			expect(b.length).toBe(2);
-			expect(c.length).toBe(1);
-			expect(z).toEqual([[1, 3, 5], [1, 4, 5], [2, 3, 5], [2, 4, 5]]);
+			a = [[1, 2], [3, 4]];
+			z = a.assign(['a', 'b']);
+			expect(a).toEqual([[1, 2], [3, 4]]);
+			expect(z).toEqual([{ a: 1, b: 2 }, { a: 3, b: 4 }]);
 		});
 
 		it('throws an error', function () {
