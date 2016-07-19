@@ -11,8 +11,8 @@
 	var ERR_LEN = 'a length was not valid';
 	var ERR_AES = 'a string cannot be empty';
 	var ERR_AEA = 'an array cannot be empty';
-	var ERR_MZM = 'an array had no members';
-	var ERR_AMM = 'an array had more than one member';
+	var ERR_MZM = 'an array had no matching members';
+	var ERR_AMM = 'an array had more than one matching member';
 	var ERR_MMM = 'an array had too many matching members';
 	var ERR_NOB = 'one or more array members were not an object';
 	var ERR_IWG = '[invokeWhich] must be called after [groupBy]';
@@ -1443,7 +1443,7 @@
 	/**
 	 * <p><b>Returns</b> the first member that meets the given condition, otherwise undefined. This overrides the native find method.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>(condition: <i>function</i>)</u><br>
+	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
 	 * <u>(nameProjector: <i>string</i>, expectedValue: <i>anything</i>)</u>
 	 * </p>
 	 * <code>
@@ -1486,8 +1486,8 @@
 	 * <p><b>Returns</b> the first member that meets the given condition, otherwise throws an exception. This also throws an exception if the current array is empty.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u> – This returns the first member.<br>
-	 * <u>(condition: <i>function</i>)</u><br>
-	 * <u>(condition: <i>function</i>, startIndex: <i>number</i>)</u><br>
+	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
+	 * <u>(condition: <i>function&lt;boolean&gt;</i>, startIndex: <i>number</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * var a = [
@@ -1498,6 +1498,8 @@
 	 * a.first();
 	 * 
 	 * a.first(function (x) { return x.work === 'Singer'; });
+	 * 
+	 * a.first(function (x) { return x.work === 'Doctor'; });
 	 * </code>
 	 * <p><b>See also</b> <a href="#array.prototype.find">Array.prototype.find()</a>, <a href="#array.prototype.firstornull">Array.prototype.firstOrNull()</a></p>
 	 * <meta keywords="find"/>
@@ -1524,8 +1526,8 @@
 	 * <p><b>Returns</b> the first member that meets the given condition, otherwise null.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u> – This returns the first member.<br>
-	 * <u>(condition: <i>function</i>)</u><br>
-	 * <u>(condition: <i>function</i>, startIndex: <i>number</i>)</u><br>
+	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
+	 * <u>(condition: <i>function&lt;boolean&gt;</i>, startIndex: <i>number</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * var a = [
@@ -1560,6 +1562,28 @@
 		}
 	};
 
+	/**
+	 * <p><b>Returns</b> the last member that meets the given condition, otherwise throws an exception. This also throws an exception if the current array is empty.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>()</u> – This returns the last member.<br>
+	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
+	 * <u>(condition: <i>function&lt;boolean&gt;</i>, startIndex: <i>number</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * var a = [
+	 * 	{ name: 'Alex', work: 'Singer' },
+	 * 	{ name: 'Brad', work: 'Dancer' },
+	 * 	{ name: 'Chad', work: 'Singer' }
+	 * ];
+	 * a.last();
+	 * 
+	 * a.last(function (x) { return x.work === 'Singer'; });
+	 * 
+	 * a.last(function (x) { return x.work === 'Doctor'; });
+	 * </code>
+	 * <p><b>See also</b> <a href="#array.prototype.find">Array.prototype.find()</a>, <a href="#array.prototype.lastornull">Array.prototype.lastOrNull()</a></p>
+	 * <meta keywords="find"/>
+	 */
 	Array.prototype.last = function () {
 		if (this.length === 0) {
 			throw new Error(ERR_AEA);
@@ -1578,6 +1602,28 @@
 		}
 	};
 
+	/**
+	 * <p><b>Returns</b> the last member that meets the given condition, otherwise null.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>()</u> – This returns the last member.<br>
+	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
+	 * <u>(condition: <i>function&lt;boolean&gt;</i>, startIndex: <i>number</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * var a = [
+	 * 	{ name: 'Alex', work: 'Singer' },
+	 * 	{ name: 'Brad', work: 'Dancer' },
+	 * 	{ name: 'Chad', work: 'Singer' }
+	 * ];
+	 * a.lastOrNull();
+	 * 
+	 * a.lastOrNull(function (x) { return x.work === 'Singer'; });
+	 * 
+	 * a.lastOrNull(function (x) { return x.work === 'Doctor'; });
+	 * </code>
+	 * <p><b>See also</b> <a href="#array.prototype.find">Array.prototype.find()</a>, <a href="#array.prototype.last">Array.prototype.last()</a></p>
+	 * <meta keywords="find"/>
+	 */
 	Array.prototype.lastOrNull = function () {
 		if (this.length === 0) {
 			return null;
@@ -1596,37 +1642,30 @@
 		}
 	};
 
-	Array.prototype.singleOrNull = function () {
-		if (this.length === 0) {
-			return null;
-
-		} else if (arguments.length === 0) {
-			if (this.length === 1) {
-				return this[0];
-
-			} else {
-				return null;
-			}
-
-		} else if (arguments.length === 1) {
-			var idx = this.indexOf.call(this, arguments[0]);
-			if (idx >= 0) {
-				if (idx === this.lastIndexOf.call(this, arguments[0])) {
-					return this[idx];
-
-				} else {
-					return null;
-				}
-
-			} else {
-				return null;
-			}
-
-		} else {
-			throw new Error(ERR_INV);
-		}
-	};
-
+	/**
+	 * <p><b>Returns</b> the one and only member that meets the given condition, otherwise throws an exception. This also throws an exception if the current array is empty.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>()</u> – This returns the one and only member.<br>
+	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
+	 * <u>(condition: <i>function&lt;boolean&gt;</i>, startIndex: <i>number</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * var a = [
+	 * 	{ name: 'Alex', work: 'Singer' },
+	 * 	{ name: 'Brad', work: 'Dancer' },
+	 * 	{ name: 'Chad', work: 'Singer' }
+	 * ];
+	 * a.single();
+	 * 
+	 * a.single(function (x) { return x.work === 'Singer'; });
+	 * 
+	 * a.single(function (x) { return x.work === 'Dancer'; });
+	 * 
+	 * a.single(function (x) { return x.work === 'Doctor'; });
+	 * </code>
+	 * <p><b>See also</b> <a href="#array.prototype.find">Array.prototype.find()</a>, <a href="#array.prototype.singleornull">Array.prototype.singleOrNull()</a></p>
+	 * <meta keywords="find"/>
+	 */
 	Array.prototype.single = function () {
 		if (this.length === 0) {
 			throw new Error(ERR_AEA);
@@ -1659,6 +1698,82 @@
 		}
 	};
 
+	/**
+	 * <p><b>Returns</b> the one and only member that meets the given condition, otherwise null.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>()</u> – This returns the last member.<br>
+	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
+	 * <u>(condition: <i>function&lt;boolean&gt;</i>, startIndex: <i>number</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * var a = [
+	 * 	{ name: 'Alex', work: 'Singer' },
+	 * 	{ name: 'Brad', work: 'Dancer' },
+	 * 	{ name: 'Chad', work: 'Singer' }
+	 * ];
+	 * a.singleOrNull();
+	 * 
+	 * a.singleOrNull(function (x) { return x.work === 'Singer'; });
+	 * 
+	 * a.singleOrNull(function (x) { return x.work === 'Dancer'; });
+	 * 
+	 * a.singleOrNull(function (x) { return x.work === 'Doctor'; });
+	 * </code>
+	 * <p><b>See also</b> <a href="#array.prototype.find">Array.prototype.find()</a>, <a href="#array.prototype.single">Array.prototype.single()</a></p>
+	 * <meta keywords="find"/>
+	 */
+	Array.prototype.singleOrNull = function () {
+		if (this.length === 0) {
+			return null;
+
+		} else if (arguments.length === 0) {
+			if (this.length === 1) {
+				return this[0];
+
+			} else {
+				return null;
+			}
+
+		} else if (arguments.length === 1) {
+			var idx = this.indexOf.call(this, arguments[0]);
+			if (idx >= 0) {
+				if (idx === this.lastIndexOf.call(this, arguments[0])) {
+					return this[idx];
+
+				} else {
+					return null;
+				}
+
+			} else {
+				return null;
+			}
+
+		} else {
+			throw new Error(ERR_INV);
+		}
+	};
+
+	/**
+	 * <p><b>Returns</b> the unique members.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>()</u><br>
+	 * <u>(nameProjector: <i>string</i>)</u><br>
+	 * <u>(valueProjector: <i>function</i>)</u> – This treats <i>undefined</i> and <i>null</i> the same thing.<br>
+	 * </p>
+	 * <code>
+	 * [1, 2, 3, 2].distinct();
+	 * 
+	 * var a = [
+	 * 	{ name: 'Alex', work: 'Singer' },
+	 * 	{ name: 'Brad', work: 'Dancer' },
+	 * 	{ name: 'Chad', work: 'Singer' }
+	 * ];
+	 * a.distinct('work');
+	 * 
+	 * a.distinct(function (x) { return x.work; });
+	 * </code>
+	 * <meta keywords="unique"/>
+	 */
 	Array.prototype.distinct = function () {
 		var ar0 = arguments[0];
 		var hsh = {};
@@ -1666,12 +1781,19 @@
 		var jdx = -1;
 		var bnd = this.length;
 		var tmp;
+		var udf = false;
 		var nil = false;
 		var out = [];
 		if (arguments.length === 0) {
 			while (++idx < bnd) {
 				tmp = this[idx];
-				if (tmp === undefined || tmp === null) {
+				if (tmp === undefined) {
+					if (udf === false) {
+						udf = true;
+						out[++jdx] = this[idx];
+					}
+
+				} else if (tmp === null) {
 					if (nil === false) {
 						nil = true;
 						out[++jdx] = this[idx];
@@ -1686,7 +1808,13 @@
 		} else if (typeof ar0 === 'string' && ar0.length > 0 && arguments.length === 1) {
 			while (++idx < bnd) {
 				tmp = this[idx][ar0];
-				if (tmp === undefined || tmp === null) {
+				if (tmp === undefined) {
+					if (udf === false) {
+						udf = true;
+						out[++jdx] = this[idx];
+					}
+
+				} else if (tmp === null) {
 					if (nil === false) {
 						nil = true;
 						out[++jdx] = this[idx];
@@ -1701,7 +1829,13 @@
 		} else if (typeof ar0 === 'function' && arguments.length === 1) {
 			while (++idx < bnd) {
 				tmp = ar0.call(this._s, this[idx], idx, this);
-				if (tmp === undefined || tmp === null) {
+				if (tmp === undefined) {
+					if (udf === false) {
+						udf = true;
+						out[++jdx] = this[idx];
+					}
+
+				} else if (tmp === null) {
 					if (nil === false) {
 						nil = true;
 						out[++jdx] = this[idx];
@@ -1722,6 +1856,24 @@
 		return out;
 	};
 
+	/**
+	 * <p><b>Returns</b> the current array which has the given member added. This mutates the current array.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(value: <i>anything</i>)</u> – This appends the given value to the current array.<br>
+	 * <u>(value: <i>anything</i>, targetIndex: <i>number</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * a = [1, 2, 3];
+	 * 
+	 * a.add(4);
+	 * 
+	 * a.add(5, 0);
+	 * 
+	 * console.log(a);
+	 * </code>
+	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push">Array.prototype.push()</a>, <a href="#array.prototype.addrange">Array.prototype.addRange()</a></p>
+	 * <meta keywords="push,append,insert,splice"/>
+	 */
 	Array.prototype.add = function () {
 		var ar0 = arguments[0];
 		var ar1 = arguments[1];
@@ -1742,8 +1894,26 @@
 		return this;
 	};
 
+	/**
+	 * <p><b>Returns</b> the current array which has the given members added. This mutates the current array.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(values: <i>array&lt;anything&gt;</i>)</u> – This appends the given value to the current array.<br>
+	 * <u>(values: <i>array&lt;anything&gt;</i>, targetIndex: <i>number</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * a = [1, 2, 3];
+	 * 
+	 * a.addRange([4]);
+	 * 
+	 * a.addRange([5], 0);
+	 * 
+	 * console.log(a);
+	 * </code>
+	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push">Array.prototype.push()</a>, <a href="#array.prototype.add">Array.prototype.add()</a></p>
+	 * <meta keywords="push,append,insert,splice"/>
+	 */
 	Array.prototype.addRange = function () {
-		var ar0 = arguments[0];
+		var ar0 = Array.create(arguments[0]);
 		var ar1 = arguments[1];
 		if (arguments.length === 1 || ar1 === this.length) {
 			Array.prototype.splice.apply(this, [this.length, 0].concat(ar0));
@@ -1767,17 +1937,38 @@
 		return this;
 	};
 
+	/**
+	 * <p><b>Returns</b> the current array which has the given member removed. This mutates the current array.</p>
+	 * <p>This removes the first occurrence of the given value from the current array.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(value: <i>anything</i>)</u><br>
+	 * <u>(value: <i>anything</i>, startIndex: <i>number</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * a = [1, 2, 3, 2];
+	 * 
+	 * a.remove(2);
+	 * 
+	 * a.remove(3, 2);
+	 * 
+	 * a.remove(3, 1);
+	 * 
+	 * console.log(a);
+	 * </code>
+	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice">Array.prototype.splice()</a>, <a href="#array.prototype.removeall">Array.prototype.removeAll()</a>, <a href="#array.prototype.removeat">Array.prototype.removeAt()</a>, <a href="#array.prototype.removerange">Array.prototype.removeRange()</a></p>
+	 * <meta keywords="splice"/>
+	 */
 	Array.prototype.remove = function () {
 		var ar0 = arguments[0];
 		var ar1 = arguments[1];
 		var idx;
-		if (arguments.length === 1) {
+		if (arguments.length <= 2) {
 			idx = this.indexOf(ar0);
-			if (idx === -1 || !isNaN(ar1) && idx > ar1) {
-				return this;
+			if (idx >= 0 && (!isInt(ar1) || idx >= ar1)) {
+				return this.removeAt(idx);
 
 			} else {
-				return this.removeAt(idx);
+				return this;
 			}
 
 		} else {
@@ -1785,6 +1976,21 @@
 		}
 	};
 
+	/**
+	 * <p><b>Returns</b> the current array which has the given index removed. This mutates the current array.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(targetIndex: <i>number</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * a = [1, 2, 3, 2];
+	 * 
+	 * a.removeAt(1);
+	 * 
+	 * console.log(a);
+	 * </code>
+	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice">Array.prototype.splice()</a>, <a href="#array.prototype.remove">Array.prototype.remove()</a>, <a href="#array.prototype.removeall">Array.prototype.removeAll()</a>, <a href="#array.prototype.removerange">Array.prototype.removeRange()</a></p>
+	 * <meta keywords="splice"/>
+	 */
 	Array.prototype.removeAt = function () {
 		var ar0 = arguments[0];
 		if (arguments.length === 1) {
@@ -1801,6 +2007,23 @@
 		return this;
 	};
 
+	/**
+	 * <p><b>Returns</b> the current array which has the given members removed. This mutates the current array.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(values: <i>array&lt;anything&gt;</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * a = [1, 2, 3, 2];
+	 * 
+	 * a.removeRange([2]);
+	 * 
+	 * a.removeRange([3, 2]);
+	 * 
+	 * console.log(a);
+	 * </code>
+	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice">Array.prototype.splice()</a>, <a href="#array.prototype.remove">Array.prototype.remove()</a>, <a href="#array.prototype.removeall">Array.prototype.removeAll()</a>, <a href="#array.prototype.removeat">Array.prototype.removeAt()</a></p>
+	 * <meta keywords="splice"/>
+	 */
 	Array.prototype.removeRange = function () {
 		var ar0 = Array.create(arguments[0]);
 		var idx = -1;
@@ -1816,12 +2039,30 @@
 		return this;
 	};
 
+	/**
+	 * <p><b>Returns</b> the current array which has the given member removed. This mutates the current array.</p>
+	 * <p>This removes all occurrences of the given value from the current array.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>()</u> – This removes all members.<br>
+	 * <u>(value: <i>anything</i>)</u><br>
+	 * <u>(value: <i>anything</i>, startIndex: <i>number</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * a = [1, 2, 3, 2];
+	 * 
+	 * a.removeAll(2);
+	 * 
+	 * console.log(a);
+	 * </code>
+	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice">Array.prototype.splice()</a>, <a href="#array.prototype.remove">Array.prototype.remove()</a>, <a href="#array.prototype.removeat">Array.prototype.removeAt()</a>, <a href="#array.prototype.removerange">Array.prototype.removeRange()</a></p>
+	 * <meta keywords="splice"/>
+	 */
 	Array.prototype.removeAll = function () {
+		var ar0 = arguments[0];
 		if (arguments.length === 0) {
 			this.splice(0, this.length);
 
 		} else if (arguments.length === 1) {
-			var ar0 = arguments[0];
 			var idx = this.length;
 			while (--idx >= 0) {
 				if (this[idx] === ar0) {
@@ -1835,31 +2076,56 @@
 		return this;
 	};
 
+	/**
+	 * <p><b>Returns</b> a new nested array which has the current array split at the given member.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(valueProjector: <i>function&lt;boolean&gt;</i>)</u><br>
+	 * <u>(value: <i>anything</i>)</u><br>
+	 * <u>(nameProjector: <i>string</i>, targetValue: <i>anything</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * [1, 2, 3, 2].split(3);
+	 * 
+	 * [1, 2, 3, 2].split(function (x) { return x === 3; });
+	 * </code>
+	 * <p><b>See also</b> <a href="#array.prototype.splitat">Array.prototype.splitAt()</a></p>
+	 */
 	Array.prototype.split = function () {
 		var ar0 = arguments[0];
+		var ar1 = arguments[1];
 		var idx = -1;
 		var pvt = 0;
 		var bnd = this.length;
 		var out = [];
 		var ctx = this._s;
-		if (arguments.length !== 1) {
-			throw new Error(ERR_INV);
+		if (arguments.length === 1) {
+			if (typeof ar0 === 'function') {
+				while (++idx < bnd) {
+					if (ar0.call(ctx, this[idx], idx, this)) {
+						out.push(this.slice(pvt, idx));
+						pvt = idx + 1;
+					}
+				}
 
-		} else if (typeof ar0 === 'function') {
+			} else {
+				while (++idx < bnd) {
+					if (this[idx] === ar0) {
+						out.push(this.slice(pvt, idx));
+						pvt = idx + 1;
+					}
+				}
+			}
+
+		} else if (typeof ar0 === 'string' && arguments.length === 2) {
 			while (++idx < bnd) {
-				if (ar0.call(ctx, this[idx], idx, this)) {
+				if (this[idx][ar0] === ar1) {
 					out.push(this.slice(pvt, idx));
 					pvt = idx + 1;
 				}
 			}
 
 		} else {
-			while (++idx < bnd) {
-				if (this[idx] === ar0) {
-					out.push(this.slice(pvt, idx));
-					pvt = idx + 1;
-				}
-			}
+			throw new Error(ERR_INV);
 		}
 		if (this.length > 0 && pvt <= bnd) {
 			out.push(this.slice(pvt));
@@ -1870,6 +2136,16 @@
 		return out;
 	};
 
+	/**
+	 * <p><b>Returns</b> a new nested array which has the current array split at the given index. This always creates two arrays inside without removing any member.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(targetIndex: <i>number</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * [1, 2, 3, 2].splitAt(2);
+	 * </code>
+	 * <p><b>See also</b> <a href="#array.prototype.split">Array.prototype.split()</a></p>
+	 */
 	Array.prototype.splitAt = function () {
 		var ar0 = arguments[0];
 		var out = [];

@@ -170,12 +170,15 @@ module.exports = function (grunt) {
 									wait = true;
 
 								} else if (/;$/.test(line)) {
+									var last;
 									if (wait === true) {
-										buff += line;
+										last = line;
+										buff += last;
 										wait = false;
 
 									} else {
-										buff += 'temp = ' + line;
+										last = 'temp = ' + line;
+										buff += last;
 									}
 
 									var _log = console.log;
@@ -184,7 +187,13 @@ module.exports = function (grunt) {
 										_out.push(tran(argx));
 									};
 
-									eval(buff);
+									try {
+										eval(buff);
+
+									} catch (ex) {
+										temp = ex;
+										buff = buff.substring(0, buff.length - last.length);
+									}
 
 									console.log = _log;
 
@@ -193,6 +202,9 @@ module.exports = function (grunt) {
 											return itm.toEncodedXML();
 										}).join('<br>// ');
 										buff += '_out = [];';
+
+									} else if (temp instanceof Error) {
+										temp = 'Throws "' + temp.message + '"';
 
 									} else {
 										temp = tran(temp).toEncodedXML();

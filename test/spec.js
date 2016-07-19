@@ -748,15 +748,12 @@ describe('Array', function () {
 			a = [1, 2, 1, 2, 2, undefined, null];
 			z = a.distinct();
 			expect(z).not.toBe(a);
-			expect(z).toEqual([1, 2, undefined]);
+			expect(z).toEqual([1, 2, undefined, null]);
 
 			a = [{ v: 1 }, { v: 2 }, { v: 1 }, { v: undefined }, { v: null }];
 			z = a.distinct('v');
 			expect(z).not.toBe(a);
-			expect(z.length).toBe(3);
-			expect(z[0]).toBe(a[0]);
-			expect(z[1]).toBe(a[1]);
-			expect(z[2]).toBe(a[3]);
+			expect(z).toEqual([{ v: 1 }, { v: 2 }, { v: undefined }, { v: null }]);
 			expect(z).toEqual(a.distinct(function (x) { return x.v; }));
 		});
 
