@@ -1,6 +1,6 @@
 {
 	"name": "Enumerable",
-	"version": "4.0.0",
+	"version": "4.0.0-rc",
 	"description": "A JavaScript library that provides useful and handy query functions.",
 	"main": "Enumerable.js",
 	"repository": {
@@ -30,7 +30,7 @@
 	},
 	"scripts": {
 		"preversion": "uglifyjs --mangle --compress --comments --output Enumerable-min.js --verbose Enumerable.js",
-		"version": "grunt license:Enumerable*.* && grunt version && git commit --all --message=\"Released a new version\"",
+		"version": "grunt license:Enumerable*.* && grunt version && git add --all",
 		"postversion": "git checkout gh-pages && git rebase master && git checkout master && git push --all && git push --tags"
 	}
 }
