@@ -80,6 +80,13 @@
 				out = ar0;
 				out._m = true;
 
+			} else if (ar0 instanceof Map) {
+				out = new Array(ar0.size);
+				ar0.forEach(function (val, key) {
+					out[++idx] = [key, val];
+				});
+				out._m = false;
+
 			} else if (typeof ar0.length === 'number') {
 				var bnd = ar0.length;
 				if (isInt(bnd) && bnd >= 0) {
@@ -244,64 +251,6 @@
 		}
 	};
 
-	Array.prototype.toMap = function () {
-		var ar0 = arguments[0];
-		var ar1 = arguments[1];
-		var idx = -1;
-		var bnd = this.length;
-		var out = new Map();
-		var ctx = this._s;
-		if (arguments.length === 0) {
-			while (++idx < bnd) {
-				out.set(idx, this[idx]);
-			}
-
-		} else if (typeof ar0 === 'string') {
-			if (arguments.length === 1) {
-				while (++idx < bnd) {
-					out.set(this[idx][ar0], this[idx]);
-				}
-
-			} else if (typeof ar1 === 'string') {
-				while (++idx < bnd) {
-					out.set(this[idx][ar0], this[idx][ar1]);
-				}
-
-			} else if (typeof ar1 === 'function') {
-				while (++idx < bnd) {
-					out.set(this[idx][ar0], ar1.call(ctx, this[idx], idx, this));
-				}
-
-			} else {
-				throw new Error(ERR_INV);
-			}
-
-		} else if (typeof ar0 === 'function') {
-			if (arguments.length === 1) {
-				while (++idx < bnd) {
-					out.set(ar0.call(ctx, this[idx], idx, this), this[idx]);
-				}
-
-			} else if (typeof ar1 === 'string') {
-				while (++idx < bnd) {
-					out.set(ar0.call(ctx, this[idx], idx, this), this[idx][ar1]);
-				}
-
-			} else if (typeof ar1 === 'function') {
-				while (++idx < bnd) {
-					out.set(ar0.call(ctx, this[idx], idx, this), ar1.call(ctx, this[idx], idx, this));
-				}
-
-			} else {
-				throw new Error(ERR_INV);
-			}
-
-		} else {
-			throw new Error(ERR_INV);
-		}
-		return out;
-	};
-
 	/**
 	 * <p><b>Returns</b> an object with properties that are derived from all members. The members must implement <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toString">toString()</a> method.</p>
 	 * <p><b>Accepts</b><br>
@@ -436,10 +385,94 @@
 		return out;
 	};
 
+	/**
+	 * <p><b>Returns</b> a map with key-value pairs that are derived from all members.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>()</u><br>
+	 * <u>(nameProjector: <i>string</i>)</u><br>
+	 * <u>(nameProjector: <i>string</i>, valueProjector: <i>string</i>)</u><br>
+	 * <u>(nameProjector: <i>string</i>, valueProjector: <i>function&lt;anything&gt;</i>)</u><br>
+	 * <u>(nameProjector: <i>string</i>, staticValue: <i>anything</i>)</u><br>
+	 * <u>(nameProjector: <i>function&lt;string&gt;</i>)</u><br>
+	 * <u>(nameProjector: <i>function&lt;string&gt;</i>, valueProjector: <i>function&lt;anything&gt;</i>)</u><br>
+	 * <u>(nameProjector: <i>function&lt;string&gt;</i>, valueProjector: <i>string</i>)</u><br>
+	 * <u>(nameProjector: <i>function&lt;string&gt;</i>, staticValue: <i>anything</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * ['a', 'b', 'c'].toMap();
+	 *
+	 * ['a', 'b', 'c'].toMap(function (x) {
+	 * 	return x.toUpperCase();
+	 * });
+	 * </code>
+	 * <meta keywords="hash,dictionary,map"/>
+	 */
+	Array.prototype.toMap = function () {
+		var ar0 = arguments[0];
+		var ar1 = arguments[1];
+		var idx = -1;
+		var bnd = this.length;
+		var out = new Map();
+		var ctx = this._s;
+		if (arguments.length === 0) {
+			while (++idx < bnd) {
+				out.set(idx, this[idx]);
+			}
+
+		} else if (typeof ar0 === 'string') {
+			if (arguments.length === 1) {
+				while (++idx < bnd) {
+					out.set(this[idx][ar0], this[idx]);
+				}
+
+			} else if (typeof ar1 === 'string') {
+				while (++idx < bnd) {
+					out.set(this[idx][ar0], this[idx][ar1]);
+				}
+
+			} else if (typeof ar1 === 'function') {
+				while (++idx < bnd) {
+					out.set(this[idx][ar0], ar1.call(ctx, this[idx], idx, this));
+				}
+
+			} else {
+				while (++idx < bnd) {
+					out.set(this[idx][ar0], ar1);
+				}
+			}
+
+		} else if (typeof ar0 === 'function') {
+			if (arguments.length === 1) {
+				while (++idx < bnd) {
+					out.set(ar0.call(ctx, this[idx], idx, this), this[idx]);
+				}
+
+			} else if (typeof ar1 === 'string') {
+				while (++idx < bnd) {
+					out.set(ar0.call(ctx, this[idx], idx, this), this[idx][ar1]);
+				}
+
+			} else if (typeof ar1 === 'function') {
+				while (++idx < bnd) {
+					out.set(ar0.call(ctx, this[idx], idx, this), ar1.call(ctx, this[idx], idx, this));
+				}
+
+			} else {
+				while (++idx < bnd) {
+					out.set(ar0.call(ctx, this[idx], idx, this), ar1);
+				}
+			}
+
+		} else {
+			throw new Error(ERR_INV);
+		}
+		return out;
+	};
+
 	var _toString = Array.prototype.toString;
 
 	/**
-	 * <p><b>Returns</b> a string that is the result of concatenating all members. This overrides the native toString method.</p>
+	 * <p><b>Returns</b> a string that is the result of concatenating all members. This overrides the native <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/toString">toString</a> method.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u> – This uses a comma as a separator.<br>
 	 * <u>(separator: <i>string</i>)</u><br>
@@ -598,7 +631,7 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> the current array after iterates on all members. Whenever the given iterator returns false, the invocation will be stopped immediately.</p>
+	 * <p><b>Returns</b> the current array after iterates on all members. Whenever the given iterator returns <i>false</i>, the invocation will be stopped immediately.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(iterator: <i>function</i>)</u><br>
 	 * <u>(startIndex: <i>number</i>, iterator: <i>function</i>)</u><br>
@@ -677,7 +710,7 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> a new <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a> then iterates on all members asynchronously. Whenever the given iterator returns false, the invocation will be stopped immediately. Each iteration has a delay of 2 milliseconds. The default batch count is 1.</p>
+	 * <p><b>Returns</b> a new <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a> then iterates on all members asynchronously. Whenever the given iterator returns <i>false</i>, the invocation will be stopped immediately. Each iteration has a delay of 2 milliseconds. The default batch count is 1.</p>
 	 * <p>This is very useful when doing some work without freezing UI.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(iterator: <i>function</i>, [batchCount: <i>number</i>])</u><br>
@@ -779,7 +812,7 @@
 
 
 	/**
-	 * <p><b>Returns</b> the current array after iterates on the members that meet the given group. This must be called after <a>Array.prototype.groupBy()</a> method. Whenever the given iterator returns false, the invocation will be stopped immediately.</p>
+	 * <p><b>Returns</b> the current array after iterates on the members that meet the given group. This must be called after <a>Array.prototype.groupBy()</a> method. Whenever the given iterator returns <i>false</i>, the invocation will be stopped immediately.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(groupName: <i>anything</i>, iterator: <i>function</i>)</u><br>
 	 * </p>
@@ -822,7 +855,7 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> a new array with only members that are in the given range. If the condition function is given, the range is starting from zero to the index which the condition returns false.</p>
+	 * <p><b>Returns</b> a new array with only members that are in the given range. If the condition function is given, the range is starting from zero to the index which the condition returns <i>false</i>.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
 	 * <u>(startIndex: <i>number</i>)</u><br>
@@ -888,7 +921,7 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> a new array with only members that are not in the given range. If the condition function is given, the range is starting from the index which the condition returns false. This is a reverse implementation of <a>Array.prototype.take()</a> method.</p>
+	 * <p><b>Returns</b> a new array with only members that are not in the given range. If the condition function is given, the range is starting from the index which the condition returns <i>false</i>. This is a reverse implementation of <a>Array.prototype.take()</a> method.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
 	 * <u>(startIndex: <i>number</i>)</u><br>
@@ -1004,9 +1037,9 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> true if and only if one or more members match the given condition.</p>
+	 * <p><b>Returns</b> <i>true</i> if and only if one or more members match the given condition.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>()</u> – This returns true if the current array is not empty.<br>
+	 * <u>()</u> – This returns <i>true</i> if the current array is not empty.<br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
 	 * <u>(nameProjector: <i>string</i>, expectedValue: <i>anything</i>)</u><br>
 	 * </p>
@@ -1070,7 +1103,7 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> true if and only if all members match the given condition.</p>
+	 * <p><b>Returns</b> <i>true</i> if and only if all members match the given condition.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
 	 * <u>(nameProjector: <i>string</i>, expectedValue: <i>anything</i>)</u><br>
@@ -1131,7 +1164,7 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> true if and only if all members match the given condition.</p>
+	 * <p><b>Returns</b> <i>true</i> if and only if all members match the given condition.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
 	 * <u>(expectedValue: <i>anything</i>)</u><br>
@@ -1162,7 +1195,7 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> true if and only if all members match the given array.</p>
+	 * <p><b>Returns</b> <i>true</i> if and only if all members match the given array.</p>
 	 * <p>The difference between this method and <a>Object.isEqual()</a> is, this method does a shallow comparison for reference object only.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(another: <i>array</i>)</u><br>
@@ -1212,7 +1245,7 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> true if and only if all members match the given array.</p>
+	 * <p><b>Returns</b> <i>true</i> if and only if all members match the given array.</p>
 	 * <p>The difference between this method and <a>Array.prototype.isEqual()</a> is, this method does not check the order of members.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(another: <i>array</i>)</u><br>
@@ -1278,7 +1311,7 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> true if and only if the current array is a proper subset of the given array.</p>
+	 * <p><b>Returns</b> <i>true</i> if and only if the current array is a proper subset of the given array.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(another: <i>array</i>)</u><br>
 	 * <u>(another: <i>array</i>, comparer: <i>function&lt;boolean&gt;</i>)</u><br>
@@ -2348,8 +2381,15 @@
 		}
 	};
 
+	var _sort = Array.prototype.sort;
+
+	Array.prototype.sort = function () {
+		_sort.apply(this, arguments);
+		return this;
+	};
+
 	/**
-	 * <p><b>Returns</b> a new array with members sorted by the given condition.</p>
+	 * <p><b>Returns</b> a new array with members that have been sorted by the given condition. The default sort order is according to string Unicode code points.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(nameProjector: <i>string</i>)</u><br>
 	 * <u>(nameProjector: <i>string</i>, reverse: <i>boolean</i>, ...)</u><br>
@@ -2431,7 +2471,7 @@
 				return this;
 
 			} else if (ar1 !== true) {
-				out.sort(function (x, y) {
+				_sort.call(out, function (x, y) {
 					if (x.r === y.r) {
 						return x.i - y.i;
 
@@ -2447,7 +2487,7 @@
 				});
 
 			} else {
-				out.sort(function (x, y) {
+				_sort.call(out, function (x, y) {
 					if (x.r === y.r) {
 						return x.i - y.i;
 
@@ -2490,7 +2530,7 @@
 			var x;
 			var y;
 			out = this.clone();
-			out.sort(function (cur, ano) {
+			_sort.call(out, function (cur, ano) {
 				idx = -1;
 				while (++idx < bnd) {
 					x = lst[idx * 2].call(ctx, cur);
@@ -3263,7 +3303,6 @@
 						out[++jdx] = tmp;
 
 					} else if (tmp !== undefined && tmp !== null && typeof tmp !== 'function' && isInt(tmp.length)) {
-						console.log(tmp);
 						out[++jdx] = Array.create(tmp);
 					}
 				}
@@ -3449,7 +3488,7 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> true if and only if the given parameter has a type of object, not an array and not null, otherwise false.</p>
+	 * <p><b>Returns</b> <i>true</i> if and only if the given parameter has a type of object, not an array and not null, otherwise <i>false</i>.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(assertedValue: <i>anything</i>)</u>
 	 * </p>
@@ -3470,7 +3509,7 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> true if and only if the given parameters are identical, otherwise false. This performs deep array/object comparison.</p>
+	 * <p><b>Returns</b> <i>true</i> if and only if the given parameters are identical, otherwise <i>false</i>. This performs deep array/object comparison.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(firstValue: <i>anything</i>, secondValue: <i>anything</i>)</u>
 	 * </p>
@@ -3526,7 +3565,7 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> <i>true</i> if and only if the given string is part of the current string, otherwise false.</p>
+	 * <p><b>Returns</b> <i>true</i> if and only if the given string is part of the current string, otherwise <i>false</i>.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(expectedValue: <i>string</i>)</u>
 	 * </p>
@@ -3673,6 +3712,17 @@
 		return this.toEnglishCase().replace(CAS_APO, '').splitWords().join('-').toLowerCase();
 	};
 
+	/**
+	 * <p><b>Returns</b> the last index of the given closing string.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(startingText: <i>string</i>, closingText: <i>string</i>)</u>
+	 * </p>
+	 * <code>
+	 * '(()())'.latchOf('(', ')');
+	 * </code>
+	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/indexOf">String.prototype.indexOf()</a></p>
+	 * <meta keywords="index"/>
+	 */
 	String.prototype.latchOf = function (str, end) {
 		var num = 0;
 		var idx = -1;
@@ -3691,6 +3741,28 @@
 			}
 		}
 		return -1;
+	};
+
+	/**
+	 * <p><b>Returns</b> a new array with members that are constructed from the current map.</p>
+	 * <code>
+	 * new Map().set(1, 'a').set(2, 'b').toArray();
+	 * </code>
+	 * <p><b>See also</b> <a>Array.create()</a></p>
+	 */
+	Map.prototype.toArray = function () {
+		return Array.create(this);
+	};
+
+	/**
+	 * <p><b>Returns</b> a new object with properties that are constructed from the current map.</p>
+	 * <code>
+	 * new Map().set(1, 'a').set(2, 'b').toObject();
+	 * </code>
+	 * <p><b>See also</b> <a>Array.prototype.toObject()</a></p>
+	 */
+	Map.prototype.toObject = function () {
+		return Array.create(this).toObject('0', '1');
 	};
 
 	Function.prototype.debounce = function (dur) {

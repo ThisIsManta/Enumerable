@@ -30,7 +30,7 @@ module.exports = function (grunt) {
 				options: {
 					livereload: true
 				},
-				files: ['demo/*.*', '!demo/*.less']
+				files: ['demo/*.*', '!demo/*.less', 'test/*']
 			}
 		}
 	});
@@ -92,7 +92,7 @@ module.exports = function (grunt) {
 				});
 			}
 
-			var $menu = $('nav > ul').empty();
+			var $menu = $('nav ul').empty();
 			var $main = $('main').empty();
 
 			var tran = function (data) {

@@ -147,7 +147,45 @@ describe('Array', function () {
 
 	describe('toMap()', function () {
 		it('returns a map', function () {
+			a = [{ v: 1, w: 4 }, { v: 2, w: 5 }, { v: 3, w: 6 }];
+			z = a.toMap();
+			expect(z instanceof Map).toBe(true);
+			expect(z.size).toBe(3);
+			expect(z.get(0)).toBe(a[0]);
+			expect(z.get(1)).toBe(a[1]);
+			expect(z.get(2)).toBe(a[2]);
 
+			z = a.toMap('v');
+			expect(z instanceof Map).toBe(true);
+			expect(z.size).toBe(3);
+			expect(z.get(1)).toBe(a[0]);
+			expect(z.get(2)).toBe(a[1]);
+			expect(z.get(3)).toBe(a[2]);
+
+			z = a.toMap('v', 'w');
+			expect(z instanceof Map).toBe(true);
+			expect(z.size).toBe(3);
+			expect(z.get(1)).toBe(4);
+			expect(z.get(2)).toBe(5);
+			expect(z.get(3)).toBe(6);
+
+			z = a.toMap('v', function (x) { return x.w; });
+			expect(typeof z).toBe('object');
+			expect(z.get(1)).toBe(4);
+			expect(z.get(2)).toBe(5);
+			expect(z.get(3)).toBe(6);
+
+			z = a.toMap(function (x) { return x.v; }, 'w');
+			expect(typeof z).toBe('object');
+			expect(z.get(1)).toBe(4);
+			expect(z.get(2)).toBe(5);
+			expect(z.get(3)).toBe(6);
+
+			z = a.toMap(function (x) { return x.v; }, function (x) { return x.w; });
+			expect(typeof z).toBe('object');
+			expect(z.get(1)).toBe(4);
+			expect(z.get(2)).toBe(5);
+			expect(z.get(3)).toBe(6);
 		});
 	});
 

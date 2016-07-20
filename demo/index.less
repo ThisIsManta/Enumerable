@@ -61,10 +61,14 @@ body {
 
 nav {
 	width: 240;
-	max-height: calc(100% ~"-" 16px * 2);
-	display: flex;
-	flex-direction: column;
+	height: calc(100% ~"-" 16px * 2);
 	position: fixed;
+
+	> div {
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+	}
 
 	#search {
 		width: 100%;
@@ -79,10 +83,6 @@ nav {
 			font-size: medium;
 			color: black;
 			flex: 1;
-
-			&::-webkit-input-placeholder {
-				color: @grey400;
-			}
 		}
 
 		button {
@@ -106,26 +106,29 @@ nav {
 		}
 	}
 
-	ul {
-		list-style: none;
-		padding: 0;
-		margin: 0;
+	#list {
 		flex: 1;
 		overflow-y: auto;
-		background: @grey100;
 
-		li {
-			display: block;
+		ul {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+			background: @grey100;
 
-			&:hover {
-				background: @grey300;
-			}
-
-			a {
+			li {
 				display: block;
-				padding: 8px 16px;
-				color: black;
-				text-decoration: none;
+
+				&:hover {
+					background: @grey300;
+				}
+
+				a {
+					display: block;
+					padding: 8px 16px;
+					color: black;
+					text-decoration: none;
+				}
 			}
 		}
 	}
