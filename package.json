@@ -30,7 +30,7 @@
 	},
 	"scripts": {
 		"preversion": "uglifyjs --mangle --compress --comments --output Enumerable-min.js --verbose Enumerable.js",
-		"version": "grunt license:Enumerable*.*",
+		"version": "grunt license:Enumerable*.* && grunt version && git commit --all --message=\"Released a new version\"",
 		"postversion": "git checkout gh-pages && git rebase master && git checkout master && git push --all && git push --tags"
 	}
 }

@@ -6,31 +6,33 @@ module.exports = function (grunt) {
 					compress: true,
 					plugins: [new (require('less-plugin-autoprefix'))({ browsers: ["last 2 versions"] })]
 				},
-				files: {
-					'demo/index.css': 'demo/index.less'
-				}
+				files: [{
+					expand: true,
+					src: ['./*.less', 'demo/*.less'],
+					ext: '.css'
+				}]
 			}
 		},
 		watch: {
-			demo: {
+			main: {
 				options: {
 					atBegin: true
 				},
-				tasks: ['compose'],
-				files: ['*.js']
+				files: ['*.js'],
+				tasks: ['compose']
 			},
 			less: {
 				options: {
 					atBegin: true
 				},
-				files: ['demo/*.less'],
+				files: ['./*.less', 'demo/*.less'],
 				tasks: ['less']
 			},
 			html: {
 				options: {
 					livereload: true
 				},
-				files: ['demo/*.*', '!demo/*.less', 'test/*']
+				files: ['./*.html', './*.css', './*.js', '*/*.html', '*/*.css', '*/*.js']
 			}
 		}
 	});
@@ -267,5 +269,14 @@ module.exports = function (grunt) {
 			// Writes back
 			grunt.file.write(path, vals.join('\n') + '\n' + file);
 		});
+	});
+
+	grunt.task.registerTask('version', function () {
+		var vers = grunt.file.readJSON('package.json').version;
+		var html = grunt.file.read('index.html');
+		var strt = html.indexOf('>', html.indexOf('id="version"')) + 1;
+		var stop = html.indexOf('<', strt);
+		html = html.substring(0, strt) + 'v' + vers + html.substring(stop);
+		grunt.file.write('index.html', html);
 	});
 };

@@ -1,0 +1,114 @@
+@grey50: #FAFAFA;
+@grey100: #F5F5F5;
+@grey200: #EEEEEE;
+@grey300: #E0E0E0;
+@grey400: #BDBDBD;
+@grey500: #9E9E9E;
+@grey600: #757575;
+@grey700: #616161;
+@grey800: #424242;
+@grey900: #212121;
+
+@blue50: #E3F2FD;
+@blue100: #BBDEFB;
+@blue400: #42A5F5;
+@blue500: #2196F3;
+@blue600: #1E88E5;
+@blue700: #1976D2;
+@blue900: #0D47A1;
+
+@teal50: #E0F2F1;
+@teal100: #B2DFDB;
+@teal300: #4DB6AC;
+@teal500: #009688;
+@teal700: #00796B;
+@teal900: #004D40;
+
+@green500: #4CAF50;
+@green700: #388E3C;
+
+@red50: #FFEBEE;
+@red100: #FFCDD2;
+@red300: #E57373;
+@red401: #FF1744;
+@red500: #F44336;
+@red700: #D32F2F;
+@red900: #B71C1C;
+
+@pink300: #F06292;
+@pink500: #E91E63;
+@pink700: #C2185B;
+@pink900: #880E4F;
+
+@amber500: #FFC107;
+
+
+html {
+	font-family: 'Roboto';
+	font-size: small;
+	color: black;
+
+	body {
+		margin: 16px;
+		background: @grey200;
+		display: flex;
+
+		> div {
+			margin: auto;
+			text-align: center;
+		}
+	}
+}
+
+header {
+	display: inline-block;
+
+	h6 {
+		margin: 0;
+		font-size: 6em;
+		line-height: 1em;
+	}
+
+	#line {
+		display: flex;
+
+		> *:first-child {
+			flex: 1;
+			text-align: left;
+			margin-left: 4px;
+		}
+
+		> *:last-child {
+			text-align: right;
+		}
+	}
+}
+
+main {
+	margin-top: 2em;
+	display: flex;
+	justify-content: center;
+
+	> * {
+		display: inline-block;
+		width: 9em;
+		height: 9em;
+		margin: 0.6em;
+		text-decoration: none;
+		color: @grey900;
+		background: white;
+		transition: background 300ms;
+
+		.material-icons {
+			font-size: 6em;
+		}
+
+		> *:first-child {
+			margin: 4px 0;
+		}
+
+		&:hover {
+			background: @grey300;
+		}
+	}
+}
