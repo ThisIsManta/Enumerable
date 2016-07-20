@@ -3,7 +3,7 @@
  * @version 4.0.0
  * @author Anantachai Saothong <thisismanta@outlook.com>
  * @license MIT
- * git+https://github.com/ThisIsManta/Enumerable.git
+ * https://github.com/ThisIsManta/Enumerable.git
 */
 (function () {
 	var ERR_INV = 'one or more parameters were not valid';
