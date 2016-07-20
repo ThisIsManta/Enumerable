@@ -1,4 +1,5 @@
 $(document).ready(function () {
+	// Stores a list of API elements
 	var list = $('nav ul > li').toArray().select(function (elem) {
 		return {
 			fami: $(elem).text().split('.').first(),
@@ -11,12 +12,16 @@ $(document).ready(function () {
 		item.link.data('item', item);
 	});
 
+	// Defines a helping function to retrieve an API element
 	function seekCard(name) {
 		return $('[name="' + name.toLowerCase() + '"]').parents('section').first();
 	};
 
+	// Stores a search box
 	var $srch = $('#search input[type=text]');
-	function fineCard(resetScrollPosition) {
+
+	// Filters API elements
+	function findCard(resetScrollPosition) {
 		if (resetScrollPosition) {
 			window.location.hash = '';
 		}
@@ -24,7 +29,7 @@ $(document).ready(function () {
 		var text = $srch.val().trim();
 		if (text.length > 0) {
 			var fami = {};
-			var tags = text.toLowerCase().split(/(\s|\.)/).distinct();
+			var tags = text.toLowerCase().replace(/\./g, ' ').split(' ').norm().distinct();
 			list.invoke(function (item) {
 				if (tags.all(function (tagx) {
 					return item.keys.any(function (keyx) {
@@ -41,6 +46,7 @@ $(document).ready(function () {
 				}
 			});
 
+			// Hides the unseen family captions
 			$('main > h1').each(function () {
 				var $head = $(this);
 				if (fami[$head.text().trim()] === true) {
@@ -62,20 +68,24 @@ $(document).ready(function () {
 		localStorage.setItem('search', text);
 	}
 
-	$srch.on('input', fineCard.bind(true).debounce(300));
+	// Binds the search box normal key press event
+	$srch.on('input', findCard.bind(true).debounce(300));
 
+	// Binds the search box special key press event
 	$srch.on('keydown', function (e) {
 		if (e.keyCode === 27 /* Escape */) {
 			$(e.currentTarget).val('');
-			fineCard(true);
+			findCard(true);
 		}
-	}).val(localStorage.getItem('search') || '');
-
-	$('#search button').on('click', function (e) {
-		$srch.val('');
-		fineCard(true);
 	});
 
+	// Binds the search clear button event
+	$('#search button').on('click', function (e) {
+		$srch.val('');
+		findCard(true);
+	});
+
+	// Focuses at the clicking API element
 	$('nav ul > li').on('click', function (e) {
 		var item = $(e.currentTarget).data('item');
 		$('section').attr('gaze', null);
@@ -84,6 +94,7 @@ $(document).ready(function () {
 		e.stopPropagation();
 	});
 
+	// Focuses at the clicking API element
 	$('section').on('click', function (e) {
 		var $card = $(e.currentTarget);
 		var $main = $('main');
@@ -95,12 +106,14 @@ $(document).ready(function () {
 		}
 	});
 
+	// Defocuses at the clicking API element
 	$(document).on('click', function (e) {
 		if ($(e.target).parents('main').length === 0) {
 			$('main, section').attr('gaze', null);
 		}
 	});
 
+	// Adds internal hyper-links to all the anchors
 	$('a').each(function () {
 		var $elem = $(this);
 		var name = $elem.text().trim().replace(/\(\)$/, '');
@@ -109,6 +122,7 @@ $(document).ready(function () {
 		}
 	});
 
+	// Focuses at the clicking API element
 	$('a[href^="#"]').on('click', function (e) {
 		var $elem = $(e.currentTarget);
 		seekCard($elem.attr('href').substring(1)).trigger('click');
@@ -116,8 +130,12 @@ $(document).ready(function () {
 		e.stopPropagation();
 	});
 
+	// Restores the previous search words
+	$srch.val(localStorage.getItem('search') || '');
+
+	// Focuses at the clicking API element
 	if ($srch.val().length > 0) {
-		fineCard(false);
+		findCard(false);
 
 		if (window.location.hash && window.location.hash !== '#') {
 			var $card = seekCard(window.location.hash.substring(1));
