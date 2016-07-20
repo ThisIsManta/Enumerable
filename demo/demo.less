@@ -2,9 +2,13 @@
 
 html {
 	font-family: 'Roboto';
-	font-size: small;
+	font-size: 0.8em;
 	color: black;
 	overflow-y: scroll;
+
+	@media screen and (min-resolution: 2dppx) {
+		font-size: 1.2em;
+	}	
 
 	body {
 		margin: 0;
@@ -14,19 +18,25 @@ html {
 			max-width: 984px;
 			margin: auto;
 			padding: 16px;
+
+			@media screen and (min-resolution: 2dppx) {
+				padding: 0;
+			}
 		}
 	}
 }
 
 nav {
-	width: 240;
-	height: calc(100% ~"-" 16px * 2);
-	position: fixed;
+	@media not screen and (min-resolution: 2dppx) {
+		width: 240;
+		height: calc(100% ~"-" 16px * 2);
+		position: fixed;
 
-	> div {
-		height: 100%;
-		display: flex;
-		flex-direction: column;
+		> div {
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+		}
 	}
 
 	#search {
@@ -34,12 +44,20 @@ nav {
 		display: flex;
 		background: white;
 
+		> * {
+			font-size: 2em;
+
+			@media screen and (min-resolution: 2dppx) {
+				font-size: 4em;
+			}
+		}
+
 		input[type=text] {
+			width: 1em;
 			padding: 0 0 0 16px;
 			border: none;
 			outline: none;
 			font-family: 'Roboto';
-			font-size: medium;
 			color: black;
 			flex: 1;
 		}
@@ -47,7 +65,6 @@ nav {
 		button {
 			padding: 8px;
 			margin: auto;
-			font-size: 2em;
 			color: @grey400;
 			background: none;
 			border: none;
@@ -68,6 +85,10 @@ nav {
 	#list {
 		flex: 1;
 		overflow-y: auto;
+
+		@media screen and (min-resolution: 2dppx) {
+			display: none;
+		}
 
 		ul {
 			list-style: none;
@@ -95,8 +116,11 @@ nav {
 
 main {
 	margin-left: 240px + 16px;
-	font-size: small;
 	color: @grey900;
+
+	@media screen and (min-resolution: 2dppx) {
+		margin-left: 0;
+	}
 
 	h1, h2 {
 		font-weight: normal;
@@ -108,18 +132,30 @@ main {
 		margin: 16px;
 		user-select: none;
 
-		&:first-child {
-			margin-top: 0;
+		@media screen and (min-resolution: 2dppx) {
+			font-size: 4em;
+		}
+
+		@media not screen and (min-resolution: 2dppx) {
+			&:first-child {
+				margin-top: 0;
+			}
 		}
 	}
 
 	h2 {
 		font-size: 1.6em;
+
+		@media screen and (min-resolution: 2dppx) {
+			font-size: 3em;
+		}
 	}
 
-	&[gaze] {
-		> * {
-			opacity: 0.2;
+	@media not screen and (min-resolution: 2dppx) {
+		&[gaze] {
+			> * {
+				opacity: 0.2;
+			}
 		}
 	}
 
@@ -129,18 +165,20 @@ main {
 		cursor: default;
 		transition: 300ms opacity;
 
-		.auto-hide {
-			opacity: 0;
-			transition: 300ms opacity;
-		}
+		@media not screen and (min-resolution: 2dppx) {
+			.auto-hide {
+				opacity: 0;
+				transition: 300ms opacity;
+			}
 
-		&:hover .auto-hide {
-			opacity: 1;
-		}
+			&:hover .auto-hide {
+				opacity: 1;
+			}
 
-		&[gaze] {
-			opacity: 1;
-			box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+			&[gaze] {
+				opacity: 1;
+				box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+			}
 		}
 
 		&+ section {
