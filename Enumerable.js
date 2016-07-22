@@ -603,6 +603,9 @@
 		var lim;
 		var tmp;
 		var out;
+		if (arguments.length !== 1) {
+			throw new Error(ERR_INV);			
+		}
 		if (typeof ar0 === 'function') {
 			out = this.map(ar0, this._s);
 
