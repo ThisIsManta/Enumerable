@@ -153,82 +153,97 @@ module.exports = function (grunt) {
 						var wait = false;
 						var varx = false;
 						var temp;
-						var disb = $(this).attr('disabled');
 
-						$(this).replaceWith('<code contenteditable="true" spellcheck="false">' + (this.childNodes.length === 1 && this.childNodes[0].nodeType === 8 ? this.childNodes[0] : this).textContent.trim().split('\n').select(function (line) {
-							var outp = '';
-
-							if (!disb) {
-								if (/^var\s+\w+\s+=/.test(line) || /^\w+\s*=\s*/.test(line)) {
-									buff += line;
-									if (!/;$/.test(line)) {
-										varx = true;
+						$(this).replaceWith('<code contenteditable="true" spellcheck="false">' + Array.create(this.childNodes).select(function (node) {
+							if (node.nodeType === 8) { // In case of comments
+								return node.textContent.split('\n').select(function (line) {
+									line = line.toEncodedXML();
+									if (line.contains('//')) {
+										line = line.replace('//', '<s contenteditable="false">//') + '</s>';
 									}
+									return line;
+								});
 
-								} else if (varx === true) {
-									buff += line;
-									if (!/^\t/.test(line) && /;$/.test(line)) {
-										varx = false;
-									}
-
-								} else if (/^\t/.test(line)) {
-									buff += line;
-
-								} else if (/[\[\({,]$/.test(line)) {
-									buff += 'temp = ' + line;
-									wait = true;
-
-								} else if (/;$/.test(line)) {
-									var last;
-									if (wait === true) {
-										last = line;
-										buff += last;
-										wait = false;
-
-									} else {
-										last = 'temp = ' + line;
-										buff += last;
-									}
-
-									var _log = console.log;
-									var _out = [];
-									console.log = function (argx) {
-										_out.push(tran(argx));
-									};
-
-									try {
-										eval(buff);
-
-									} catch (ex) {
-										temp = ex;
-										buff = buff.substring(0, buff.length - last.length);
-									}
-
-									console.log = _log;
-
-									if (_out.length > 0) {
-										temp = _out.select(function (itm) {
-											return itm.toEncodedXML();
-										}).join('<br>// ');
-										buff += '_out = [];';
-
-									} else if (temp instanceof Error) {
-										temp = 'Throws "' + temp.message + '"';
-
-									} else {
-										temp = tran(temp).toEncodedXML();
-									}
-
-									outp = '<br><s contenteditable="false">// ' + temp + '</s>';
+							} else {
+								if (item.name === 'Array.prototype.trim') {
+									grunt.log.writeln(node.textContent);
 								}
-							}
+								return node.textContent.split('\n').select(function (line) {
+									var outp = '';
 
-							if (line.contains('//')) {
-								line = line.replace('//', '<s contenteditable="false">//') + '</s>';
-							}
+									if (/^var\s+\w+\s+=/.test(line) || /^\w+\s*=\s*/.test(line)) {
+										buff += line;
+										if (!/;$/.test(line)) {
+											varx = true;
+										}
 
-							return line.replace(/&/g, '&amp;').replace(/\t/g, '&nbsp;&nbsp;') + outp;
-						}).toString('<br>') + '</code>');
+									} else if (varx === true) {
+										buff += line;
+										if (!/^\t/.test(line) && /;$/.test(line)) {
+											varx = false;
+										}
+
+									} else if (/^\t/.test(line)) {
+										buff += line;
+
+									} else if (/[\[\({,]$/.test(line)) {
+										buff += 'temp = ' + line;
+										wait = true;
+
+									} else if (/;$/.test(line)) {
+										var last;
+										if (wait === true) {
+											last = line;
+											buff += last;
+											wait = false;
+
+										} else {
+											last = 'temp = ' + line;
+											buff += last;
+										}
+
+										var _log = console.log;
+										var _out = [];
+										console.log = function (argx) {
+											_out.push(tran(argx));
+										};
+
+										try {
+											eval(buff);
+
+										} catch (ex) {
+											temp = ex;
+											buff = buff.substring(0, buff.length - last.length);
+										}
+
+										console.log = _log;
+
+										if (_out.length > 0) {
+											temp = _out.select(function (itm) {
+												return itm.toEncodedXML();
+											}).join('<br>// ');
+											buff += '_out = [];';
+
+										} else if (temp instanceof Error) {
+											temp = 'Throws "' + temp.message + '"';
+
+										} else {
+											temp = tran(temp).toEncodedXML();
+										}
+
+										outp = '<br><s contenteditable="false">// ' + temp + '</s>';
+									}
+
+									if (line.contains('//')) {
+										line = line.replace('//', '<s contenteditable="false">//') + '</s>';
+									}
+
+									return line.replace(/&/g, '&amp;').replace(/\t/g, '&nbsp;&nbsp;') + outp;
+								});
+							}
+						}).flatten().where(function (line, indx, full) {
+							return !(line.trim() === '' && (indx === 0 || indx === full.length - 1 || full[indx - 1].trim() === ''));
+						}).join('<br>') + '</code>');
 					});
 
 					$card.appendTo($main);

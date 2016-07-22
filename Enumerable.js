@@ -163,6 +163,7 @@
 	 * <code>
 	 * var a = { z: 0 };
 	 * [1, 2, 3].bind(a).invoke(function (x) { this.z += x; });
+	 * 
 	 * console.log(a.z);
 	 * </code>
 	 * <meta keywords="context"/>
@@ -216,12 +217,16 @@
 	 * var a = [{ q: { r: true } }];
 	 * var z = a.clone();
 	 * console.log(a === z);
+	 * 
 	 * console.log(a[0] === z[0]);
+	 * 
 	 * console.log(a[0].q === z[0].q);
 	 * 
 	 * z = a.clone(true);
 	 * console.log(a === z);
+	 * 
 	 * console.log(a[0] === z[0]);
+	 * 
 	 * console.log(a[0].q === z[0].q);
 	 * </code>
 	 * <meta keywords="copy,slice,duplicate"/>
@@ -718,7 +723,7 @@
 	 * <u>(startIndex: <i>number</i>, stopIndex: <i>number</i>, iterator: <i>function</i>, [batchCount: <i>number</i>])</u><br>
 	 * <u>(startIndex: <i>number</i>, stopIndex: <i>number</i>, stepCount: <i>number</i>, iterator: <i>function</i>, [batchCount: <i>number</i>])</u><br>
 	 * </p>
-	 * <code disabled>
+	 * <code><!--
 	 * [1, 2, 3].invokeAsync(function (x) { console.log(x); });
 	 * console.log('4');
 	 * setTimeout(function () {
@@ -740,7 +745,7 @@
 	 * // 2
 	 * // 5
 	 * // 3
-	 * </code>
+	 * --></code>
 	 */
 	Array.prototype.invokeAsync = function () {
 		var fni = Array.prototype.slice.call(arguments).indexOf(function (itm) { return typeof itm === 'function'; });
@@ -809,7 +814,6 @@
 		}
 		return pwn;
 	};
-
 
 	/**
 	 * <p><b>Returns</b> the current array after iterates on the members that meet the given group. This must be called after <a>Array.prototype.groupBy()</a> method. Whenever the given iterator returns <i>false</i>, the invocation will be stopped immediately.</p>
@@ -986,6 +990,62 @@
 		}
 		if (this._s !== undefined) {
 			out._s = this._s;
+		}
+		return out;
+	};
+
+	/**
+	 * <p><b>Returns</b> a new array without first and last members that match the given condition.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
+	 * <u>(value: <i>anything</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * var a = [
+	 * 	{ name: 'Alex', work: 'Singer' },
+	 * 	{ name: 'Brad', work: 'Dancer' },
+	 * 	{ name: 'Chad', work: 'Singer' }
+	 * ];
+	 * 
+	 * a.trim(function (x) { return x.work === 'Singer'; });
+	 * 
+	 * [0, 1, 0, 2, 0, 3, 0, 0].trim(0);
+	 * </code>
+	 * <p><b>See also</b> <a>Array.prototype.where()</a></p>
+	 * <meta keywords="where,filter"/>
+	 */
+	Array.prototype.trim = function () {
+		var ar0 = arguments[0];
+		var idx = -1;
+		var bnd = this.length;
+		var out = this.toImmutable();
+		if (typeof ar0 === 'function') {
+			while (--bnd >= 0) {
+				if (!ar0.call(this._s, this[bnd], bnd, this)) {
+					out.splice(bnd + 1, this.length - bnd);
+					break;
+				}
+			}
+			while (++idx < bnd) {
+				if (!ar0.call(this._s, this[idx], idx, this)) {
+					out.splice(0, idx);
+					break;
+				}
+			}
+
+		} else {
+			while (--bnd >= 0) {
+				if (Object.isEqual(this[bnd], ar0) === false) {
+					out.splice(bnd + 1, this.length - bnd);
+					break;
+				}
+			}
+			while (++idx < bnd) {
+				if (Object.isEqual(this[idx], ar0) === false) {
+					out.splice(0, idx);
+					break;
+				}
+			}
 		}
 		return out;
 	};
@@ -2202,7 +2262,7 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> a new array with members have the given member replaced.</p>
+	 * <p><b>Returns</b> the current array with members have the given member replaced. This mutates the current array.</p>
 	 * <p>This replaces all occurrences of the given value from the current array, unless the limit is specified.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(targetValue: <i>anything</i>, replacement: <i>anything</i>)</u><br>
@@ -2213,7 +2273,7 @@
 	 * 
 	 * a.replace(2, 4);
 	 * 
-	 * a.replace(2, 4, 1);
+	 * a.replace(4, 5, 1);
 	 * 
 	 * console.log(a);
 	 * </code>
@@ -2226,23 +2286,22 @@
 		var ar2 = arguments[2];
 		var idx = -1;
 		var bnd = this.length;
-		var out = this.toImmutable();
 		if (arguments.length >= 2) {
 			if (!isInt(ar2) || ar2 < 0) {
 				ar2 = Infinity;
 			}
 			if (typeof ar0 === 'function') {
 				while (++idx < bnd && ar2 > 0) {
-					if (ar0.call(this._s, out[idx], idx, out)) {
-						out[idx] = ar1;
+					if (ar0.call(this._s, this[idx], idx, this)) {
+						this[idx] = ar1;
 						ar2--;
 					}
 				}
 
 			} else {
 				while (++idx < bnd && ar2 > 0) {
-					if (out[idx] === ar0) {
-						out[idx] = ar1;
+					if (this[idx] === ar0) {
+						this[idx] = ar1;
 						ar2--;
 					}
 				}
@@ -2251,11 +2310,11 @@
 		} else {
 			throw new Error(ERR_INV);
 		}
-		return out;
+		return this;
 	};
 
 	/**
-	 * <p><b>Returns</b> a new array with members have the given index replaced.</p>
+	 * <p><b>Returns</b> the current array with members have the given index replaced. This mutates the current array.</p>
 	 * <p>This replaces all occurrences of the given value from the current array, unless the limit is specified.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(targetIndex: <i>number</i>, replacement: <i>anything</i>)</u><br>
@@ -2273,17 +2332,16 @@
 	Array.prototype.replaceAt = function () {
 		var ar0 = arguments[0];
 		var ar1 = arguments[1];
-		var out = this.toImmutable();
 		if (arguments.length !== 2) {
 			throw new Error(ERR_INV);
 
-		} else if (!isInt(ar0) || ar0 < 0 || ar0 >= out.length) {
+		} else if (!isInt(ar0) || ar0 < 0 || ar0 >= this.length) {
 			throw new RangeError(ERR_OOR);
 
 		} else {
-			out[ar0] = ar1;
+			this[ar0] = ar1;
 		}
-		return out;
+		return this;
 	};
 
 	/**
@@ -3226,8 +3284,8 @@
 	 * <p><b>Returns</b> a new array with members that have been converted to the target type. If the member cannot be converted, this will skip the member and continue converting.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u><br>
-	 * <u>(typeName: <i>string</i>)</u> – The possible values are <i>string</i>, <i>number</i>, <i>boolean</i>, <i>array</i>, <i>object</i> and <i>function</i>.<br>
-	 * <u>(typeClass: <i>anything</i>)</u> – The possible values are <i>String</i>, <i>Number</i>, <i>Boolean</i>, <i>Array</i>, <i>Object</i> and <i>Function</i>.<br>
+	 * <u>(typeName: <i>string</i>)</u> – The possible values are <i>string</i>, <i>number</i>, <i>boolean</i>, <i>array</i>, <i>object</i>, <i>function</i> and <a href="http://jquery.com/"><i>jQuery</i></a>.<br>
+	 * <u>(typeClass: <i>anything</i>)</u> – The possible values are <i>String</i>, <i>Number</i>, <i>Boolean</i>, <i>Array</i>, <i>Object</i>, <i>Function</i> and <a href="http://jquery.com/"><i>jQuery</i></a>.<br>
 	 * </p>
 	 * <code>
 	 * [1, 2, 3].cast('string');
@@ -3238,24 +3296,26 @@
 	 * 
 	 * [{ "0": 1, "1": 2, "2": 3, length: 3 }].cast(Array);
 	 * 
-	 * [1, 2, 3].cast('object');
+	 * [1, {}, []].cast('object');
+	 * <!--
+	 * ['<a></a>', document.createElement('b'), $('<i></i>')].cast(jQuery);
+	 * // [$(<a></a>), $(<b></b>), $(<i></i>)]
+	 * -->
 	 * </code>
 	 * <p><b>See also</b> <a>Array.prototype.where()</a></p>
 	 * <meta keywords="select"/>
 	 */
 	Array.prototype.cast = function () {
 		var ar0 = arguments[0];
+		var nam = typeof ar0 === 'function' ? ar0.name : ar0;
 		var idx = -1;
 		var jdx = -1;
 		var bnd = this.length;
 		var tmp;
 		var out = [];
-		if (typeof ar0 === 'function') {
-			ar0 = ar0.name;
-		}
-		if (typeof ar0 === 'string' && ar0.length > 0) {
-			ar0 = ar0.toLowerCase();
-			if (ar0 === 'string') {
+		if (typeof nam === 'string') {
+			nam = nam.toLowerCase();
+			if (nam === 'string') {
 				while (++idx < bnd) {
 					tmp = this[idx];
 					if (tmp !== undefined && tmp !== null && tmp.toString !== undefined) {
@@ -3266,7 +3326,7 @@
 					}
 				}
 
-			} else if (ar0 === 'number') {
+			} else if (nam === 'number') {
 				while (++idx < bnd) {
 					tmp = this[idx];
 					if (typeof tmp === 'number' && !isNaN(tmp)) {
@@ -3282,7 +3342,7 @@
 					}
 				}
 
-			} else if (ar0 === 'boolean') {
+			} else if (nam === 'boolean') {
 				while (++idx < bnd) {
 					tmp = this[idx];
 					if (tmp !== undefined && tmp !== null && tmp.toString !== undefined) {
@@ -3296,7 +3356,7 @@
 					}
 				}
 
-			} else if (ar0 === 'array') {
+			} else if (nam === 'array') {
 				while (++idx < bnd) {
 					tmp = this[idx];
 					if (Array.isArray(tmp)) {
@@ -3307,7 +3367,7 @@
 					}
 				}
 
-			} else if (ar0 === 'object') {
+			} else if (nam === 'object') {
 				while (++idx < bnd) {
 					tmp = this[idx];
 					if (tmp !== null && typeof tmp === 'object' && !Array.isArray(tmp)) {
@@ -3315,7 +3375,7 @@
 					}
 				}
 
-			} else if (ar0 === 'function') {
+			} else if (nam === 'function') {
 				while (++idx < bnd) {
 					tmp = this[idx];
 					if (typeof tmp === 'function') {
@@ -3323,10 +3383,16 @@
 					}
 				}
 
-			} else if (typeof tmp === ar0) {
+			} else if (jQuery !== undefined && (nam === 'jquery' || ar0 === window.jQuery)) {
 				while (++idx < bnd) {
-					out[++jdx] = this[idx];
+					tmp = this[idx];
+					if (typeof tmp === 'string' || typeof tmp === 'object' && (tmp instanceof HTMLElement || tmp instanceof jQuery)) {
+						out[++jdx] = jQuery(tmp);
+					}
 				}
+
+			} else {
+				throw new Error(ERR_INV);
 			}
 			if (this._s !== undefined) {
 				out._s = this._s;
@@ -3631,6 +3697,7 @@
 	 * <p><b>Returns</b> a string that has all <a href="https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references#Predefined_entities_in_XML">XML characters</a> escaped. This is a reverse implementation of <a>String.prototype.toEncodedXML/=()</a></p>
 	 * <code><!--
 	 * 'Alex &amp; Brad say &quot;0 &lt; 1 but 2 &gt; 1&quot;'.toDecodedXML();
+	 * // 'Alex & Brad say "0 < 1 but 2 > 1"'
 	 * --></code>
 	 * <p><b>See also</b> <a>String.prototype.toEncodedXML()</a></p>
 	 * <meta keywords="html,escape,unescape,character"/>
