@@ -25,6 +25,7 @@
 	 * <u>(source: <i>array</i>)</u> – The parameter can be an object that has "length" property.<br>
 	 * <u>(source: <i>string</i>)</u><br>
 	 * <u>(source: <i>string</i>, separator: <i>string</i>)</u><br>
+	 * <u>(source: <i>string</i>, separator: <i>RegExp</i>)</u><br>
 	 * <u>(source: <i>object</i>, [includeEverything: <i>boolean</i>])</u><br>
 	 * <u>(source: <i>object</i>, nameProperty: <i>string</i>, [includeEverything: <i>boolean</i>])</u><br>
 	 * <u>(source: <i>object</i>, nameProperty: <i>string</i>, valueProperty: <i>string</i>, [includeEverything: <i>boolean</i>])</u><br>
