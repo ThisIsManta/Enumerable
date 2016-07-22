@@ -475,11 +475,11 @@ describe('Array', function () {
 
 			z = a.take(1);
 			expect(a).not.toBe(z);
-			expect(z).toEqual([2, 3]);
+			expect(z).toEqual([1]);
 
-			z = a.take(1, 2);
+			z = a.take(1, 3);
 			expect(a).not.toBe(z);
-			expect(z).toEqual([2]);
+			expect(z).toEqual([2, 3]);
 		});
 	});
 
@@ -913,7 +913,7 @@ describe('Array', function () {
 		it('asserts an array', function () {
 			a = [1, 2, 3, 2];
 			z = a.replace(2, 4);
-			expect(z).not.toBe(a);
+			expect(z).toBe(a);
 			expect(z).toEqual([1, 4, 3, 4]);
 			expect(z).toEqual(a.replace(function (x) { return x === 2; }, 4));
 		});

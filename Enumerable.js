@@ -916,7 +916,7 @@
 				out = this.slice(ar0, ar1);
 
 			} else {
-				out = this.slice(ar0);
+				out = this.slice(0, ar0);
 			}
 
 		} else {
