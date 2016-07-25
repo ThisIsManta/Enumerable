@@ -604,10 +604,13 @@
 		var tmp;
 		var out;
 		if (arguments.length !== 1) {
-			throw new Error(ERR_INV);			
+			throw new Error(ERR_INV);
 		}
 		if (typeof ar0 === 'function') {
-			out = this.map(ar0, this._s);
+			out = new Array(bnd);
+			while (++idx < bnd) {
+				out[idx] = ar0.call(this._s, this[idx], idx, this);;
+			}
 
 		} else if (typeof ar0 === 'string') {
 			out = new Array(bnd);
