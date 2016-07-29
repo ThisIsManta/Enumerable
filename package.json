@@ -1,6 +1,6 @@
 {
   "name": "Enumerable",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "A JavaScript library that provides useful and handy query functions.",
   "main": "Enumerable.js",
   "repository": {
