@@ -500,7 +500,7 @@ describe('Array', function () {
 
 			z = a.skip(1);
 			expect(a).not.toBe(z);
-			expect(z).toEqual([1]);
+			expect(z).toEqual([2, 3]);
 
 			z = a.skip(1, 2);
 			expect(a).not.toBe(z);

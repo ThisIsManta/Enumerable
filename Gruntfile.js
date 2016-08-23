@@ -165,9 +165,6 @@ module.exports = function (grunt) {
 								});
 
 							} else {
-								if (item.name === 'Array.prototype.trim') {
-									grunt.log.writeln(node.textContent);
-								}
 								return node.textContent.split('\n').select(function (line) {
 									var outp = '';
 

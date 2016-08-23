@@ -869,7 +869,7 @@
 	 * <p><b>Returns</b> a new array with only members that are in the given range. If the condition function is given, the range is starting from zero to the index which the condition returns <i>false</i>.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
-	 * <u>(startIndex: <i>number</i>)</u><br>
+	 * <u>(memberCount: <i>number</i>)</u><br>
 	 * <u>(startIndex: <i>number</i>, stopIndex: <i>number</i>)</u><br>
 	 * </p>
 	 * <code>
@@ -935,7 +935,7 @@
 	 * <p><b>Returns</b> a new array with only members that are not in the given range. If the condition function is given, the range is starting from the index which the condition returns <i>false</i>. This is a reverse implementation of <a>Array.prototype.take()</a> method.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
-	 * <u>(startIndex: <i>number</i>)</u><br>
+	 * <u>(memberCount: <i>number</i>)</u><br>
 	 * <u>(startIndex: <i>number</i>, stopIndex: <i>number</i>)</u><br>
 	 * </p>
 	 * <code>
@@ -989,7 +989,7 @@
 				out.splice(ar0, ar1 - ar0);
 
 			} else {
-				out = this.slice(0, ar0);
+				out = this.slice(ar0);
 			}
 
 		} else {
