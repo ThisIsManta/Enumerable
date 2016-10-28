@@ -392,7 +392,7 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> a map with key-value pairs that are derived from all members.</p>
+	 * <p><b>Returns</b> an ES6 Map object with key-value pairs that are derived from all members.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u><br>
 	 * <u>(nameProjector: <i>string</i>)</u><br>
@@ -404,13 +404,15 @@
 	 * <u>(nameProjector: <i>function&lt;string&gt;</i>, valueProjector: <i>string</i>)</u><br>
 	 * <u>(nameProjector: <i>function&lt;string&gt;</i>, staticValue: <i>anything</i>)</u><br>
 	 * </p>
-	 * <code>
+	 * <code><!--
 	 * ['a', 'b', 'c'].toMap();
+	 * // Map { 0 => "a", 1 => "b", 2 => "c" }
 	 *
 	 * ['a', 'b', 'c'].toMap(function (x) {
 	 * 	return x.toUpperCase();
 	 * });
-	 * </code>
+	 * // Map { "A" => "a", "B" => "b", "C" => "c"}
+	 * --></code>
 	 * <meta keywords="hash,dictionary,map"/>
 	 */
 	Array.prototype.toMap = function () {
@@ -2447,11 +2449,6 @@
 	};
 
 	var _sort = Array.prototype.sort;
-
-	Array.prototype.sort = function () {
-		_sort.apply(this, arguments);
-		return this;
-	};
 
 	/**
 	 * <p><b>Returns</b> a new array with members that have been sorted by the given condition. The default sort order is according to string Unicode code points.</p>
