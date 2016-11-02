@@ -138,7 +138,7 @@
 			}
 			out._m = false;
 
-		} else if (typeof ar0 === 'number' && isInt(ar0) && ar0 >= 0) {
+		} else if (isInt(ar0) && ar0 >= 0) {
 			out = new Array(ar0);
 			if (ar1 !== undefined) {
 				while (++idx < ar0) {
@@ -619,7 +619,7 @@
 				out[idx] = ar0.call(this._s, this[idx], idx, this);;
 			}
 
-		} else if (typeof ar0 === 'string' || typeof ar0 === 'number' && isFinite(ar0) && ar0 <= Number.MAX_SAFE_INTEGER && (ar0 = ar0.toString())) {
+		} else if (typeof ar0 === 'string' || isInt(ar0) && (ar0 = ar0.toString())) {
 			out = new Array(bnd);
 			if (ar0.length === 0) {
 				throw new Error(ERR_AES);
@@ -2324,7 +2324,7 @@
 		var idx = -1;
 		var bnd = this.length;
 		if (arguments.length >= 2) {
-			if (!isInt(ar2) || ar2 < 0) {
+			if (!isInt(ar2)) {
 				ar2 = Infinity;
 			}
 			if (typeof ar0 === 'function') {
@@ -3588,8 +3588,8 @@
 		}
 	};
 
-	var isInt = function (valu) {
-		return typeof valu === 'number' && isFinite(valu) && Math.floor(valu) === valu && Math.abs(valu) <= Number.MAX_SAFE_INTEGER;
+	var isInt = function (val) {
+		return typeof val === 'number' && isFinite(val) && Math.floor(val) === val && Math.abs(val) <= Number.MAX_SAFE_INTEGER;
 	};
 
 	/**
