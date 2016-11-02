@@ -19,7 +19,8 @@
 	var ERR_BID = 'a non-object type was not allowed';
 
 	/**
-	 * <p><b>Returns</b> an array from the given array-like or object. If the source is object and the last parameter is true, private properties and functions will be included in the new array.</p>
+	 * <p><b>Returns</b> an array from the given array-like or object.</p>
+	 * <p>If the source is an object, functions and private properties will be excluded, unless the last parameter is <i>true</i>. A private property is a member of an object that its name starts with an underscore sign</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u> – This creates an empty array.<br>
 	 * <u>(source: <i>array</i>)</u> – The parameter can be an object that has "length" property.<br>
@@ -157,7 +158,8 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> the current array and stores the given object as a context for further use in functions. Passing an <i>undefined</i> or <i>null</i> will delete the existing context.</p>
+	 * <p><b>Returns</b> the current array and stores the given object as a context for further use in functions.</p>
+	 * <p>Passing an <i>undefined</i> or <i>null</i> will delete the existing context.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(context: <i>object</i>)</u><br>
 	 * </p>
@@ -209,10 +211,10 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> a new array that has identical members to the current array.</p>
+	 * <p><b>Returns</b> a new array with members that has identical members to the current array.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u> – This does a shallow copy on all members.<br>
-	 * <u>(isDeep: <i>boolean</i>)</u><br>
+	 * <u>(deep: <i>boolean</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * var a = [{ q: { r: true } }];
@@ -258,7 +260,8 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> an object with properties that are derived from all members. The members must implement <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toString">toString()</a> method.</p>
+	 * <p><b>Returns</b> an object with properties that are derived from all members.</p>
+	 * <p>The members must implement <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toString">toString()</a> method.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u><br>
 	 * <u>(nameProjector: <i>string</i>)</u><br>
@@ -480,7 +483,8 @@
 	var _toString = Array.prototype.toString;
 
 	/**
-	 * <p><b>Returns</b> a string that is the result of concatenating all members. This overrides the native <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/toString">toString</a> method.</p>
+	 * <p><b>Returns</b> a string that is the result of concatenating all members.</p>
+	 * <p>This extends the native <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/toString">toString</a> method.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u> – This uses a comma as a separator.<br>
 	 * <u>(separator: <i>string</i>)</u><br>
@@ -575,10 +579,11 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> a new array with the results of all members.</p>
+	 * <p><b>Returns</b> a new array with members that is the results of running the given argument.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(valueProjector: <i>function&lt;anything&gt;</i>)</u><br>
 	 * <u>(nameProjector: <i>string</i>)</u><br>
+	 * <u>(nameProjector: <i>number</i>)</u><br>
 	 * <u>(nameProjector: <i>array&lt;string&gt;</i>)</u> – This creates an object containing the given property name(s).<br>
 	 * </p>
 	 * <code>
@@ -614,7 +619,7 @@
 				out[idx] = ar0.call(this._s, this[idx], idx, this);;
 			}
 
-		} else if (typeof ar0 === 'string') {
+		} else if (typeof ar0 === 'string' || typeof ar0 === 'number' && isFinite(ar0) && ar0 <= Number.MAX_SAFE_INTEGER && (ar0 = ar0.toString())) {
 			out = new Array(bnd);
 			if (ar0.length === 0) {
 				throw new Error(ERR_AES);
@@ -724,8 +729,9 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> a new <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a> then iterates on all members asynchronously. Whenever the given iterator returns <i>false</i>, the invocation will be stopped immediately. Each iteration has a delay of 2 milliseconds. The default batch count is 1.</p>
-	 * <p>This is very useful when doing some work without freezing UI.</p>
+	 * <p><b>Returns</b> a new <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a> then iterates on all members asynchronously.</p>
+	 * <p>Whenever the given iterator returns <i>false</i>, the invocation will be stopped immediately. Each iteration has a delay of 2 milliseconds. The default batch count is 1.</p>
+	 * <p>This is very useful when doing some time-consuming work without freezing the user interface.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(iterator: <i>function</i>, [batchCount: <i>number</i>])</u><br>
 	 * <u>(startIndex: <i>number</i>, iterator: <i>function</i>, [batchCount: <i>number</i>])</u><br>
@@ -825,7 +831,8 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> the current array after iterates on the members that meet the given group. This must be called after <a>Array.prototype.groupBy()</a> method. Whenever the given iterator returns <i>false</i>, the invocation will be stopped immediately.</p>
+	 * <p><b>Returns</b> the current array after iterates on the members that meet the given group.</p>
+	 * <p>This must be called after <a>Array.prototype.groupBy()</a> method. Whenever the given iterator returns <i>false</i>, the invocation will be stopped immediately.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(groupName: <i>anything</i>, iterator: <i>function</i>)</u><br>
 	 * </p>
@@ -868,9 +875,9 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> a new array with only members that are in the given range. If the condition function is given, the range is starting from zero to the index which the condition returns <i>false</i>.</p>
+	 * <p><b>Returns</b> a new array with only members that are in the given range.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
+	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u> – This stops when the given condition is <i>false</i>.<br>
 	 * <u>(memberCount: <i>number</i>)</u><br>
 	 * <u>(startIndex: <i>number</i>, stopIndex: <i>number</i>)</u><br>
 	 * </p>
@@ -934,9 +941,10 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> a new array with only members that are not in the given range. If the condition function is given, the range is starting from the index which the condition returns <i>false</i>. This is a reverse implementation of <a>Array.prototype.take()</a> method.</p>
+	 * <p><b>Returns</b> a new array with only members that are not in the given range.</p>
+	 * <p>This is a reverse implementation of <a>Array.prototype.take()</a> method.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
+	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u> – This stops when the given condition is <i>false</i>.<br>
 	 * <u>(memberCount: <i>number</i>)</u><br>
 	 * <u>(startIndex: <i>number</i>, stopIndex: <i>number</i>)</u><br>
 	 * </p>
@@ -1004,7 +1012,7 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> a new array without first and last members that match the given condition.</p>
+	 * <p><b>Returns</b> a new array without first and last members that match the value or the given condition.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
 	 * <u>(value: <i>anything</i>)</u><br>
@@ -1063,7 +1071,7 @@
 	 * <p><b>Returns</b> a new array with all members that have nested array members flatten.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u> – This does a shallow flattening on all members.<br>
-	 * <u>(isDeep: <i>boolean</i>)</u><br>
+	 * <u>(deep: <i>boolean</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * var a = [1, [2, [3]]];
@@ -1109,8 +1117,9 @@
 	 * <p><b>Returns</b> <i>true</i> if and only if one or more members match the given condition.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u> – This returns <i>true</i> if the current array is not empty.<br>
+	 * <u>(value: <i>anything</i>)</u> – This is similar to <a>Array.prototype.has()</a>.<br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
-	 * <u>(nameProjector: <i>string</i>, expectedValue: <i>anything</i>)</u><br>
+	 * <u>(nameProjector: <i>string</i>, value: <i>anything</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * var a = [
@@ -1120,6 +1129,9 @@
 	 * ];
 	 * 
 	 * a.any();
+	 * 
+	 * var Alex = a[0]
+	 * a.any(Alex);
 	 * 
 	 * a.any(function (x) { return x.work === 'Singer'; });
 	 * 
@@ -1174,8 +1186,9 @@
 	/**
 	 * <p><b>Returns</b> <i>true</i> if and only if all members match the given condition.</p>
 	 * <p><b>Accepts</b><br>
+	 * <u>(value: <i>anything</i>)</u><br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
-	 * <u>(nameProjector: <i>string</i>, expectedValue: <i>anything</i>)</u><br>
+	 * <u>(nameProjector: <i>string</i>, value: <i>anything</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * var a = [
@@ -1183,6 +1196,9 @@
 	 * 	{ name: 'Brad', work: 'Dancer', year: 18 },
 	 * 	{ name: 'Chad', work: 'Singer', year: 26 }
 	 * ];
+	 * 
+	 * var Alex = a[0]
+	 * a.all(Alex);
 	 * 
 	 * a.all(function (x) { return x.year <= 30; });
 	 * 
@@ -1233,11 +1249,11 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> <i>true</i> if and only if all members match the given condition.</p>
+	 * <p><b>Returns</b> <i>true</i> if and only if all members match the value or the given condition.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
-	 * <u>(expectedValue: <i>anything</i>)</u><br>
-	 * <u>(expectedValue: <i>anything</i>, startIndex: <i>number</i>)</u><br>
+	 * <u>(value: <i>anything</i>)</u><br>
+	 * <u>(value: <i>anything</i>, startIndex: <i>number</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * var a = [
@@ -1437,7 +1453,8 @@
 	var _indexOf = Array.prototype.indexOf;
 
 	/**
-	 * <p><b>Returns</b> a number of index that match the given condition, otherwise -1. This extends the native <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf">Array.prototype.indexOf()</a> method.</p>
+	 * <p><b>Returns</b> a number of index that match the given condition, otherwise -1.</p>
+	 * <p>This extends the native <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf">Array.prototype.indexOf()</a> method.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>, startIndex: <i>number</i>)</u><br>
@@ -1491,7 +1508,8 @@
 	var _lastIndexOf = Array.prototype.lastIndexOf;
 
 	/**
-	 * <p><b>Returns</b> a number of index that match the given condition, otherwise -1. This extends the native <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/lastIndexOf">Array.prototype.lastIndexOf()</a> method.</p>
+	 * <p><b>Returns</b> a number of index that match the given condition, otherwise -1.</p>
+	 * <p>This extends the native <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/lastIndexOf">Array.prototype.lastIndexOf()</a> method.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>, startIndex: <i>number</i>)</u><br>
@@ -1544,7 +1562,8 @@
 	var _find = Array.prototype.find;
 
 	/**
-	 * <p><b>Returns</b> the first member that meets the given condition, otherwise <i>undefined</i>. This overrides the native find method.</p>
+	 * <p><b>Returns</b> the first member that meets the given condition, otherwise <i>undefined</i>.</p>
+	 * <p>This extends the native find method.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
 	 * <u>(nameProjector: <i>string</i>, expectedValue: <i>anything</i>)</u>
@@ -1586,7 +1605,8 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> the first member that meets the given condition, otherwise throws an exception. This also throws an exception if the current array is empty.</p>
+	 * <p><b>Returns</b> the first member that meets the given condition, otherwise throws an exception.<p>
+	 * </p>This throws the exception if the current array is empty.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u> – This returns the first member.<br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
@@ -1666,7 +1686,8 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> the last member that meets the given condition, otherwise throws an exception. This also throws an exception if the current array is empty.</p>
+	 * <p><b>Returns</b> the last member that meets the given condition, otherwise throws an exception.</p>
+	 * <p>This throws the exception if the current array is empty.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u> – This returns the last member.<br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
@@ -1746,7 +1767,8 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> the one and only member that meets the given condition, otherwise throws an exception. This also throws an exception if the current array is empty.</p>
+	 * <p><b>Returns</b> the one and only member that meets the given condition, otherwise throws an exception.</p>
+	 * <p>This throws the exception if the current array is empty.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u> – This returns the one and only member.<br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
@@ -1861,7 +1883,7 @@
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u><br>
 	 * <u>(nameProjector: <i>string</i>)</u><br>
-	 * <u>(valueProjector: <i>function</i>)</u> – This treats <i>undefined</i> and <i>null</i> the same thing.<br>
+	 * <u>(valueProjector: <i>function</i>)</u> – This treats <i>undefined</i> and <i>null</i> like the same.<br>
 	 * </p>
 	 * <code>
 	 * [1, 2, 3, 2].distinct();
@@ -1960,7 +1982,8 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> the current array that has the given member added. This mutates the current array.</p>
+	 * <p><b>Returns</b> the current array that has the given member added.</p>
+	 * <p>This mutates the current array.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(value: <i>anything</i>)</u> – This appends the given value to the current array.<br>
 	 * <u>(value: <i>anything</i>, targetIndex: <i>number</i>)</u><br>
@@ -1998,9 +2021,10 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> the current array that has the given members added. This mutates the current array.</p>
+	 * <p><b>Returns</b> the current array that has the given members added.</p>
+	 * <p>This mutates the current array.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>(values: <i>array&lt;anything&gt;</i>)</u> – This appends the given value to the current array.<br>
+	 * <u>(values: <i>array&lt;anything&gt;</i>)</u> – This appends the given members to the current array.<br>
 	 * <u>(values: <i>array&lt;anything&gt;</i>, targetIndex: <i>number</i>)</u><br>
 	 * </p>
 	 * <code>
@@ -2041,8 +2065,8 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> the current array that has the given member removed. This mutates the current array.</p>
-	 * <p>This removes the first occurrence of the given value from the current array.</p>
+	 * <p><b>Returns</b> the current array that has the given member of the first occurrence removed.</p>
+	 * <p>This mutates the current array.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(value: <i>anything</i>)</u><br>
 	 * <u>(value: <i>anything</i>, startIndex: <i>number</i>)</u><br>
@@ -2080,7 +2104,8 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> the current array that has the given index removed. This mutates the current array.</p>
+	 * <p><b>Returns</b> the current array that has the given index removed.</p>
+	 * <p>This mutates the current array.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(targetIndex: <i>number</i>)</u><br>
 	 * </p>
@@ -2111,7 +2136,8 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> the current array that has the given members removed. This mutates the current array.</p>
+	 * <p><b>Returns</b> the current array that has the given members removed.</p>
+	 * <p>This mutates the current array.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(values: <i>array&lt;anything&gt;</i>)</u><br>
 	 * </p>
@@ -2143,8 +2169,8 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> the current array that has the given member removed. This mutates the current array.</p>
-	 * <p>This removes all occurrences of the given value from the current array.</p>
+	 * <p><b>Returns</b> the current array that has the given member of all occurrences removed.</p>
+	 * <p>This mutates the current array.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u> – This removes all members.<br>
 	 * <u>(value: <i>anything</i>)</u><br>
@@ -2180,16 +2206,17 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> a new nested array with members have the current array split at the given member.</p>
+	 * <p><b>Returns</b> a new nested array that have the current array split at the given member.</p>
+	 * <p>This excludes the given member of all occurrences.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>(valueProjector: <i>function&lt;boolean&gt;</i>)</u><br>
 	 * <u>(value: <i>anything</i>)</u><br>
+	 * <u>(valueProjector: <i>function&lt;boolean&gt;</i>)</u><br>
 	 * <u>(nameProjector: <i>string</i>, valueProperty: <i>anything</i>)</u><br>
 	 * </p>
 	 * <code>
-	 * [1, 2, 3, 2].split(3);
+	 * [1, 2, 3, 2, 3, 4].split(3);
 	 * 
-	 * [1, 2, 3, 2].split(function (x) { return x === 3; });
+	 * [1, 2, 3, 2, 3, 4].split(function (x) { return x === 3; });
 	 * </code>
 	 * <p><b>See also</b> <a>Array.prototype.splitAt()</a>, <a>Array.prototype.groupOf()</a></p>
 	 */
@@ -2240,7 +2267,8 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> a new nested array with members have the current array split at the given index. This always creates two internal arrays without removing any members.</p>
+	 * <p><b>Returns</b> a new nested array with members have the current array split at the given index.</p>
+	 * <p>This always creates two nested arrays without removing any members.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(targetIndex: <i>number</i>)</u><br>
 	 * </p>
@@ -2271,11 +2299,11 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> the current array with members have the given member replaced. This mutates the current array.</p>
-	 * <p>This replaces all occurrences of the given value from the current array, unless the limit is specified.</p>
+	 * <p><b>Returns</b> the current array with members have the given member replaced.</p>
+	 * <p>This mutates the current array.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>(targetValue: <i>anything</i>, replacement: <i>anything</i>)</u><br>
-	 * <u>(targetValue: <i>anything</i>, replacement: <i>anything</i>, limit: <i>number</i>)</u><br>
+	 * <u>(targetValue: <i>anything</i>, replacement: <i>anything</i>)</u> – This replaces the given value of all occurrences.<br>
+	 * <u>(targetValue: <i>anything</i>, replacement: <i>anything</i>, operationCount: <i>number</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * a = [1, 2, 3, 2];
@@ -2323,10 +2351,10 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> the current array with members have the given index replaced. This mutates the current array.</p>
-	 * <p>This replaces all occurrences of the given value from the current array, unless the limit is specified.</p>
+	 * <p><b>Returns</b> the current array with members have the given index replaced.</p>
+	 * <p>This mutates the current array.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>(targetIndex: <i>number</i>, replacement: <i>anything</i>)</u><br>
+	 * <u>(targetIndex: <i>number</i>, replacement: <i>anything</i>)</u> – This replaces the given value of all occurrences.<br>
 	 * </p>
 	 * <code>
 	 * a = [1, 2, 3, 2];
@@ -2354,7 +2382,7 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> a new array with members appear in the current array and members appear exclusively in the given array .</p>
+	 * <p><b>Returns</b> a new array with members appear in the current array and members appear exclusively in the given array.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(values: <i>array&lt;anything&gt;</i>)</u><br>
 	 * </p>
@@ -2451,7 +2479,8 @@
 	var _sort = Array.prototype.sort;
 
 	/**
-	 * <p><b>Returns</b> a new array with members that have been sorted by the given condition. The default sort order is according to string Unicode code points.</p>
+	 * <p><b>Returns</b> a new array with members that have been sorted by the given condition.</p>
+	 * <p>The default sorting order is according to the string Unicode points.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(nameProjector: <i>string</i>)</u><br>
 	 * <u>(nameProjector: <i>string</i>, reverse: <i>boolean</i>, ...)</u><br>
@@ -2740,7 +2769,8 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> a new array with members merged with the given values. All members must be an object. Although this does not mutate the current array, the members of the current array may be changed.</p>
+	 * <p><b>Returns</b> a new array with members merged with the given values.</p>
+	 * <p>All members must be an object. Although this does not mutate the current array, the members of the current array may be mutated.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(values: <i>array&lt;anything&gt;</i>, nameProjector: <i>string</i></u><br>
 	 * <u>(values: <i>array&lt;anything&gt;</i>, nameProjector: <i>string</i>, overwrite: <i>boolean</i>)</u><br>
@@ -2833,9 +2863,9 @@
 	/**
 	 * <p><b>Returns</b> a number of members that match the given condition.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>(nameProjector: <i>string</i>, valueProperty: <i>anything</i>)</u><br>
+	 * <u>(value: <i>anything</i>)</u><br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
-	 * <u>(targetValue: <i>anything</i>)</u><br>
+	 * <u>(nameProjector: <i>string</i>, value: <i>anything</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * [1, 2, 3, 2].countBy(2);
@@ -2846,9 +2876,12 @@
 	 * 	{ name: 'Chad', work: 'Singer' }
 	 * ];
 	 * 
-	 * a.countBy('work', 'Singer');
+	 * var Alex = a[0]
+	 * a.countBy(Alex)
 	 * 
 	 * a.countBy(function (x) { return x.work === 'Singer'; });
+	 * 
+	 * a.countBy('work', 'Singer');
 	 * </code>
 	 */
 	Array.prototype.countBy = function () {
@@ -3285,7 +3318,8 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> a new array with members that have been converted to the target type. If the member cannot be converted, this will skip the member and continue converting.</p>
+	 * <p><b>Returns</b> a new array with members that have been converted to the target type.</p>
+	 * <p>If the member cannot be converted, this will omit the member and continue converting.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u><br>
 	 * <u>(typeName: <i>string</i>)</u> – The possible values are <i>string</i>, <i>number</i>, <i>boolean</i>, <i>array</i>, <i>object</i>, <i>function</i> and <a href="http://jquery.com/"><i>jQuery</i></a>.<br>
@@ -3499,7 +3533,8 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> the member that matches the given condition. This searches through a nest tree-structured array.</p>
+	 * <p><b>Returns</b> the member that matches the given condition.</p>
+	 * <p>This searches through a nested-tree-structured array.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(treeProjector: <i>string</i>, nameProjector: <i>string</i>, expectedValue: <i>anything</i>)</u><br>
 	 * <u>(treeProjector: <i>string</i>, condition: <i>function&lt;boolean&gt;</i>)</u><br>
@@ -3579,7 +3614,8 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> <i>true</i> if and only if the given parameters are identical, otherwise <i>false</i>. This performs deep array/object comparison.</p>
+	 * <p><b>Returns</b> <i>true</i> if and only if the given parameters are identical, otherwise <i>false</i>.</p>
+	 * <p>This performs deep array/object comparison.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(firstValue: <i>anything</i>, secondValue: <i>anything</i>)</u>
 	 * </p>
@@ -3652,7 +3688,8 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> a number that is the result of hashing. The result is always an interger that can be less than zero.</p>
+	 * <p><b>Returns</b> a number that is the result of hashing.</p>
+	 * <p>The result is always an interger that can be a negative integer.</p>
 	 * <code>
 	 * 'this is what you came for'.toHashCode();
 	 * </code>
@@ -3815,7 +3852,7 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> a new array with members that are constructed from the current map.</p>
+	 * <p><b>Returns</b> a new array with name-value paris that are copied from the current map.</p>
 	 * <code>
 	 * new Map().set(1, 'a').set(2, 'b').toArray();
 	 * </code>
@@ -3826,7 +3863,7 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> a new object with properties that are constructed from the current map.</p>
+	 * <p><b>Returns</b> a new object with properties that are copied from the current map.</p>
 	 * <code>
 	 * new Map().set(1, 'a').set(2, 'b').toObject();
 	 * </code>
