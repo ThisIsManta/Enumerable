@@ -1130,7 +1130,7 @@
 	 * 
 	 * a.any();
 	 * 
-	 * var Alex = a[0]
+	 * var Alex = a[0];
 	 * a.any(Alex);
 	 * 
 	 * a.any(function (x) { return x.work === 'Singer'; });
@@ -1197,7 +1197,7 @@
 	 * 	{ name: 'Chad', work: 'Singer', year: 26 }
 	 * ];
 	 * 
-	 * var Alex = a[0]
+	 * var Alex = a[0];
 	 * a.all(Alex);
 	 * 
 	 * a.all(function (x) { return x.year <= 30; });
@@ -2876,8 +2876,8 @@
 	 * 	{ name: 'Chad', work: 'Singer' }
 	 * ];
 	 * 
-	 * var Alex = a[0]
-	 * a.countBy(Alex)
+	 * var Alex = a[0];
+	 * a.countBy(Alex);
 	 * 
 	 * a.countBy(function (x) { return x.work === 'Singer'; });
 	 * 
