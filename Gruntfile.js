@@ -158,6 +158,9 @@ module.exports = function (grunt) {
 							if (node.nodeType === 8) { // In case of comments
 								return node.textContent.split('\n').select(function (line) {
 									line = line.toEncodedXML();
+									if (line.startsWith('\t')) {
+										line = line.replace(/\t/g, '&nbsp;&nbsp;');
+									}
 									if (line.contains('//')) {
 										line = line.replace('//', '<s contenteditable="false">//') + '</s>';
 									}
