@@ -3716,9 +3716,9 @@
 	 * 
 	 * Object.isObject([]);
 	 * 
-	 * Object.isObject(null);
-	 * 
 	 * Object.isObject(undefined);
+	 * 
+	 * Object.isObject(null);
 	 * </code>
 	 */
 	Object.isObject = function (ar0) {
@@ -3731,15 +3731,15 @@
 	 * <u>(value: <i>anything</i>)</u>
 	 * </p>
 	 * <code>
-	 * Object.isEmpty(undefined);
-	 * 
-	 * Object.isEmpty(null);
-	 * 
 	 * Object.isEmpty({});
 	 * 
 	 * Object.isEmpty({ a: 1 });
 	 * 
 	 * Object.isEmpty([]);
+	 * 
+	 * Object.isEmpty(undefined);
+	 * 
+	 * Object.isEmpty(null);
 	 * 
 	 * Object.isEmpty([1, 2, 3]);
 	 * 
@@ -3832,7 +3832,7 @@
 
 	Number.MAX_SAFE_INTEGER = Number.MAX_SAFE_INTEGER || 9007199254740991;
 
-	Number.isSafeInteger = function (ar0) {
+	Number.isSafeInteger = Number.isSafeInteger || function (ar0) {
 		return Number.isNumber(ar0) && isFinite(ar0) && Math.floor(ar0) === ar0 && Math.abs(ar0) <= Number.MAX_SAFE_INTEGER;
 	};
 

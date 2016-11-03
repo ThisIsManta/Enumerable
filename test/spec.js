@@ -1261,6 +1261,26 @@ describe('Array', function () {
 		});
 	});
 
+	describe('percent()', function () {
+		it('returns the new array', function () {
+			expect([0].percent()).toEqual([0]);
+			expect([0, 1].percent()).toEqual([0, 100]);
+			expect([0, 1, 3].percent()).toEqual([0, 25, 75]);
+			expect([0, 1, 3, 4, 8].percent()).toEqual([0, 6, 19, 25, 50]);
+
+			expect([1, 1, 1].percent()).toEqual([34, 33, 33]);
+			expect([229, 1, 1].percent()).toEqual([98, 1, 1]);
+			expect([229, 3, 3].percent()).toEqual([98, 1, 1]);
+			expect([229, 4, 4].percent()).toEqual([96, 2, 2]);
+			expect([242, 1, 2, 37].percent()).toEqual([86, 1, 1, 12]);
+		});
+
+		it('throws an error', function () {
+			expect([null].percent).toThrowError();
+			expect(['abc'].percent).toThrowError();
+		});		
+	});
+
 	describe('seek()', function () {
 		it('returns the new array', function () {
 			a = [{ i: 1, v: [{ i: 11 }] }, { i: 2, v: [{ i: 3, v: [{ i: 4, v: [] }] }] }];
@@ -1275,6 +1295,70 @@ describe('Array', function () {
 			expect(a.seek('v', function (x) { return x.i === 4; }).i).toBe(4);
 			expect(a.seek('v', function (x) { return x.i === 5; })).toBeUndefined();
 
+		});
+	});
+});
+
+describe('Object', function () {
+	describe('isObject', function () {
+		it('returns a boolean', function () {
+			expect(Object.isObject({})).toBe(true);
+			expect(Object.isObject(new Object())).toBe(true);
+
+			expect(Object.isObject([])).toBe(false);
+
+			expect(Object.isObject(undefined)).toBe(false);
+			expect(Object.isObject(null)).toBe(false);
+		});
+	});
+
+	describe('isEmpty', function () {
+		it('returns a boolean', function () {
+			expect(Object.isEmpty({})).toBe(true);
+			expect(Object.isEmpty({ a: 1 })).toBe(false);
+			expect(Object.isEmpty(new Object())).toBe(true);
+
+			expect(Object.isEmpty([])).toBe(true);
+			expect(Object.isEmpty([1, 2, 3])).toBe(false);
+
+			expect(Object.isEmpty(new Map())).toBe(true);
+			expect(Object.isEmpty(new Map([[1, 2]]))).toBe(false);
+
+			expect(Object.isEmpty(new Set())).toBe(true);
+			expect(Object.isEmpty(new Set([1, 2, 3]))).toBe(false);
+
+			expect(Object.isEmpty(undefined)).toBe(false);
+			expect(Object.isEmpty(null)).toBe(false);
+		});
+	});
+
+	describe('isEqual', function () {
+		it('returns a boolean', function () {
+			expect(Object.isEqual(undefined, undefined)).toBe(true);
+			expect(Object.isEqual(undefined, null)).toBe(false);
+			expect(Object.isEqual(null, null)).toBe(true);
+
+			expect(Object.isEqual([], [])).toBe(true);
+			expect(Object.isEqual([], {})).toBe(false);
+			expect(Object.isEqual([1], [1])).toBe(true);
+			expect(Object.isEqual([1], [1, 2])).toBe(false);
+			expect(Object.isEqual([{ a: 1, b: { c: 2 } }], [{ a: 1, b: { c: 2 } }])).toBe(true);
+			expect(Object.isEqual([{ a: 1, b: { c: 2 } }], [{ a: 1, b: {} }])).toBe(false);
+
+			expect(Object.isEqual({}, {})).toBe(true);
+			expect(Object.isEqual({ a: 1, b: { c: 2 } }, { a: 1, b: { c: 2 } })).toBe(true);
+			expect(Object.isEqual({ a: 1, b: { c: 2 } }, { a: 1, b: {} })).toBe(false);
+
+			expect(Object.isEqual(1, 1)).toBe(true);
+			expect(Object.isEqual(1, 2)).toBe(false);
+			expect(Object.isEqual(1, NaN)).toBe(false);
+			expect(Object.isEqual(NaN, NaN)).toBe(true);
+		});
+
+		it('throws an error', function () {
+			expect(Object.isEqual).toThrowError();
+			expect(Object.isEqual.bind(null, 1)).toThrowError();
+			expect(Object.isEqual.bind(null, 1, 2, 3)).toThrowError();
 		});
 	});
 });
