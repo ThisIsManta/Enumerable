@@ -3726,24 +3726,43 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> <i>true</i> if and only if the given value is an object with no own properties, otherwise <i>false</i>.</p>
+	 * <p><b>Returns</b> <i>true</i> if and only if the given value is an object with no own properties, an empty array, an empty <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map">Map</a> or an empty <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set">Set</a>, otherwise <i>false</i>.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>(value: <i>object</i>)</u>
+	 * <u>(value: <i>anything</i>)</u>
 	 * </p>
 	 * <code>
+	 * Object.isEmpty(undefined);
+	 * 
+	 * Object.isEmpty(null);
+	 * 
 	 * Object.isEmpty({});
 	 * 
 	 * Object.isEmpty({ a: 1 });
+	 * 
+	 * Object.isEmpty([]);
+	 * 
+	 * Object.isEmpty([1, 2, 3]);
+	 * 
+	 * Object.isEmpty(new Map());
+	 * 
+	 * Object.isEmpty(new Set());
+	 * 
 	 * </code>
 	 */
 	Object.isEmpty = function (ar0) {
-		if (Object.isObject(ar0)) {
+		if (ar0 instanceof Map || ar0 instanceof Set) {
+			return ar0.size === 0;
+
+		} else if (Object.isObject(ar0)) {
 			for (var nam in ar0) {
 				if (Object.prototype.hasOwnProperty.call(ar0, nam)) {
 					return false;
 				}
 			}
 			return true;
+		
+		} else if (Array.isArray(ar0)) {
+			return ar0.length === 0;
 
 		} else {
 			return false;
@@ -3805,6 +3824,48 @@
 		} else {
 			return false;
 		}
+	};
+
+	/**
+	 * <p><b>Returns</b> <i>true</i> if and only if the given value has a type of string, otherwise <i>false</i>.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(value: <i>anything</i>)</u>
+	 * </p>
+	 * <code>
+	 * String.isString('abc');
+	 * 
+	 * String.isString(undefined);
+	 * 
+	 * String.isString(null);
+	 * 
+	 * String.isString({});
+	 * 
+	 * String.isString([]);
+	 * </code>
+	 */
+	String.isString = function (ar0) {
+		return typeof ar0 === 'string';
+	}
+
+	/**
+	 * <p><b>Returns</b> <i>true</i> if and only if the given value is an empty string or a white-space-only string, otherwise <i>false</i>.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(value: <i>anything</i>)</u>
+	 * </p>
+	 * <code>
+	 * String.isEmpty('');
+	 * 
+	 * String.isEmpty('   ');
+	 * 
+	 * String.isEmpty('abc');
+	 * 
+	 * String.isEmpty(undefined);
+	 * 
+	 * String.isEmpty(null);
+	 * </code>
+	 */
+	String.isEmpty = function (ar0) {
+		return String.isString(ar0) && (ar0.length === 0 || /^\s+$/.test(ar0));
 	};
 
 	/**
