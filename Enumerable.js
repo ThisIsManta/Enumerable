@@ -91,7 +91,7 @@
 
 			} else if (typeof ar0.length === 'number') {
 				var bnd = ar0.length;
-				if (isInt(bnd) && bnd >= 0) {
+				if (Number.isSafeInteger(bnd) && bnd >= 0) {
 					out = new Array(bnd);
 					while (++idx < bnd) {
 						out[idx] = ar0[idx];
@@ -138,7 +138,7 @@
 			}
 			out._m = false;
 
-		} else if (isInt(ar0) && ar0 >= 0) {
+		} else if (Number.isSafeInteger(ar0) && ar0 >= 0) {
 			out = new Array(ar0);
 			if (ar1 !== undefined) {
 				while (++idx < ar0) {
@@ -619,7 +619,7 @@
 				out[idx] = ar0.call(this._s, this[idx], idx, this);;
 			}
 
-		} else if (typeof ar0 === 'string' || isInt(ar0) && (ar0 = ar0.toString())) {
+		} else if (typeof ar0 === 'string' || Number.isSafeInteger(ar0) && (ar0 = ar0.toString())) {
 			out = new Array(bnd);
 			if (ar0.length === 0) {
 				throw new Error(ERR_AES);
@@ -687,7 +687,7 @@
 		var fnc = arguments[fni];
 		var brk;
 		var ctx = this._s;
-		if (typeof fnc === 'function' && isInt(idx) && idx >= 0 && isInt(bnd) && isInt(stp) && stp !== 0) {
+		if (typeof fnc === 'function' && Number.isSafeInteger(idx) && idx >= 0 && Number.isSafeInteger(bnd) && Number.isSafeInteger(stp) && stp !== 0) {
 			if (bnd >= 0 && bnd <= this.length) {
 				if (idx === 0 && bnd >= 1024 && stp === 1) {
 					while (idx < bnd % 8 && brk !== false) {
@@ -773,7 +773,7 @@
 		var arr = this;
 		var ctx = this._s;
 		var pwn;
-		if (typeof fnc === 'function' && isInt(idx) && idx >= 0 && isInt(bnd) && isInt(stp) && stp !== 0 && isInt(btc) && btc > 0) {
+		if (typeof fnc === 'function' && Number.isSafeInteger(idx) && idx >= 0 && Number.isSafeInteger(bnd) && Number.isSafeInteger(stp) && stp !== 0 && Number.isSafeInteger(btc) && btc > 0) {
 			if (bnd >= 0 && bnd <= this.length) {
 				if (stp > 0) {
 					pwn = new Promise(function (res, rej) {
@@ -914,11 +914,11 @@
 		} else if (!isFinite(ar0) || ar0 >= Number.MAX_SAFE_INTEGER) {
 			out = this.toImmutable();
 
-		} else if (isInt(ar0)) {
+		} else if (Number.isSafeInteger(ar0)) {
 			if (ar0 < 0 || ar0 > bnd) {
 				throw new RangeError(ERR_OOR);
 			}
-			if (isInt(ar1)) {
+			if (Number.isSafeInteger(ar1)) {
 				if (ar1 < 0 || ar1 > bnd) {
 					throw new RangeError(ERR_OOR);
 
@@ -984,11 +984,11 @@
 		} else if (!isFinite(ar0) || ar0 >= Number.MAX_SAFE_INTEGER) {
 			out = [];
 
-		} else if (isInt(ar0)) {
+		} else if (Number.isSafeInteger(ar0)) {
 			if (ar0 < 0 || ar0 > bnd) {
 				throw new RangeError(ERR_OOR);
 			}
-			if (isInt(ar1)) {
+			if (Number.isSafeInteger(ar1)) {
 				if (ar1 < 0 || ar1 > bnd) {
 					throw new RangeError(ERR_OOR);
 
@@ -1478,7 +1478,7 @@
 		var bnd = this.length;
 		if (arguments.length >= 1) {
 			if (typeof ar0 === 'function') {
-				if (isInt(ar1)) {
+				if (Number.isSafeInteger(ar1)) {
 					if (ar1 >= 0) {
 						idx = ar1 - 1;
 
@@ -1532,7 +1532,7 @@
 		var idx = this.length;
 		if (arguments.length >= 1) {
 			if (typeof ar0 === 'function') {
-				if (isInt(ar1)) {
+				if (Number.isSafeInteger(ar1)) {
 					if (ar1 >= 0) {
 						idx = ar1;
 
@@ -2006,7 +2006,7 @@
 		if (arguments.length === 1 || ar1 === this.length) {
 			this.push(ar0);
 
-		} else if (isInt(ar1) && arguments.length === 2) {
+		} else if (Number.isSafeInteger(ar1) && arguments.length === 2) {
 			if (ar1 >= 0 && ar1 <= this.length) {
 				this.splice(ar1, 0, ar0);
 
@@ -2045,7 +2045,7 @@
 		if (arguments.length === 1 || ar1 === this.length) {
 			Array.prototype.splice.apply(this, [this.length, 0].concat(ar0));
 
-		} else if (isInt(ar1) && arguments.length === 2) {
+		} else if (Number.isSafeInteger(ar1) && arguments.length === 2) {
 			if (ar1 >= 0 && ar1 <= this.length) {
 				if (ar0.length === 1) {
 					this.splice(ar1, 0, ar0[0]);
@@ -2091,7 +2091,7 @@
 		var idx;
 		if (arguments.length <= 2) {
 			idx = this.indexOf(ar0);
-			if (idx >= 0 && (!isInt(ar1) || idx >= ar1)) {
+			if (idx >= 0 && (!Number.isSafeInteger(ar1) || idx >= ar1)) {
 				return this.removeAt(idx);
 
 			} else {
@@ -2122,7 +2122,7 @@
 	Array.prototype.removeAt = function () {
 		var ar0 = arguments[0];
 		if (arguments.length === 1) {
-			if (isInt(ar0) && ar0 >= 0 && ar0 <= this.length) {
+			if (Number.isSafeInteger(ar0) && ar0 >= 0 && ar0 <= this.length) {
 				this.splice(ar0, 1);
 
 			} else {
@@ -2280,7 +2280,7 @@
 	Array.prototype.splitAt = function () {
 		var ar0 = arguments[0];
 		var out = [];
-		if (isInt(ar0) && arguments.length === 1) {
+		if (Number.isSafeInteger(ar0) && arguments.length === 1) {
 			if (ar0 >= 0 && ar0 < this.length) {
 				out.push(this.slice(0, ar0));
 				out.push(this.slice(ar0));
@@ -2324,7 +2324,7 @@
 		var idx = -1;
 		var bnd = this.length;
 		if (arguments.length >= 2) {
-			if (!isInt(ar2)) {
+			if (!Number.isSafeInteger(ar2)) {
 				ar2 = Infinity;
 			}
 			if (typeof ar0 === 'function') {
@@ -2372,7 +2372,7 @@
 		if (arguments.length !== 2) {
 			throw new Error(ERR_INV);
 
-		} else if (!isInt(ar0) || ar0 < 0 || ar0 >= this.length) {
+		} else if (!Number.isSafeInteger(ar0) || ar0 < 0 || ar0 >= this.length) {
 			throw new RangeError(ERR_OOR);
 
 		} else {
@@ -2749,7 +2749,7 @@
 		var bnd = this.length;
 		var tmp;
 		var out;
-		if (isInt(ar0) && ar0 > 0 && arguments.length === 1) {
+		if (Number.isSafeInteger(ar0) && ar0 > 0 && arguments.length === 1) {
 			out = new Array(Math.ceil(bnd / ar0));
 			while (++idx < bnd) {
 				tmp = out[Math.floor(idx / ar0)];
@@ -3400,7 +3400,7 @@
 					if (Array.isArray(tmp)) {
 						out[++jdx] = tmp;
 
-					} else if (tmp !== undefined && tmp !== null && typeof tmp !== 'function' && isInt(tmp.length)) {
+					} else if (tmp !== undefined && tmp !== null && typeof tmp !== 'function' && Number.isSafeInteger(tmp.length)) {
 						out[++jdx] = Array.create(tmp);
 					}
 				}
@@ -3571,6 +3571,10 @@
 	 * </code>
 	 */
 	Array.prototype.percent = function () {
+		if (this.any(function (val) { return Number.isNumber(val) === false || isFinite(val) === false; })) {
+			throw new Error(ERR_INV);
+		}
+
 		var sum = this.sum();
 		if (sum === 0) {
 			return this.clone();
@@ -3700,10 +3704,6 @@
 		}
 	};
 
-	var isInt = function (val) {
-		return typeof val === 'number' && isFinite(val) && Math.floor(val) === val && Math.abs(val) <= Number.MAX_SAFE_INTEGER;
-	};
-
 	/**
 	 * <p><b>Returns</b> <i>true</i> if and only if the given value is an object, not an array and not null, otherwise <i>false</i>.</p>
 	 * <p><b>Accepts</b><br>
@@ -3826,6 +3826,16 @@
 		}
 	};
 
+	Number.isNumber = function (ar0) {
+		return typeof ar0 === 'number' && isNaN(ar0) === false;
+	};
+
+	Number.MAX_SAFE_INTEGER = Number.MAX_SAFE_INTEGER || 9007199254740991;
+
+	Number.isSafeInteger = function (ar0) {
+		return Number.isNumber(ar0) && isFinite(ar0) && Math.floor(ar0) === ar0 && Math.abs(ar0) <= Number.MAX_SAFE_INTEGER;
+	};
+
 	/**
 	 * <p><b>Returns</b> <i>true</i> if and only if the given value has a type of string, otherwise <i>false</i>.</p>
 	 * <p><b>Accepts</b><br>
@@ -3881,8 +3891,8 @@
 	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes">String.prototype.includes()</a></p>
 	 * <meta keywords="include,indexof"/>
 	 */
-	String.prototype.contains = function (val) {
-		return this.indexOf(val) >= 0;
+	String.prototype.contains = function (ar0) {
+		return this.indexOf(ar0) >= 0;
 	};
 
 	/**
@@ -4078,7 +4088,7 @@
 	 * </p>
 	 */
 	Function.prototype.debounce = function (dur) {
-		if (isInt(dur) && dur > 0) {
+		if (Number.isSafeInteger(dur) && dur > 0) {
 			var tid, ctx, arg, fnc = this;
 			var hdr = function () {
 				tid = undefined;
@@ -4105,7 +4115,7 @@
 	 * </p>
 	 */
 	Function.prototype.immediate = function (dur) {
-		if (isInt(dur) && dur > 0) {
+		if (Number.isSafeInteger(dur) && dur > 0) {
 			var tid, fnc = this;
 			var hdr = function () {
 				tid = undefined;
