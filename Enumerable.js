@@ -3579,17 +3579,17 @@
 		var raw = this.select(function (val) { return val / sum * 100 });
 		var out = raw.select(Math.round);
 
-		var pct = out.sum();
-		if (pct === 100) {
-			return out;
-		}
-
 		while (raw.any(function (val) { return val > 0 && val < 1; })) {
 			var idx = raw.indexOf(function (val) { return val > 0 && val < 1; });
 			raw[idx] = NaN;
 			pct -= out[idx];
 			out[idx] = 1;
 			pct += 1;
+		}
+
+		var pct = out.sum();
+		if (pct === 100) {
+			return out;
 		}
 
 		var tmp;
