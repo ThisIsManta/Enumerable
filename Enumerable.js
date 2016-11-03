@@ -3593,9 +3593,9 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> <i>true</i> if and only if the given parameter has a type of object, not an array and not null, otherwise <i>false</i>.</p>
+	 * <p><b>Returns</b> <i>true</i> if and only if the given value is an object, not an array and not null, otherwise <i>false</i>.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>(assertedValue: <i>anything</i>)</u>
+	 * <u>(value: <i>anything</i>)</u>
 	 * </p>
 	 * <code>
 	 * Object.isObject({});
@@ -3611,6 +3611,31 @@
 	 */
 	Object.isObject = function (ar0) {
 		return typeof ar0 === 'object' && ar0 !== null && (ar0 instanceof Array) === false;
+	};
+
+	/**
+	 * <p><b>Returns</b> <i>true</i> if and only if the given value is an object with no own properties, otherwise <i>false</i>.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(value: <i>object</i>)</u>
+	 * </p>
+	 * <code>
+	 * Object.isEmpty({});
+	 * 
+	 * Object.isEmpty({ a: 1 });
+	 * </code>
+	 */
+	Object.isEmpty = function (ar0) {
+		if (Object.isObject(ar0)) {
+			for (var nam in ar0) {
+				if (Object.prototype.hasOwnProperty.call(ar0, nam)) {
+					return false;
+				}
+			}
+			return true;
+
+		} else {
+			return false;
+		}
 	};
 
 	/**
@@ -3873,27 +3898,57 @@
 		return Array.create(this).toObject('0', '1');
 	};
 
+	/**
+	 * <p><b>Returns</b> a new function that, once it is called, it will be executed if the last call was at least the given duration ago.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(milliseconds: <i>number</i>)</u>
+	 * </p>
+	 */
 	Function.prototype.debounce = function (dur) {
-		var tid, arg, ctx, stp, fnc = this;
-		return function () {
-			ctx = this;
-			arg = [].slice.call(arguments, 0);
-			stp = new Date();
-
+		if (isInt(dur) && dur > 0) {
+			var tid, ctx, arg, fnc = this;
 			var hdr = function () {
-				var tim = (new Date()) - stp;
-				if (tim < dur) {
-					tid = setTimeout(hdr, dur - tim);
-
-				} else {
-					tid = undefined;
-					fnc.apply(ctx, arg);
+				tid = undefined;
+				fnc.apply(ctx, arg);
+			};
+			return function () {
+				ctx = this;
+				arg = Array.prototype.slice.call(arguments, 0);
+				if (tid !== undefined) {
+					clearTimeout(tid);
 				}
+				tid = setTimeout(hdr, dur);
 			};
 
-			if (tid === undefined) {
+		} else {
+			throw new Error(ERR_INV);
+		}
+	};
+
+	/**
+	 * <p><b>Returns</b> a new function that, once it is called, it will be executed immediately, and prevents the same function from being executed after the last call for the given duration.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(milliseconds: <i>number</i>)</u>
+	 * </p>
+	 */
+	Function.prototype.immediate = function (dur) {
+		if (isInt(dur) && dur > 0) {
+			var tid, fnc = this;
+			var hdr = function () {
+				tid = undefined;
+			};
+			return function () {
+				if (tid === undefined) {
+					fnc.apply(this, arguments);
+
+				} else {
+					clearTimeout(tid);
+				}
 				tid = setTimeout(hdr, dur);
-			}
-		};
+			};
+
+		} else {
+			throw new Error(ERR_INV);
+		}
 	};
 })();
