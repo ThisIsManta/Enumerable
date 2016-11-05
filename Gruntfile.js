@@ -171,7 +171,7 @@ module.exports = function (grunt) {
 								return node.textContent.split('\n').select(function (line) {
 									var outp = '';
 
-									if (/^var\s+\w+\s+=/.test(line) || /^\w+\s*=\s*/.test(line)) {
+									if (/^var\s+\w+\s*=/.test(line) || /^\w+(\.\w+)*\s*=\s*/.test(line)) {
 										buff += line;
 										if (!/;$/.test(line)) {
 											varx = true;

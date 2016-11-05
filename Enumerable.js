@@ -44,6 +44,113 @@
 	};
 
 	/**
+	 * <p><b>Returns</b> a new function; once it is called, it will be executed if the last call was at least the given duration ago.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(duration: <i>number</i>) – This accepts the duration in milliseconds.</u><br>
+	 * </p>
+	 */
+	Function.prototype.debounce = function (dur) {
+		if (Number.isSafeInteger(dur) && dur > 0) {
+			var tid, ctx, arg, fnc = this;
+			var hdr = function () {
+				tid = undefined;
+				fnc.apply(ctx, arg);
+			};
+			return function () {
+				ctx = this;
+				arg = Array.prototype.slice.call(arguments, 0);
+				if (tid !== undefined) {
+					clearTimeout(tid);
+				}
+				tid = setTimeout(hdr, dur);
+			};
+
+		} else {
+			throw new Error(ERR_INV);
+		}
+	};
+
+	/**
+	 * <p><b>Returns</b> a new function; once it is called, it will be executed immediately, and prevents the same function from being executed after the last call for the given duration.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(duration: <i>number</i>) – This accepts the duration in milliseconds.</u><br>
+	 * </p>
+	 */
+	Function.prototype.immediate = function (dur) {
+		if (Number.isSafeInteger(dur) && dur > 0) {
+			var tid, fnc = this;
+			var hdr = function () {
+				tid = undefined;
+			};
+			return function () {
+				if (tid === undefined) {
+					fnc.apply(this, arguments);
+
+				} else {
+					clearTimeout(tid);
+				}
+				tid = setTimeout(hdr, dur);
+			};
+
+		} else {
+			throw new Error(ERR_INV);
+		}
+	};
+
+	/**
+	 * <p><b>Returns</b> a new function that remembers its recent arguments and the returned value; once the same arguments is supplied, the cached value is returned.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>() – This remembers only last 8 arguments.</u><br>
+	 * <u>(recentCount: <i>number</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * var a = { b: 1 };
+	 * var f = function (x) { return x.b + 1; }.cache();
+	 * 
+	 * f(a);
+	 * 
+	 * // Changes the value
+	 * a.b = 9;
+	 * 
+	 * f(a);
+	 * </code>
+	 */
+	Function.prototype.cache = function () {
+		var bnd = arguments.length > 0 ? arguments[0] : 8;
+		var fnc = this;
+		var key = [];
+		var val = [];
+		if (Number.isSafeInteger(bnd) && bnd > 0) {
+			return function () {
+				var arg = Array.prototype.slice.call(arguments, 0);
+				if (key.length === 0 || Object.isEqual(key[0], arg) === false) {
+					var idx = key.indexOf(function (itm) {
+						return Object.isEqual(itm, arg);
+					});
+					if (idx === -1) {
+						key.unshift(arg);
+						val.unshift(fnc.apply(this, arguments));
+						if (key.length > bnd) {
+							key.pop();
+							val.pop();
+						}
+
+					} else {
+						key.unshift(arg);
+						val.unshift(val[idx]);
+						key.splice(idx + 1, 1);
+						val.splice(idx + 1, 1);
+					}
+				}
+				return val[0];
+			};
+
+		} else {
+			throw new Error(ERR_INV);
+		}
+	};
+
+	/**
 	 * <p><b>Returns</b> an array from the given array-like or object.</p>
 	 * <p>If the source is an object, functions and private properties will be excluded, unless the last parameter is <i>true</i>. A private property is a member of an object that its name starts with an underscore sign</p>
 	 * <p><b>Accepts</b><br>
@@ -1155,8 +1262,7 @@
 	 * 
 	 * a.any();
 	 * 
-	 * var Alex = a[0];
-	 * a.any(Alex);
+	 * a.any(a[0]);
 	 * 
 	 * a.any(function (x) { return x.work === 'Singer'; });
 	 * 
@@ -1222,8 +1328,7 @@
 	 * 	{ name: 'Chad', work: 'Singer', year: 26 }
 	 * ];
 	 * 
-	 * var Alex = a[0];
-	 * a.all(Alex);
+	 * a.all(a[0]);
 	 * 
 	 * a.all(function (x) { return x.year <= 30; });
 	 * 
@@ -2901,8 +3006,7 @@
 	 * 	{ name: 'Chad', work: 'Singer' }
 	 * ];
 	 * 
-	 * var Alex = a[0];
-	 * a.countBy(Alex);
+	 * a.countBy(a[0]);
 	 * 
 	 * a.countBy(function (x) { return x.work === 'Singer'; });
 	 * 
@@ -3344,7 +3448,7 @@
 
 	/**
 	 * <p><b>Returns</b> a new array with members that have been converted to the target type.</p>
-	 * <p>If the member cannot be converted to the given type, the member will be excluded in the output array.</p>
+	 * <p>If a member cannot be converted to the given type, the member will be excluded from the new array.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u><br>
 	 * <u>(typeName: <i>string</i>)</u> – The possible values are <i>string</i>, <i>number</i>, <i>boolean</i>, <i>array</i>, <i>object</i>, <i>function</i> and <a href="http://jquery.com/"><i>jQuery</i></a>.<br>
@@ -3675,7 +3779,7 @@
 				}
 			}
 			return true;
-		
+
 		} else if (Array.isArray(ar0)) {
 			return ar0.length === 0;
 
@@ -4123,59 +4227,5 @@
 			out[key] = val;
 		});
 		return out;
-	};
-
-	/**
-	 * <p><b>Returns</b> a new function that, once it is called, it will be executed if the last call was at least the given duration ago.</p>
-	 * <p><b>Accepts</b><br>
-	 * <u>(milliseconds: <i>number</i>)</u>
-	 * </p>
-	 */
-	Function.prototype.debounce = function (dur) {
-		if (Number.isSafeInteger(dur) && dur > 0) {
-			var tid, ctx, arg, fnc = this;
-			var hdr = function () {
-				tid = undefined;
-				fnc.apply(ctx, arg);
-			};
-			return function () {
-				ctx = this;
-				arg = Array.prototype.slice.call(arguments, 0);
-				if (tid !== undefined) {
-					clearTimeout(tid);
-				}
-				tid = setTimeout(hdr, dur);
-			};
-
-		} else {
-			throw new Error(ERR_INV);
-		}
-	};
-
-	/**
-	 * <p><b>Returns</b> a new function that, once it is called, it will be executed immediately, and prevents the same function from being executed after the last call for the given duration.</p>
-	 * <p><b>Accepts</b><br>
-	 * <u>(milliseconds: <i>number</i>)</u>
-	 * </p>
-	 */
-	Function.prototype.immediate = function (dur) {
-		if (Number.isSafeInteger(dur) && dur > 0) {
-			var tid, fnc = this;
-			var hdr = function () {
-				tid = undefined;
-			};
-			return function () {
-				if (tid === undefined) {
-					fnc.apply(this, arguments);
-
-				} else {
-					clearTimeout(tid);
-				}
-				tid = setTimeout(hdr, dur);
-			};
-
-		} else {
-			throw new Error(ERR_INV);
-		}
 	};
 })();
