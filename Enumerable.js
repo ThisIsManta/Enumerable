@@ -19,6 +19,26 @@
 	var ERR_IWG = '[invokeWhich] must be called after [groupBy]';
 	var ERR_BID = 'a non-object type was not allowed';
 
+	/**
+	 * <p><b>Returns</b> <i>true</i> if and only if the given value is a function, otherwise <i>false</i>.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(value: <i>anything</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * Function.isFunction(function () {});
+	 * 
+	 * // ES6's arrow function
+	 * Function.isFunction(() => {});
+	 * 
+	 * Function.isFunction(undefined);
+	 * 
+	 * Function.isFunction(null);
+	 * 
+	 * Function.isFunction({});
+	 * 
+	 * Function.isFunction([]);
+	 * </code>
+	 */
 	Function.isFunction = function (ar0) {
 		return typeof ar0 === 'function' || Object.prototype.toString.call(ar0) === '[object Function]';
 	};
@@ -3596,7 +3616,7 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> <i>true</i> if and only if the given value is an object, not an array and not null, otherwise <i>false</i>.</p>
+	 * <p><b>Returns</b> <i>true</i> if and only if the given value is an object, but not an array nor a function, otherwise <i>false</i>.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(value: <i>anything</i>)</u>
 	 * </p>
@@ -3604,6 +3624,10 @@
 	 * Object.isObject({});
 	 * 
 	 * Object.isObject(new Object());
+	 * 
+	 * Object.isObject(new String());
+	 * 
+	 * Object.isObject(function () {});
 	 * 
 	 * Object.isObject([]);
 	 * 
