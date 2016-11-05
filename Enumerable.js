@@ -19,6 +19,10 @@
 	var ERR_IWG = '[invokeWhich] must be called after [groupBy]';
 	var ERR_BID = 'a non-object type was not allowed';
 
+	Function.isFunction = function (ar0) {
+		return typeof ar0 === 'function' || Object.prototype.toString.call(ar0) === '[object Function]';
+	};
+
 	/**
 	 * <p><b>Returns</b> an array from the given array-like or object.</p>
 	 * <p>If the source is an object, functions and private properties will be excluded, unless the last parameter is <i>true</i>. A private property is a member of an object that its name starts with an underscore sign</p>
@@ -320,7 +324,7 @@
 					}
 				}
 
-			} else if (typeof ar1 === 'function') {
+			} else if (Function.isFunction(ar1)) {
 				while (++idx < bnd) {
 					nam = this[idx][ar0];
 					if (nam === null) {
@@ -343,7 +347,7 @@
 				}
 			}
 
-		} else if (typeof ar0 === 'function') {
+		} else if (Function.isFunction(ar0)) {
 			if (arguments.length === 1) {
 				while (++idx < bnd) {
 					nam = ar0.call(ctx, this[idx], idx, this);
@@ -366,7 +370,7 @@
 					}
 				}
 
-			} else if (typeof ar1 === 'function') {
+			} else if (Function.isFunction(ar1)) {
 				while (++idx < bnd) {
 					nam = ar0.call(ctx, this[idx], idx, this);
 					if (nam === null) {
@@ -442,7 +446,7 @@
 					out.set(this[idx][ar0], this[idx][ar1]);
 				}
 
-			} else if (typeof ar1 === 'function') {
+			} else if (Function.isFunction(ar1)) {
 				while (++idx < bnd) {
 					out.set(this[idx][ar0], ar1.call(ctx, this[idx], idx, this));
 				}
@@ -453,7 +457,7 @@
 				}
 			}
 
-		} else if (typeof ar0 === 'function') {
+		} else if (Function.isFunction(ar0)) {
 			if (arguments.length === 1) {
 				while (++idx < bnd) {
 					out.set(ar0.call(ctx, this[idx], idx, this), this[idx]);
@@ -464,7 +468,7 @@
 					out.set(ar0.call(ctx, this[idx], idx, this), this[idx][ar1]);
 				}
 
-			} else if (typeof ar1 === 'function') {
+			} else if (Function.isFunction(ar1)) {
 				while (++idx < bnd) {
 					out.set(ar0.call(ctx, this[idx], idx, this), ar1.call(ctx, this[idx], idx, this));
 				}
@@ -544,7 +548,7 @@
 		var tmp;
 		var nam;
 		var out = [];
-		if (typeof ar0 === 'function' && arguments.length === 1) {
+		if (Function.isFunction(ar0) && arguments.length === 1) {
 			out = this.filter(ar0, this._s);
 
 		} else if (typeof ar0 === 'object' && arguments.length === 1) {
@@ -614,7 +618,7 @@
 		if (arguments.length !== 1) {
 			throw new Error(ERR_INV);
 		}
-		if (typeof ar0 === 'function') {
+		if (Function.isFunction(ar0)) {
 			out = new Array(bnd);
 			while (++idx < bnd) {
 				out[idx] = ar0.call(this._s, this[idx], idx, this);;
@@ -681,14 +685,14 @@
 	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach">Array.prototype.forEach()</a></p>
 	 */
 	Array.prototype.invoke = function () {
-		var fni = Array.prototype.slice.call(arguments).indexOf(function (itm) { return typeof itm === 'function'; });
+		var fni = Array.prototype.slice.call(arguments).indexOf(Function.isFunction);
 		var idx = fni >= 1 ? arguments[0] : 0;
 		var bnd = fni >= 2 ? arguments[1] : this.length;
 		var stp = fni >= 3 ? arguments[2] : (idx < bnd ? 1 : -1);
 		var fnc = arguments[fni];
 		var brk;
 		var ctx = this._s;
-		if (typeof fnc === 'function' && Number.isSafeInteger(idx) && idx >= 0 && Number.isSafeInteger(bnd) && Number.isSafeInteger(stp) && stp !== 0) {
+		if (Function.isFunction(fnc) && Number.isSafeInteger(idx) && idx >= 0 && Number.isSafeInteger(bnd) && Number.isSafeInteger(stp) && stp !== 0) {
 			if (bnd >= 0 && bnd <= this.length) {
 				if (idx === 0 && bnd >= 1024 && stp === 1) {
 					while (idx < bnd % 8 && brk !== false) {
@@ -764,7 +768,7 @@
 	 * --></code>
 	 */
 	Array.prototype.invokeAsync = function () {
-		var fni = Array.prototype.slice.call(arguments).indexOf(function (itm) { return typeof itm === 'function'; });
+		var fni = Array.prototype.slice.call(arguments).indexOf(Function.isFunction);
 		var idx = fni >= 1 ? arguments[0] : 0;
 		var bnd = fni >= 2 ? arguments[1] : this.length;
 		var stp = fni >= 3 ? arguments[2] : (idx < bnd ? 1 : -1);
@@ -774,7 +778,7 @@
 		var arr = this;
 		var ctx = this._s;
 		var pwn;
-		if (typeof fnc === 'function' && Number.isSafeInteger(idx) && idx >= 0 && Number.isSafeInteger(bnd) && Number.isSafeInteger(stp) && stp !== 0 && Number.isSafeInteger(btc) && btc > 0) {
+		if (Function.isFunction(fnc) && Number.isSafeInteger(idx) && idx >= 0 && Number.isSafeInteger(bnd) && Number.isSafeInteger(stp) && stp !== 0 && Number.isSafeInteger(btc) && btc > 0) {
 			if (bnd >= 0 && bnd <= this.length) {
 				if (stp > 0) {
 					pwn = new Promise(function (res, rej) {
@@ -857,7 +861,7 @@
 		if (this._g === undefined) {
 			throw new Error(ERR_IWG);
 
-		} else if (typeof ar1 === 'function' && arguments.length === 2) {
+		} else if (Function.isFunction(ar1) && arguments.length === 2) {
 			if (ar0 === undefined) {
 				ar0 = 'undefined';
 
@@ -904,7 +908,7 @@
 		var idx = -1;
 		var bnd = this.length;
 		var out;
-		if (typeof ar0 === 'function') {
+		if (Function.isFunction(ar0)) {
 			while (++idx < bnd) {
 				if (ar0.call(this._s, this[idx], idx, this) === false) {
 					break;
@@ -972,7 +976,7 @@
 		var bnd = this.length;
 		var tmp;
 		var out;
-		if (typeof ar0 === 'function') {
+		if (Function.isFunction(ar0)) {
 			tmp = bnd;
 			while (++idx < bnd) {
 				if (ar0.call(this._s, this[idx], idx, this) === false) {
@@ -1037,7 +1041,7 @@
 		var idx = -1;
 		var bnd = this.length;
 		var out = this.toImmutable();
-		if (typeof ar0 === 'function') {
+		if (Function.isFunction(ar0)) {
 			while (--bnd >= 0) {
 				if (!ar0.call(this._s, this[bnd], bnd, this)) {
 					out.splice(bnd + 1, this.length - bnd);
@@ -1158,7 +1162,7 @@
 		} else if (arguments.length === 0) {
 			return true;
 
-		} else if (typeof ar0 === 'function') {
+		} else if (Function.isFunction(ar0)) {
 			while (++idx < bnd) {
 				if (ar0.call(this._s, this[idx], idx, this)) {
 					return true;
@@ -1223,7 +1227,7 @@
 		} else if (arguments.length === 0) {
 			throw new Error(ERR_INV);
 
-		} else if (typeof ar0 === 'function') {
+		} else if (Function.isFunction(ar0)) {
 			while (++idx < bnd) {
 				if (!ar0.call(this._s, this[idx], idx, this)) {
 					return false;
@@ -1317,7 +1321,7 @@
 			}
 			return true;
 
-		} else if (typeof ar1 === 'function' && arguments.length === 2) {
+		} else if (Function.isFunction(ar1) && arguments.length === 2) {
 			while (++idx < bnd) {
 				if (!ar1.call(this._s, this[idx], ar0[idx])) {
 					return false;
@@ -1372,7 +1376,7 @@
 			}
 			return ar0.length === 0;
 
-		} else if (typeof ar1 === 'function' && arguments.length === 2) {
+		} else if (Function.isFunction(ar1) && arguments.length === 2) {
 			while (++idx < bnd) {
 				tmp = this[idx];
 				jdx = -1;
@@ -1431,7 +1435,7 @@
 				}
 			}
 
-		} else if (typeof ar1 === 'function' && arguments.length === 2) {
+		} else if (Function.isFunction(ar1) && arguments.length === 2) {
 			var fnc = function (itm) { return ar1.call(this, arr[idx], itm); };
 			while (++idx < bnd) {
 				if (ar0.indexOf(fnc) === -1) {
@@ -1478,7 +1482,7 @@
 		var idx = -1;
 		var bnd = this.length;
 		if (arguments.length >= 1) {
-			if (typeof ar0 === 'function') {
+			if (Function.isFunction(ar0)) {
 				if (Number.isSafeInteger(ar1)) {
 					if (ar1 >= 0) {
 						idx = ar1 - 1;
@@ -1532,7 +1536,7 @@
 		var ar1 = arguments[1];
 		var idx = this.length;
 		if (arguments.length >= 1) {
-			if (typeof ar0 === 'function') {
+			if (Function.isFunction(ar0)) {
 				if (Number.isSafeInteger(ar1)) {
 					if (ar1 >= 0) {
 						idx = ar1;
@@ -1588,7 +1592,7 @@
 		var ar0 = arguments[0];
 		var ar1 = arguments[1];
 		var idx;
-		if (typeof ar0 === 'function') {
+		if (Function.isFunction(ar0)) {
 			return _find.apply(this, arguments);
 
 		} else if (typeof ar0 === 'string' && arguments.length === 2) {
@@ -1952,7 +1956,7 @@
 				}
 			}
 
-		} else if (typeof ar0 === 'function' && arguments.length === 1) {
+		} else if (Function.isFunction(ar0) && arguments.length === 1) {
 			while (++idx < bnd) {
 				tmp = ar0.call(this._s, this[idx], idx, this);
 				if (tmp === undefined) {
@@ -2230,7 +2234,7 @@
 		var out = [];
 		var ctx = this._s;
 		if (arguments.length === 1) {
-			if (typeof ar0 === 'function') {
+			if (Function.isFunction(ar0)) {
 				while (++idx < bnd) {
 					if (ar0.call(ctx, this[idx], idx, this)) {
 						out.push(this.slice(pvt, idx));
@@ -2328,7 +2332,7 @@
 			if (!Number.isSafeInteger(ar2)) {
 				ar2 = Infinity;
 			}
-			if (typeof ar0 === 'function') {
+			if (Function.isFunction(ar0)) {
 				while (++idx < bnd && ar2 > 0) {
 					if (ar0.call(this._s, this[idx], idx, this)) {
 						this[idx] = ar1;
@@ -2532,7 +2536,7 @@
 						return { v: itm, r: tmp >= 0 ? tmp : (end + idx) };
 					});
 
-				} else if (typeof ar0 === 'function') {
+				} else if (Function.isFunction(ar0)) {
 					out = this.select(function (itm, idx) {
 						var tmp = ar1.indexOf(ar0.apply(ctx, arguments));
 						return { v: itm, r: tmp >= 0 ? tmp : (end + idx) };
@@ -2543,7 +2547,7 @@
 				}
 				ar0 = undefined;
 
-			} else if (typeof ar0 === 'function') {
+			} else if (Function.isFunction(ar0)) {
 				out = this.select(function (itm, idx) {
 					return { v: itm, r: ar0.call(ctx, itm, idx, this), i: idx };
 				});
@@ -2602,7 +2606,7 @@
 					if (typeof val === 'string') {
 						return function (itm) { return itm[val]; };
 
-					} else if (typeof val === 'function') {
+					} else if (Function.isFunction(val)) {
 						return val;
 
 					} else {
@@ -2690,7 +2694,7 @@
 				ar0 = function (val) { return val[att]; };
 			}
 		}
-		if (typeof ar0 === 'function') {
+		if (Function.isFunction(ar0)) {
 			while (++idx < bnd) {
 				tmp = ar0.call(this._s, this[idx], idx, this);
 				if (tmp === undefined) {
@@ -2833,7 +2837,7 @@
 				}
 			}
 
-		} else if (typeof ar1 === 'function') {
+		} else if (Function.isFunction(ar1)) {
 			while (++idx < bnd) {
 				jdx = -1;
 				tmp = null;
@@ -2902,7 +2906,7 @@
 				}
 			}
 
-		} else if (typeof ar0 === 'function') {
+		} else if (Function.isFunction(ar0)) {
 			while (++idx < bnd) {
 				if (ar0.call(ctx, this[idx], idx, this)) {
 					out++;
@@ -2979,7 +2983,7 @@
 					}
 				}
 
-			} else if (typeof ar0 === 'function') {
+			} else if (Function.isFunction(ar0)) {
 				val = ar0.call(ctx, this[0], 0, this);
 				while (++idx < bnd) {
 					tmp = ar0.call(ctx, this[idx], idx, this);
@@ -3063,7 +3067,7 @@
 					}
 				}
 
-			} else if (typeof ar0 === 'function') {
+			} else if (Function.isFunction(ar0)) {
 				val = ar0.call(ctx, this[0], 0, this);
 				while (++idx < bnd) {
 					tmp = ar0.call(ctx, this[idx], idx, this);
@@ -3148,7 +3152,7 @@
 					}
 				}
 
-			} else if (typeof ar0 === 'function') {
+			} else if (Function.isFunction(ar0)) {
 				while (++idx < bnd) {
 					tmp = ar0.call(ctx, this[idx], idx, this).toString();
 					if (hsh[tmp]) {
@@ -3221,7 +3225,7 @@
 					}
 				}
 
-			} else if (typeof ar0 === 'function') {
+			} else if (Function.isFunction(ar0)) {
 				val = ar0.call(ctx, this[0], 0, this);
 				while (++idx < bnd) {
 					tmp = ar0.call(ctx, this[idx], idx, this);
@@ -3301,7 +3305,7 @@
 				}
 			}
 
-		} else if (typeof ar0 === 'function') {
+		} else if (Function.isFunction(ar0)) {
 			while (++idx < bnd) {
 				tmp = ar0.call(ctx, this[idx], idx, this);
 				if (tmp && (typeof tmp !== 'string' || tmp.trim().length > 0) && (typeof tmp !== 'number' || isFinite(tmp))) {
@@ -3346,7 +3350,7 @@
 	 */
 	Array.prototype.cast = function () {
 		var ar0 = arguments[0];
-		var nam = typeof ar0 === 'function' ? ar0.name : ar0;
+		var nam = Function.isFunction(ar0) ? ar0.name : ar0;
 		var idx = -1;
 		var jdx = -1;
 		var bnd = this.length;
@@ -3357,10 +3361,13 @@
 			if (nam === 'string') {
 				while (++idx < bnd) {
 					tmp = this[idx];
-					if (tmp !== undefined && tmp !== null && tmp.toString !== undefined && typeof tmp !== 'function') {
+					if (typeof tmp === 'string') {
+						out[++jdx] = tmp;
+
+					} else if (tmp !== undefined && tmp !== null && tmp.toString !== undefined && Function.isFunction(tmp) === false) {
 						tmp = tmp.toString();
-						if (tmp !== '[object Object]') {
-							out[++jdx] = tmp.toString();
+						if (/^\[object \w+\]$/.test(tmp) === false) {
+							out[++jdx] = tmp;
 						}
 					}
 				}
@@ -3417,16 +3424,16 @@
 			} else if (nam === 'function') {
 				while (++idx < bnd) {
 					tmp = this[idx];
-					if (typeof tmp === 'function') {
+					if (Function.isFunction(tmp)) {
 						out[++jdx] = tmp;
 					}
 				}
 
-			} else if (jQuery !== undefined && (nam === 'jquery' || ar0 === window.jQuery)) {
+			} else if (window.jQuery !== undefined && (nam === 'jquery' || ar0 === window.jQuery)) {
 				while (++idx < bnd) {
 					tmp = this[idx];
 					if (typeof tmp === 'string' || typeof tmp === 'object' && (tmp instanceof HTMLElement || tmp instanceof jQuery)) {
-						out[++jdx] = jQuery(tmp);
+						out[++jdx] = window.jQuery(tmp);
 					}
 				}
 
@@ -3568,13 +3575,13 @@
 		var ar1 = arguments[1];
 		var ar2 = arguments[2];
 		var ctx = this._s;
-		if (arguments.length >= 2 && typeof ar0 === 'string' && ar0.length > 0 && (typeof ar1 === 'string' && ar1.length > 0 || typeof ar1 === 'function')) {
+		if (arguments.length >= 2 && typeof ar0 === 'string' && ar0.length > 0 && (typeof ar1 === 'string' && ar1.length > 0 || Function.isFunction(ar1))) {
 			return (function (lst) {
 				var idx = -1;
 				var bnd = lst.length;
 				var tmp;
 				while (++idx < bnd) {
-					if (typeof ar1 === 'string' && lst[idx][ar1] === ar2 || typeof ar1 === 'function' && ar1.call(ctx, lst[idx], idx, lst)) {
+					if (typeof ar1 === 'string' && lst[idx][ar1] === ar2 || Function.isFunction(ar1) && ar1.call(ctx, lst[idx], idx, lst)) {
 						return lst[idx];
 
 					} else if (Array.isArray(lst[idx][ar0]) && (tmp = arguments.callee(lst[idx][ar0])) !== undefined) {
@@ -3606,7 +3613,7 @@
 	 * </code>
 	 */
 	Object.isObject = function (ar0) {
-		return typeof ar0 === 'object' && ar0 !== null && (ar0 instanceof Array) === false;
+		return typeof ar0 === 'object' && ar0 !== null && (ar0 instanceof Array) === false && Object.prototype.toString.call(ar0) !== '[object Function]';
 	};
 
 	/**
@@ -4078,7 +4085,20 @@
 	 * <p><b>See also</b> <a>Array.prototype.toObject()</a></p>
 	 */
 	Map.prototype.toObject = function () {
-		return Array.create(this).toObject('0', '1');
+		var out = {};
+		this.forEach(function (key, val) {
+			if (key === undefined) {
+				key = 'undefined';
+
+			} else if (key === null) {
+				key = 'null';
+
+			} else if (typeof key !== 'string') {
+				key = key.toString();
+			}
+			out[key] = val;
+		});
+		return out;
 	};
 
 	/**

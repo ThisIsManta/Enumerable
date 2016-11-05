@@ -1,12 +1,12 @@
-describe('Array', function () {
-	beforeEach(function () {
-		jasmine.addCustomEqualityTester(function (cur, ano) {
-			if (Array.isArray(cur) && Array.isArray(ano)) {
-				return Object.isEqual(cur, ano);
-			}
-		});
+beforeEach(function () {
+	jasmine.addCustomEqualityTester(function (cur, ano) {
+		if (Array.isArray(cur) && Array.isArray(ano)) {
+			return Object.isEqual(cur, ano);
+		}
 	});
+});
 
+describe('Array', function () {
 	describe('create()', function () {
 		it('returns an array by giving an array', function () {
 			a = Array.create([1, 2, 3]);
@@ -1247,17 +1247,17 @@ describe('Array', function () {
 		});
 	});
 
-	describe('assign()', function () {
+	describe('zip()', function () {
 		it('returns the new array', function () {
 			a = [[1, 2], [3, 4]];
-			z = a.assign(['a', 'b']);
+			z = a.zip(['a', 'b']);
 			expect(a).toEqual([[1, 2], [3, 4]]);
 			expect(z).toEqual([{ a: 1, b: 2 }, { a: 3, b: 4 }]);
 		});
 
 		it('throws an error', function () {
-			expect([].assign).toThrowError();
-			expect([].assign.bind([], [1])).toThrowError(TypeError);
+			expect([].zip).toThrowError();
+			expect([].zip.bind([], [1])).toThrowError(TypeError);
 		});
 	});
 
