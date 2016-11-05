@@ -15,6 +15,7 @@
 	var ERR_AMM = 'an array had more than one matching member';
 	var ERR_MMM = 'an array had too many matching members';
 	var ERR_NOB = 'one or more array members were not an object';
+	var ERR_NST = 'one or more array members were not a string';
 	var ERR_IWG = '[invokeWhich] must be called after [groupBy]';
 	var ERR_BID = 'a non-object type was not allowed';
 
@@ -267,11 +268,11 @@
 	 * <u>(nameProjector: <i>string</i>)</u><br>
 	 * <u>(nameProjector: <i>string</i>, valueProjector: <i>string</i>)</u><br>
 	 * <u>(nameProjector: <i>string</i>, valueProjector: <i>function&lt;anything&gt;</i>)</u><br>
-	 * <u>(nameProjector: <i>string</i>, staticValue: <i>anything</i>)</u><br>
+	 * <u>(nameProjector: <i>string</i>, value: <i>anything</i>)</u><br>
 	 * <u>(nameProjector: <i>function&lt;string&gt;</i>)</u><br>
 	 * <u>(nameProjector: <i>function&lt;string&gt;</i>, valueProjector: <i>function&lt;anything&gt;</i>)</u><br>
 	 * <u>(nameProjector: <i>function&lt;string&gt;</i>, valueProjector: <i>string</i>)</u><br>
-	 * <u>(nameProjector: <i>function&lt;string&gt;</i>, staticValue: <i>anything</i>)</u><br>
+	 * <u>(nameProjector: <i>function&lt;string&gt;</i>, value: <i>anything</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * ['a', 'b', 'c'].toObject();
@@ -401,11 +402,11 @@
 	 * <u>(nameProjector: <i>string</i>)</u><br>
 	 * <u>(nameProjector: <i>string</i>, valueProjector: <i>string</i>)</u><br>
 	 * <u>(nameProjector: <i>string</i>, valueProjector: <i>function&lt;anything&gt;</i>)</u><br>
-	 * <u>(nameProjector: <i>string</i>, staticValue: <i>anything</i>)</u><br>
+	 * <u>(nameProjector: <i>string</i>, value: <i>anything</i>)</u><br>
 	 * <u>(nameProjector: <i>function&lt;string&gt;</i>)</u><br>
 	 * <u>(nameProjector: <i>function&lt;string&gt;</i>, valueProjector: <i>function&lt;anything&gt;</i>)</u><br>
 	 * <u>(nameProjector: <i>function&lt;string&gt;</i>, valueProjector: <i>string</i>)</u><br>
-	 * <u>(nameProjector: <i>function&lt;string&gt;</i>, staticValue: <i>anything</i>)</u><br>
+	 * <u>(nameProjector: <i>function&lt;string&gt;</i>, value: <i>anything</i>)</u><br>
 	 * </p>
 	 * <code><!--
 	 * ['a', 'b', 'c'].toMap();
@@ -3319,7 +3320,7 @@
 
 	/**
 	 * <p><b>Returns</b> a new array with members that have been converted to the target type.</p>
-	 * <p>If the member cannot be converted, this will omit the member and continue converting.</p>
+	 * <p>If the member cannot be converted to the given type, the member will be excluded in the output array.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u><br>
 	 * <u>(typeName: <i>string</i>)</u> – The possible values are <i>string</i>, <i>number</i>, <i>boolean</i>, <i>array</i>, <i>object</i>, <i>function</i> and <a href="http://jquery.com/"><i>jQuery</i></a>.<br>
@@ -3356,9 +3357,9 @@
 			if (nam === 'string') {
 				while (++idx < bnd) {
 					tmp = this[idx];
-					if (tmp !== undefined && tmp !== null && tmp.toString !== undefined) {
+					if (tmp !== undefined && tmp !== null && tmp.toString !== undefined && typeof tmp !== 'function') {
 						tmp = tmp.toString();
-						if (tmp !== '[object Object]' && /function\s*\(.*\)\s*{.*}/.test(tmp) === false) {
+						if (tmp !== '[object Object]') {
 							out[++jdx] = tmp.toString();
 						}
 					}
@@ -3489,16 +3490,15 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> a new array with members that are constructed by the given array as property names and the current array as values.</p>
+	 * <p><b>Returns</b> a new array of objects that members are constructed by the given array as property names and the current array as values.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(propertyNames: <i>array&lt;string&gt;</i>)</u><br>
 	 * </p>
 	 * <code>
-	 * [[1, 2], [3]].assign(['a', 'b']);
+	 * [[1, 2], [3]].zip(['a', 'b']);
 	 * </code>
-	 * <meta keywords="table"/>
 	 */
-	Array.prototype.assign = function () {
+	Array.prototype.zip = function () {
 		var ar0 = Array.create(arguments[0]);
 		var idx = -1;
 		var jdx;
@@ -3520,7 +3520,7 @@
 				}
 
 			} else {
-				throw new TypeError(ERR_INV);
+				throw new TypeError(ERR_NST);
 			}
 
 		} else {
@@ -3529,122 +3529,6 @@
 		if (this._s !== undefined) {
 			out._s = this._s;
 		}
-		return out;
-	};
-
-	/**
-	 * <p><b>Returns</b> an array of the adjusted integers that represent the percentage of the given numbers.</p>
-	 * <p>This is very helpful when you want to calculate the percentage from three or more values which the traditional method below does not produce 100%.</p>
-	 * <p></p>
-	 * <code><!--
-	 * function calculateTraditionalPercentage (numbers) {
-	 * 	var total = numbers.sum();
-	 * 	return numbers.select(function (number) {
-	 * 		return Math.round((number / total) * 100);
-	 * 	});
-	 * }
-	 * --></code>
-	 * <p>The traditional method above could be problematic if the inputs are irrational because <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Math/round">Math.round</a> rounds the outputs to the nearest integers which the total output may not be 100%.</p>
-	 * <code><!--
-	 * calculateTraditionalPercentage([1, 1, 1])
-	 * // [33, 33, 33]
-	 * 
-	 * calculateTraditionalPercentage([229, 1, 1])
-	 * // [99, 0, 0]
-	 * 
-	 * calculateTraditionalPercentage([229, 4, 4])
-	 * // [97, 2, 2]
-	 * --></code>
-	 * <p>While using <a>Array.prototype.percent</a> adjusts the outputs automatically, so the total output will always be 100%.</p>
-	 * <code>
-	 * [0].percent();
-	 * 
-	 * [0, 1].percent();
-	 * 
-	 * [0, 1, 3].percent();
-	 * 
-	 * [1, 1, 1].percent();
-	 * 
-	 * [229, 1, 1].percent();
-	 * 
-	 * [229, 4, 4].percent();
-	 * </code>
-	 */
-	Array.prototype.percent = function () {
-		if (this.any(function (val) { return Number.isNumber(val) === false || isFinite(val) === false; })) {
-			throw new Error(ERR_INV);
-		}
-
-		var sum = this.sum();
-		if (sum === 0) {
-			return this.clone();
-		}
-
-		var raw = this.select(function (val) { return val / sum * 100 });
-		var out = raw.select(Math.round);
-
-		while (raw.any(function (val) { return val > 0 && val < 1; })) {
-			var idx = raw.indexOf(function (val) { return val > 0 && val < 1; });
-			raw[idx] = NaN;
-			pct -= out[idx];
-			out[idx] = 1;
-			pct += 1;
-		}
-
-		var pct = out.sum();
-		if (pct === 100) {
-			return out;
-		}
-
-		var tmp;
-		var idx;
-		var bnd = out.length;
-		while (pct !== 100 && raw.all(isNaN) === false) {
-			if (pct < 100) {
-				tmp = raw.max(function (val) { return val - Math.floor(val); });
-				idx = -1;
-				while (++idx < bnd) {
-					if (raw[idx] === tmp) {
-						raw[idx] = NaN;
-						out[idx] += 1;
-						pct += 1;
-					}
-				}
-
-			} else {
-				tmp = raw.min(function (val) { return val - Math.floor(val); });
-				idx = -1;
-				while (++idx < bnd) {
-					if (raw[idx] === tmp) {
-						raw[idx] = NaN;
-						out[idx] -= 1;
-						pct -= 1;
-					}
-				}
-			}
-		}
-
-		if (pct < 100) {
-			tmp = out.min();
-			idx = -1;
-			while (++idx < bnd) {
-				if (out[idx] === tmp && pct !== 100) {
-					out[idx] += 1;
-					pct += 1;
-				}
-			}
-
-		} else {
-			tmp = out.max();
-			idx = bnd;
-			while (--idx >= 0) {
-				if (out[idx] === tmp && pct !== 100) {
-					out[idx] -= 1;
-					pct -= 1;
-				}
-			}
-		}
-
 		return out;
 	};
 
@@ -3824,6 +3708,122 @@
 		} else {
 			return false;
 		}
+	};
+
+	/**
+	 * <p><b>Returns</b> an array of the adjusted integers that represent the percentage of the given numbers.</p>
+	 * <p>This is very helpful when you want to calculate the percentage from three or more values which the traditional method below does not produce 100%.</p>
+	 * <p></p>
+	 * <code><!--
+	 * function calculateTraditionalPercentage (numbers) {
+	 * 	var total = numbers.sum();
+	 * 	return numbers.select(function (number) {
+	 * 		return Math.round((number / total) * 100);
+	 * 	});
+	 * }
+	 * --></code>
+	 * <p>The traditional method above could be problematic if the inputs are irrational because <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Math/round">Math.round</a> rounds the outputs to the nearest integers which the total output may not be 100%.</p>
+	 * <code><!--
+	 * calculateTraditionalPercentage([1, 1, 1])
+	 * // [33, 33, 33]
+	 * 
+	 * calculateTraditionalPercentage([229, 1, 1])
+	 * // [99, 0, 0]
+	 * 
+	 * calculateTraditionalPercentage([229, 4, 4])
+	 * // [97, 2, 2]
+	 * --></code>
+	 * <p>While using <a>Math.percent</a> adjusts the outputs automatically, so the total output will always be 100%.</p>
+	 * <code>
+	 * Math.percent([0]);
+	 * 
+	 * Math.percent([0, 1]);
+	 * 
+	 * Math.percent([0, 1, 3]);
+	 * 
+	 * Math.percent([1, 1, 1]);
+	 * 
+	 * Math.percent([229, 1, 1]);
+	 * 
+	 * Math.percent([229, 4, 4]);
+	 * </code>
+	 */
+	Math.percent = function (ar0) {
+		if (Array.isArray(ar0) === false || ar0.length > 0 && ar0.any(function (val) { return Number.isNumber(val) === false || isFinite(val) === false; })) {
+			throw new Error(ERR_INV);
+		}
+
+		var sum = ar0.sum();
+		if (sum === 0) {
+			return ar0.clone();
+		}
+
+		var raw = ar0.select(function (val) { return val / sum * 100 });
+		var out = raw.select(Math.round);
+
+		while (raw.any(function (val) { return val > 0 && val < 1; })) {
+			var idx = raw.indexOf(function (val) { return val > 0 && val < 1; });
+			raw[idx] = NaN;
+			pct -= out[idx];
+			out[idx] = 1;
+			pct += 1;
+		}
+
+		var pct = out.sum();
+		if (pct === 100) {
+			return out;
+		}
+
+		var tmp;
+		var idx;
+		var bnd = out.length;
+		while (pct !== 100 && raw.all(isNaN) === false) {
+			if (pct < 100) {
+				tmp = raw.max(function (val) { return val - Math.floor(val); });
+				idx = -1;
+				while (++idx < bnd) {
+					if (raw[idx] === tmp) {
+						raw[idx] = NaN;
+						out[idx] += 1;
+						pct += 1;
+					}
+				}
+
+			} else {
+				tmp = raw.min(function (val) { return val - Math.floor(val); });
+				idx = -1;
+				while (++idx < bnd) {
+					if (raw[idx] === tmp) {
+						raw[idx] = NaN;
+						out[idx] -= 1;
+						pct -= 1;
+					}
+				}
+			}
+		}
+
+		if (pct < 100) {
+			tmp = out.min();
+			idx = -1;
+			while (++idx < bnd) {
+				if (out[idx] === tmp && pct !== 100) {
+					out[idx] += 1;
+					pct += 1;
+				}
+			}
+
+		} else {
+			tmp = out.max();
+			idx = bnd;
+			while (--idx >= 0) {
+				if (out[idx] === tmp && pct !== 100) {
+					out[idx] -= 1;
+					pct -= 1;
+				}
+			}
+		}
+
+		return out;
 	};
 
 	Number.isNumber = function (ar0) {

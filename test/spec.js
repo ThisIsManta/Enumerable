@@ -1261,26 +1261,6 @@ describe('Array', function () {
 		});
 	});
 
-	describe('percent()', function () {
-		it('returns the new array', function () {
-			expect([0].percent()).toEqual([0]);
-			expect([0, 1].percent()).toEqual([0, 100]);
-			expect([0, 1, 3].percent()).toEqual([0, 25, 75]);
-			expect([0, 1, 3, 4, 8].percent()).toEqual([0, 6, 19, 25, 50]);
-
-			expect([1, 1, 1].percent()).toEqual([34, 33, 33]);
-			expect([229, 1, 1].percent()).toEqual([98, 1, 1]);
-			expect([229, 3, 3].percent()).toEqual([98, 1, 1]);
-			expect([229, 4, 4].percent()).toEqual([96, 2, 2]);
-			expect([242, 1, 2, 37].percent()).toEqual([86, 1, 1, 12]);
-		});
-
-		it('throws an error', function () {
-			expect([null].percent).toThrowError();
-			expect(['abc'].percent).toThrowError();
-		});		
-	});
-
 	describe('seek()', function () {
 		it('returns the new array', function () {
 			a = [{ i: 1, v: [{ i: 11 }] }, { i: 2, v: [{ i: 3, v: [{ i: 4, v: [] }] }] }];
@@ -1300,7 +1280,7 @@ describe('Array', function () {
 });
 
 describe('Object', function () {
-	describe('isObject', function () {
+	describe('isObject()', function () {
 		it('returns a boolean', function () {
 			expect(Object.isObject({})).toBe(true);
 			expect(Object.isObject(new Object())).toBe(true);
@@ -1312,7 +1292,7 @@ describe('Object', function () {
 		});
 	});
 
-	describe('isEmpty', function () {
+	describe('isEmpty()', function () {
 		it('returns a boolean', function () {
 			expect(Object.isEmpty({})).toBe(true);
 			expect(Object.isEmpty({ a: 1 })).toBe(false);
@@ -1332,7 +1312,7 @@ describe('Object', function () {
 		});
 	});
 
-	describe('isEqual', function () {
+	describe('isEqual()', function () {
 		it('returns a boolean', function () {
 			expect(Object.isEqual(undefined, undefined)).toBe(true);
 			expect(Object.isEqual(undefined, null)).toBe(false);
@@ -1359,6 +1339,97 @@ describe('Object', function () {
 			expect(Object.isEqual).toThrowError();
 			expect(Object.isEqual.bind(null, 1)).toThrowError();
 			expect(Object.isEqual.bind(null, 1, 2, 3)).toThrowError();
+		});
+	});
+});
+
+describe('Math', function () {
+	describe('percent()', function () {
+		it('returns the new array', function () {
+			expect(Math.percent([0])).toEqual([0]);
+			expect(Math.percent([0, 1])).toEqual([0, 100]);
+			expect(Math.percent([0, 1, 3])).toEqual([0, 25, 75]);
+			expect(Math.percent([0, 1, 3, 4, 8])).toEqual([0, 6, 19, 25, 50]);
+
+			expect(Math.percent([1, 1, 1])).toEqual([34, 33, 33]);
+			expect(Math.percent([229, 1, 1])).toEqual([98, 1, 1]);
+			expect(Math.percent([229, 3, 3])).toEqual([98, 1, 1]);
+			expect(Math.percent([229, 4, 4])).toEqual([96, 2, 2]);
+			expect(Math.percent([242, 1, 2, 37])).toEqual([86, 1, 1, 12]);
+		});
+
+		it('throws an error', function () {
+			expect(Math.percent.bind(null, [null])).toThrowError();
+			expect(Math.percent.bind(null, ['abc'])).toThrowError();
+		});		
+	});
+});
+
+describe('Number', function () {
+	describe('isNumber()', function () {
+		it('returns a boolean', function () {
+			expect(Number.isNumber(1)).toBe(true);
+			expect(Number.isNumber(NaN)).toBe(false);
+			expect(Number.isNumber(Infinity)).toBe(true);
+
+			expect(Number.isNumber(undefined)).toBe(false);
+			expect(Number.isNumber(null)).toBe(false);
+			expect(Number.isNumber('')).toBe(false);
+			expect(Number.isNumber('1')).toBe(false);
+			expect(Number.isNumber({})).toBe(false);
+			expect(Number.isNumber([])).toBe(false);
+		});
+	});
+
+	describe('isSafeInteger()', function () {
+		it('returns a boolean', function () {
+			expect(Number.isSafeInteger(0)).toBe(true);
+
+			expect(Number.isSafeInteger(Infinity)).toBe(false);
+			expect(Number.isSafeInteger(-Infinity)).toBe(false);
+
+			expect(Number.isSafeInteger(Math.pow(2, 53) - 1)).toBe(true);
+			expect(Number.isSafeInteger(Math.pow(2, 53))).toBe(false);
+			expect(Number.isSafeInteger(-Math.pow(2, 53) + 1)).toBe(true);
+			expect(Number.isSafeInteger(-Math.pow(2, 53))).toBe(false);
+		});
+	});
+});
+
+describe('String', function () {
+	describe('isString()', function () {
+		it('returns a boolean', function () {
+			expect(String.isString('')).toBe(true);
+			expect(String.isString(undefined)).toBe(false);
+			expect(String.isString(null)).toBe(false);
+			expect(String.isString(1)).toBe(false);
+			expect(String.isString({})).toBe(false);
+			expect(String.isString([])).toBe(false);
+			expect(String.isString(new String())).toBe(false);
+		});
+	});
+
+	describe('isEmpty()', function () {
+		it('returns a boolean', function () {
+			expect(String.isString('')).toBe(true);
+			expect(String.isString('   ')).toBe(true);
+			expect(String.isString('abc')).toBe(true);
+			expect(String.isString(undefined)).toBe(false);
+			expect(String.isString(null)).toBe(false);
+		});
+	});
+
+	describe('contains()', function () {
+		it('returns a boolean', function () {
+			expect(''.contains('')).toBe(true);
+			expect('abc'.contains('')).toBe(true);
+			expect('abc'.contains('abc')).toBe(true);
+			expect(''.contains('abc')).toBe(false);
+			expect('abc'.contains('a')).toBe(true);
+			expect('abc'.contains('b')).toBe(true);
+			expect('abc'.contains('c')).toBe(true);
+			expect('abc'.contains('d')).toBe(false);
+			expect('abc'.contains('abc')).toBe(true);
 		});
 	});
 });
