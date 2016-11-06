@@ -6,6 +6,142 @@ beforeEach(function () {
 	});
 });
 
+describe('Function', function () {
+	describe('isFunction()', function () {
+		it('returns a boolean', function () {
+			expect(Function.isFunction(function () { })).toBe(true);
+			expect(Function.isFunction(function x() { })).toBe(true);
+			expect(Function.isFunction(() => { })).toBe(true);
+
+			expect(Function.isFunction(undefined)).toBe(false);
+			expect(Function.isFunction(null)).toBe(false);
+			expect(Function.isFunction({})).toBe(false);
+			expect(Function.isFunction([])).toBe(false);
+		});
+	});
+
+	describe('debounce()', function () {
+		it('returns the new function', function (done) {
+			c = 0;
+			f = function () {
+				c++;
+			}.debounce(100);
+
+			expect(c).toBe(0);
+			f();
+			expect(c).toBe(0);
+
+			setTimeout(function () {
+				f();
+				expect(c).toBe(0);
+			}, 20);
+
+			setTimeout(function () {
+				f();
+				expect(c).toBe(0);
+			}, 40);
+
+			setTimeout(function () {
+				expect(c).toBe(0);
+			}, 130);
+
+			setTimeout(function () {
+				expect(c).toBe(1);
+				f();
+				expect(c).toBe(1);
+			}, 150);
+
+			setTimeout(function () {
+				expect(c).toBe(1);
+				f.cancel();
+			}, 240);
+
+			setTimeout(function () {
+				// Because the function has been cancelled, the counter must be the same
+				expect(c).toBe(1);
+				done();
+			}, 260);
+		});
+
+		it('throws an error', function () {
+			expect(Function.prototype.debounce.bind(null, 0)).toThrowError();
+			expect(Function.prototype.debounce.bind(null, -1)).toThrowError();
+		});
+	});
+
+	describe('immediate()', function () {
+		it('returns the new function', function (done) {
+			c = 0;
+			f = function () {
+				c++;
+			}.immediate(100);
+
+			expect(c).toBe(0);
+			f();
+			expect(c).toBe(1);
+
+			setTimeout(function () {
+				f();
+				expect(c).toBe(1);
+			}, 20);
+
+			setTimeout(function () {
+				f();
+				expect(c).toBe(1);
+			}, 40);
+
+			setTimeout(function () {
+				expect(c).toBe(1);
+			}, 130);
+
+			setTimeout(function () {
+				expect(c).toBe(1);
+				f();
+				expect(c).toBe(2);
+			}, 150);
+
+			setTimeout(function () {
+				done();
+			}, 260);
+		});
+
+		it('throws an error', function () {
+			expect(Function.prototype.immediate.bind(null, 0)).toThrowError();
+			expect(Function.prototype.immediate.bind(null, -1)).toThrowError();
+		});
+	});
+
+	describe('cache()', function () {
+		it('returns the new function', function () {
+			f = function (x) {
+				return x.y + 1;
+			}.cache(2);
+
+			a = { y: 1 };
+			expect(f(a)).toBe(2);
+
+			a.y = 2;
+			expect(f(a)).toBe(2);
+
+			expect(f({ y: 3 })).toBe(4);
+			expect(f({ y: 4 })).toBe(5);
+
+			// At this point, the cache must be full
+			// So it must re-calculate the value
+			expect(f(a)).toBe(3);
+
+			f.forget();
+			a.y = 3;
+			expect(f(a)).toBe(4);
+		});
+
+		it('throws an error', function () {
+			expect(Function.prototype.cache.bind(null, 0)).toThrowError();
+			expect(Function.prototype.cache.bind(null, -1)).toThrowError();
+		});
+	});
+});
+
 describe('Array', function () {
 	describe('create()', function () {
 		it('returns an array by giving an array', function () {
@@ -1472,6 +1608,51 @@ describe('String', function () {
 		it('returns the string', function () {
 			var a = 'Alex & Brad say "0 < 1 but 2 > 1"';
 			expect(a.toEncodedXML().toDecodedXML()).toBe(a);
+		});
+	});
+
+	describe('toEnglishCase()', function () {
+		it('returns the string', function () {
+			expect('Åéø'.toEnglishCase()).toBe('Aeo');
+		});
+	});
+
+	describe('toCapitalCase()', function () {
+		it('returns the string', function () {
+			expect('Alex, brad, (charles), ZED'.toCapitalCase()).toBe('Alex, Brad, (Charles), ZED');
+		});
+	});
+
+	describe('toCamelCase()', function () {
+		it('returns the string', function () {
+			expect('_this-is*what you   CAME^For$'.toCamelCase()).toBe('thisIsWhatYouCameFor');
+		});
+	});
+
+	describe('toTrainCase()', function () {
+		it('returns the string', function () {
+			expect('_this-is*what you   CAME^For$'.toTrainCase()).toBe('this-is-what-you-came-for');
+		});
+	});
+
+	describe('latchOf()', function () {
+		it('returns the index', function () {
+			expect('(()())'.latchOf('(', ')')).toBe(5);
+			expect('((()))'.latchOf('(', ')')).toBe(5);
+		});
+	});
+});
+
+describe('Map', function () {
+	describe('toArray()', function () {
+		it('returns the array', function () {
+			expect(new Map([[1, 2], [3, 4]]).toArray()).toEqual([[1, 2], [3, 4]]);
+		});
+	});
+
+	describe('toObject()', function () {
+		it('returns the array', function () {
+			expect(new Map([[1, 2], [3, 4]]).toObject()).toEqual({ '1': 2, '3': 4 });
 		});
 	});
 });
