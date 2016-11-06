@@ -1,6 +1,6 @@
 /*
  * @name Enumerable
- * @version 4.0.3
+ * @version 4.1.0
  * @author Anantachai Saothong <thisismanta@outlook.com>
  * @license MIT
  * https://github.com/ThisIsManta/Enumerable.git
