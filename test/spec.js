@@ -1449,4 +1449,29 @@ describe('String', function () {
 			expect('abc'.contains('abc')).toBe(true);
 		});
 	});
+
+	describe('toHashCode()', function () {
+		it('returns an integer', function () {
+			expect(''.toHashCode()).toBe(0);
+			expect('a'.toHashCode()).toBe(97);
+			expect('ab'.toHashCode()).toBe(3105);
+			expect('abc'.toHashCode()).toBe(96354);
+			expect('abd'.toHashCode()).toBe(96355);
+		});
+	});
+
+	describe('toEncodedXML()', function () {
+		it('returns the string', function () {
+			var a = 'Alex & Brad say "0 < 1 but 2 > 1"';
+			var z = 'Alex &amp; Brad say &quot;0 &lt; 1 but 2 &gt; 1&quot;';
+			expect(a.toEncodedXML()).toBe(z);
+		});
+	});
+
+	describe('toDecodedXML()', function () {
+		it('returns the string', function () {
+			var a = 'Alex & Brad say "0 < 1 but 2 > 1"';
+			expect(a.toEncodedXML().toDecodedXML()).toBe(a);
+		});
+	});
 });

@@ -4193,6 +4193,13 @@
 		return CAS_MAP[chr];
 	};
 
+	/**
+	 * <p><b>Returns</b> a string that has Latin characters converted to English characters, if possible.</p>
+	 * <code>
+	 * 'Åsmund Renée Jørn'.toEnglishCase();
+	 * </code>
+	 * <meta keywords="latin">
+	 */
 	String.prototype.toEnglishCase = function () {
 		return this.replace(CAS_LAT, _replaceLatin).replace(CAS_MAR, '');
 	};
@@ -4201,20 +4208,45 @@
 		return txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase();
 	};
 
+	/**
+	 * <p><b>Returns</b> a string that has the first character of each word capitalized, except the word that was in capital already.</p>
+	 * <code>
+	 * 'Alexander and the terrible, horrible, no good, very BAD day (movie)'.toCapitalCase();
+	 * </code>
+	 * <meta keywords="english">
+	 */
 	String.prototype.toCapitalCase = function () {
-		var arr = _splitWords(this.toEnglishCase());
-		var idx = -1;
-		var bnd = arr.length;
+		var txt = this.toString()
+		var idx = 0;
+		var bnd = txt.length;
+		var tmp;
+		var out = [txt.charAt(0)];
+		var chr = /\w/.test(out[0]);
+		if (bnd === 0) {
+			return txt;
+		}
 		while (++idx < bnd) {
-			var tmp = arr[idx];
-			if (tmp === tmp.toUpperCase()) {
-				arr[idx] = tmp;
+			tmp = txt.charAt(idx);
+			if (/\w/.test(tmp) === chr) {
+				out[out.length - 1] += tmp;
 
 			} else {
-				arr[idx] = _capitalizeWord(tmp);
+				out.push(tmp);
+			}
+			chr = /\w/.test(tmp);
+		}
+		idx = -1;
+		bnd = out.length;
+		while (++idx < bnd) {
+			tmp = out[idx];
+			if (tmp === tmp.toUpperCase()) {
+				out[idx] = tmp;
+
+			} else {
+				out[idx] = _capitalizeWord(tmp);
 			}
 		}
-		return arr.join(' ');
+		return out.join('');
 	};
 
 	var CAS_APO = /['’]/g;
