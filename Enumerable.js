@@ -4328,7 +4328,7 @@
 	 */
 	Map.prototype.toObject = function () {
 		var out = {};
-		this.forEach(function (key, val) {
+		this.forEach(function (val, key) {
 			if (key === undefined) {
 				key = 'undefined';
 
