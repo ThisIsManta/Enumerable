@@ -1341,6 +1341,23 @@ describe('Object', function () {
 			expect(Object.isEqual.bind(null, 1, 2, 3)).toThrowError();
 		});
 	});
+
+	describe('merge()', function () {
+		it('returns the object', function () {
+			var a = {};
+			expect(Object.merge(a)).toBe(a);
+
+			expect(Object.merge({ a: 0 }, { a: 1, b: 2 }, { a: undefined, b: null, c: 3 })).toEqual({ a: 1, b: null, c: 3 });
+
+			expect(Object.merge({ a: { b: 2 } }, { a: { c: 3 } })).toEqual({ a: { b: 2, c: 3 } });
+
+			expect(Object.merge({}, undefined, null, 0, 1, true, false, [1, 2, 3])).toEqual({});
+		});
+
+		it('throws an error', function () {
+			expect(Object.merge.bind(null, 1)).toThrowError();
+		});
+	});
 });
 
 describe('Math', function () {
@@ -1361,7 +1378,7 @@ describe('Math', function () {
 		it('throws an error', function () {
 			expect(Math.percent.bind(null, [null])).toThrowError();
 			expect(Math.percent.bind(null, ['abc'])).toThrowError();
-		});		
+		});
 	});
 });
 

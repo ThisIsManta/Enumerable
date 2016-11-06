@@ -45,6 +45,7 @@
 
 	/**
 	 * <p><b>Returns</b> a new function; once it is called, it will be executed if the last call was at least the given duration ago.</p>
+	 * <p>The returned function has a special method called <i>cancel</i> that helps cancelling the defered execution.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(duration: <i>number</i>) – This accepts the duration in milliseconds.</u><br>
 	 * </p>
@@ -56,7 +57,7 @@
 				tid = undefined;
 				fnc.apply(ctx, arg);
 			};
-			return function () {
+			var out = function () {
 				ctx = this;
 				arg = Array.prototype.slice.call(arguments, 0);
 				if (tid !== undefined) {
@@ -64,6 +65,10 @@
 				}
 				tid = setTimeout(hdr, dur);
 			};
+			out.cancel = function () {
+				clearTimeout(tid);
+			};
+			return out;
 
 		} else {
 			throw new Error(ERR_INV);
@@ -98,9 +103,10 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> a new function that remembers its recent arguments and the returned value; once the same arguments is supplied, the cached value is returned.</p>
+	 * <p><b>Returns</b> a new function that remembers its recent arguments and the returned value; once the same set of arguments is supplied, the cached value is returned without running the actual function.</p>
+	 * <p>The returned function has a special method called <i>forget</i> that helps clearing the cached arguments and values.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>() – This remembers only last 8 arguments.</u><br>
+	 * <u>() – This remembers up to 8 recent arguments.</u><br>
 	 * <u>(recentCount: <i>number</i>)</u><br>
 	 * </p>
 	 * <code>
@@ -109,9 +115,16 @@
 	 * 
 	 * f(a);
 	 * 
-	 * // Changes the value
-	 * a.b = 9;
+	 * // Changes the inner value, but still the same object reference
+	 * a.b = 3;
 	 * 
+	 * // Expects to get the same result because of the same object reference
+	 * f(a);
+	 * 
+	 * // Forgets all the cached arguments
+	 * f.forget();
+	 * 
+	 * // Expects to get the new result because of cache missing
 	 * f(a);
 	 * </code>
 	 */
@@ -121,9 +134,15 @@
 		var key = [];
 		var val = [];
 		if (Number.isSafeInteger(bnd) && bnd > 0) {
-			return function () {
+			var out = function () {
 				var arg = Array.prototype.slice.call(arguments, 0);
-				if (key.length === 0 || Object.isEqual(key[0], arg) === false) {
+				if (key.length > 0 && Object.isEqual(key[0], arg)) {
+					return val[0];
+
+				} else if (key.length > 1 && Object.isEqual(key[1], arg)) {
+					return val[1];
+
+				} else {
 					var idx = key.indexOf(function (itm) {
 						return Object.isEqual(itm, arg);
 					});
@@ -144,6 +163,11 @@
 				}
 				return val[0];
 			};
+			out.forget = function () {
+				key = [];
+				val = [];
+			};
+			return out;
 
 		} else {
 			throw new Error(ERR_INV);
@@ -3795,9 +3819,9 @@
 	 * <u>(firstValue: <i>anything</i>, secondValue: <i>anything</i>)</u>
 	 * </p>
 	 * <code>
-	 * Object.isEqual({ a: { b: true } }, { a: { b: true } });
+	 * Object.isEqual({ a: { b: 1 } }, { a: { b: 1 } });
 	 * 
-	 * Object.isEqual({ a: { b: true } }, { a: { b: true, c: false } });
+	 * Object.isEqual({ a: { b: 1 } }, { a: { b: 1, c: 2 } });
 	 * 
 	 * Object.isEqual([1, 2, 3], [1, 2, 3]);
 	 * 
@@ -3843,6 +3867,51 @@
 		} else {
 			return false;
 		}
+	};
+
+	var _extend = function (ar0, ar1) {
+		for (var nam in ar1) {
+			if (ar1.hasOwnProperty(nam)) {
+				if (Object.isObject(ar0[nam]) && Object.isObject(ar1[nam])) {
+					_extend(ar0[nam], ar1[nam]);
+
+				} else if (ar1[nam] !== undefined) {
+					ar0[nam] = ar1[nam];
+				}
+			}
+		}
+	};
+
+	/**
+	 * <p><b>Returns</b> the target object with members copied from the given sources.</p>
+	 * <p>This performs deep copy and ignores the sources that are not an object, unlike <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Object/assign">Object.assign()</a>.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(target: <i>object</i>, ...sources: <i>object</i>)</u>
+	 * </p>
+	 * <code>
+	 * Object.merge({ a: { b: 1 } }, { a: { b: 2, c: 3 } }, { a: { c: 4 } });
+	 * 
+	 * Object.merge({ a: { b: 1 } }, { a: undefined, d: null });
+	 * 
+	 * Object.merge({ a: { b: 1 } }, undefined, null, 0, 1, true, false, [1, 2, 3]);
+	 * </code>
+	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Object/assign">Object.assign()</a></p>
+	 * <meta keywords="assign,extend"/>
+	 */
+	Object.merge = function () {
+		var out = arguments[0];
+		if (Object.isObject(out) === false) {
+			throw new Error(ERR_INV);
+		}
+		var arr = Array.prototype.slice.call(arguments, 1);
+		var idx = -1;
+		var bnd = arr.length;
+		while (++idx < bnd) {
+			if (Object.isObject(arr[idx])) {
+				_extend(out, arr[idx]);
+			}
+		}
+		return out;
 	};
 
 	/**
@@ -4120,19 +4189,32 @@
 		"\xdf": 'ss'
 	};
 	var CAS_MAR = /[\u0300-\u036f\ufe20-\ufe23\u20d0-\u20f0]/g;
-	var _convertLatinCase = function (chr) {
+	var _replaceLatin = function (chr) {
 		return CAS_MAP[chr];
 	};
 
 	String.prototype.toEnglishCase = function () {
-		return this.replace(CAS_LAT, _convertLatinCase).replace(CAS_MAR, '');
+		return this.replace(CAS_LAT, _replaceLatin).replace(CAS_MAR, '');
 	};
 
-	String.prototype.toCapitalWord = function (txt) {
-		if (txt === undefined) {
-			txt = this;
-		}
+	var _capitalizeWord = function (txt) {
 		return txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase();
+	};
+
+	String.prototype.toCapitalCase = function () {
+		var arr = _splitWords(this.toEnglishCase());
+		var idx = -1;
+		var bnd = arr.length;
+		while (++idx < bnd) {
+			var tmp = arr[idx];
+			if (tmp === tmp.toUpperCase()) {
+				arr[idx] = tmp;
+
+			} else {
+				arr[idx] = _capitalizeWord(tmp);
+			}
+		}
+		return arr.join(' ');
 	};
 
 	var CAS_APO = /['’]/g;
@@ -4145,7 +4227,7 @@
 	 * <p><b>See also</b> <a>String.prototype.toTrainCase()</a></p>
 	 */
 	String.prototype.toCamelCase = function () {
-		var txt = _splitWords(this.toEnglishCase().replace(CAS_APO, '')).map(String.prototype.toCapitalWord).join('');
+		var txt = _splitWords(this.toEnglishCase().replace(CAS_APO, '')).map(_capitalizeWord).join('');
 		if (txt.length > 0) {
 			txt = txt[0].toLowerCase() + txt.substring(1);
 		}
