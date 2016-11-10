@@ -59,7 +59,7 @@
 			};
 			var out = function () {
 				ctx = this;
-				arg = Array.prototype.slice.call(arguments, 0);
+				arg = Array.from(arguments);
 				if (tid !== undefined) {
 					clearTimeout(tid);
 				}
@@ -135,7 +135,7 @@
 		var val = [];
 		if (Number.isSafeInteger(bnd) && bnd > 0) {
 			var out = function () {
-				var arg = Array.prototype.slice.call(arguments, 0);
+				var arg = Array.from(arguments);
 				if (key.length > 0 && Object.isEqual(key[0], arg)) {
 					return val[0];
 
@@ -836,7 +836,7 @@
 	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach">Array.prototype.forEach()</a></p>
 	 */
 	Array.prototype.invoke = function () {
-		var fni = Array.prototype.slice.call(arguments).indexOf(Function.isFunction);
+		var fni = Array.from(arguments).indexOf(Function.isFunction);
 		var idx = fni >= 1 ? arguments[0] : 0;
 		var bnd = fni >= 2 ? arguments[1] : this.length;
 		var stp = fni >= 3 ? arguments[2] : (idx < bnd ? 1 : -1);
@@ -919,7 +919,7 @@
 	 * --></code>
 	 */
 	Array.prototype.invokeAsync = function () {
-		var fni = Array.prototype.slice.call(arguments).indexOf(Function.isFunction);
+		var fni = Array.from(arguments).indexOf(Function.isFunction);
 		var idx = fni >= 1 ? arguments[0] : 0;
 		var bnd = fni >= 2 ? arguments[1] : this.length;
 		var stp = fni >= 3 ? arguments[2] : (idx < bnd ? 1 : -1);
@@ -2750,7 +2750,7 @@
 			return out.select('v');
 
 		} else {
-			var lst = Array.prototype.slice.call(arguments).select(function (val, idx) {
+			var lst = Array.from(arguments).select(function (val, idx) {
 				if (idx % 2 === 0) {
 					if (typeof val === 'string') {
 						return function (itm) { return itm[val]; };
@@ -3903,7 +3903,7 @@
 		if (Object.isObject(out) === false) {
 			throw new Error(ERR_INV);
 		}
-		var arr = Array.prototype.slice.call(arguments, 1);
+		var arr = Array.from(arguments).slice(1);
 		var idx = -1;
 		var bnd = arr.length;
 		while (++idx < bnd) {
