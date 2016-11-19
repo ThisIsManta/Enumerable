@@ -19,6 +19,13 @@
 	var ERR_IWG = '[invokeWhich] must be called after [groupBy]';
 	var ERR_BID = 'a non-object type was not allowed';
 
+	var win;
+	try {
+		win = eval('window');
+	} catch (err) {
+		win = {};
+	}
+
 	/**
 	 * <p><b>Returns</b> <i>true</i> if and only if the given value is a function, otherwise <i>false</i>.</p>
 	 * <p><b>Accepts</b><br>
@@ -3577,11 +3584,11 @@
 					}
 				}
 
-			} else if (window.jQuery !== undefined && (nam === 'jquery' || ar0 === window.jQuery)) {
+			} else if (win.jQuery !== undefined && (nam === 'jquery' || ar0 === win.jQuery)) {
 				while (++idx < bnd) {
 					tmp = this[idx];
 					if (typeof tmp === 'string' || typeof tmp === 'object' && (tmp instanceof HTMLElement || tmp instanceof jQuery)) {
-						out[++jdx] = window.jQuery(tmp);
+						out[++jdx] = win.jQuery(tmp);
 					}
 				}
 
@@ -4306,6 +4313,72 @@
 			}
 		}
 		return -1;
+	};
+
+	String.DICTIONARY = { 'en-US': {} };
+	String.DICTIONARY.add = function (loc, hsh) {
+		if (String.isString(loc) && /^\w\w-\w\w$/.test(loc) && Object.isObject(hsh)) {
+			Object.assign(String.DICTIONARY[loc] || {}, hsh);
+
+		} else {
+			throw new Error(ERR_INV);
+		}
+	};
+
+	String.LOCALE = win.navigator && win.navigator.language || 'en-US';
+
+	String.prototype.translate = function () {
+		var tmp = String.DICTIONARY[String.LOCALE];
+		return tmp !== undefined && tmp[this.toString()] || '';
+	};
+
+	var INTERPOLATION_TEXT = {};
+	var INTERPOLATION_SIZE = 0;
+	var INTERPOLATION_SIGN = '${'
+
+	String.prototype.interpolate = function (hsh) {
+		var pvt = 0;
+		var idx;
+		var jdx;
+		var bnd = this.length;
+		var tmp;
+		var buf = '';
+		var $$i = hsh;
+		var $$o = ''; 
+		for (var nam in hsh) {
+			buf += 'var ' + nam + '=$$i.' + nam + ';';
+		}
+		if (INTERPOLATION_TEXT[this.toString()]) {
+			buf = INTERPOLATION_TEXT[this.toString()];
+
+		} else {
+			while (pvt < bnd) {
+				idx = this.indexOf(INTERPOLATION_SIGN, pvt); // }
+				if (idx >= 0) {
+					jdx = this.substring(idx).latchOf('{', '}');
+					if (jdx >= 0) {
+						buf += '$$o+="' + this.substring(pvt, idx).replace(/"/g, '\\"') + '";'
+						buf += '$$o+=' + this.substring(idx + 2, idx + jdx) + ';'
+						pvt = idx + jdx + 1;
+
+					} else {
+						buf += '$$o+="' + this.substring(pvt, idx + 2).replace(/"/g, '\\"') + '";'
+						pvt = idx + 2;
+					}
+
+				} else {
+					buf += '$$o+="' + this.substring(pvt).replace(/"/g, '\\"') + '";'
+					pvt = bnd;
+				}
+			}
+			INTERPOLATION_TEXT[this.toString()] = buf;
+			INTERPOLATION_SIZE += 1;
+			if (INTERPOLATION_SIZE > 1024) {
+				INTERPOLATION_TEXT = {};
+			}
+		}
+		eval('(function(){' + buf + '})();');
+		return $$o;
 	};
 
 	/**
