@@ -18,6 +18,7 @@
 	var ERR_NST = 'one or more array members were not a string';
 	var ERR_IWG = '[invokeWhich] must be called after [groupBy]';
 	var ERR_BID = 'a non-object type was not allowed';
+	var ERR_IPR = 'a variable name was not allowed';
 
 	var win;
 	try {
@@ -3800,11 +3801,12 @@
 	 * </code>
 	 */
 	Object.isEmpty = function (ar0) {
+		var nam;
 		if (ar0 instanceof Map || ar0 instanceof Set) {
 			return ar0.size === 0;
 
 		} else if (Object.isObject(ar0)) {
-			for (var nam in ar0) {
+			for (nam in ar0) {
 				if (Object.prototype.hasOwnProperty.call(ar0, nam)) {
 					return false;
 				}
@@ -3877,7 +3879,8 @@
 	};
 
 	var _extend = function (ar0, ar1) {
-		for (var nam in ar1) {
+		var nam;
+		for (nam in ar1) {
 			if (ar1.hasOwnProperty(nam)) {
 				if (Object.isObject(ar0[nam]) && Object.isObject(ar1[nam])) {
 					_extend(ar0[nam], ar1[nam]);
@@ -3902,7 +3905,7 @@
 	 * 
 	 * Object.merge({ a: { b: 1 } }, undefined, null, 0, 1, true, false, [1, 2, 3]);
 	 * </code>
-	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Object/assign">Object.assign()</a></p>
+	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Object/assign">Object.assign()</a>, <a>Object.clone()</a></p>
 	 * <meta keywords="assign,extend"/>
 	 */
 	Object.merge = function () {
@@ -3922,9 +3925,58 @@
 	};
 
 	/**
+	 * <p><b>Returns</b> a deep copy of the given object.</p>
+	 * <p>This does not re-instantiate the given object from its class.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(source: <i>object</i>)</u>
+	 * </p>
+	 * <code>
+	 * var a = { b: { c: 2, d: function () {}, e: [4, 5, 6] } };
+	 * 
+	 * var z = Object.clone(a);
+	 * console.log(z);
+	 * 
+	 * console.log(a === z);
+	 * 
+	 * console.log(a.b === z.b);
+	 * 
+	 * console.log(a.b.c === z.b.c);
+	 * 
+	 * console.log(a.b.d === z.b.d);
+	 * 
+	 * console.log(a.b.e === z.b.e);
+	 * </code>
+	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Object/assign">Object.assign()</a>, <a>Object.merge()</a></p>
+	 * <meta keywords="copy"/>
+	 */
+	Object.clone = function (ar0) {
+		var out;
+		var nam;
+		var idx = -1;
+		var bnd;
+		if (Object.isObject(ar0)) {
+			out = {};
+			for (nam in ar0) {
+				out[nam] = Object.clone(ar0[nam]);
+			}
+			return out;
+
+		} else if (Array.isArray(ar0)) {
+			bnd = ar0.length;
+			out = new Array(bnd);
+			while (++idx < bnd) {
+				out[idx] = Object.clone(ar0[idx]);
+			}
+			return out;
+
+		} else {
+			return ar0;
+		}
+	};
+
+	/**
 	 * <p><b>Returns</b> an array of the adjusted integers that represent the percentage of the given numbers.</p>
 	 * <p>This is very helpful when you want to calculate the percentage from three or more values which the traditional method below does not produce 100%.</p>
-	 * <p></p>
 	 * <code><!--
 	 * function calculateTraditionalPercentage (numbers) {
 	 * 	var total = numbers.sum();
@@ -4037,6 +4089,29 @@
 		return out;
 	};
 
+	/**
+	 * <p><b>Returns</b> <i>true</i> if and only if the given argument is number and not <i>NaN</i>.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(value: <i>any</i>)</u>
+	 * </p>
+	 * <code>
+	 * Number.isNumber(0);
+	 * 
+	 * Number.isNumber(1);
+	 * 
+	 * Number.isNumber(NaN);
+	 * 
+	 * Number.isNumber(Infinity);
+	 * 
+	 * Number.isNumber(undefined);
+	 * 
+	 * Number.isNumber(null);
+	 * 
+	 * Number.isNumber({});
+	 * 
+	 * Number.isNumber([]);
+	 * </code>
+	 */
 	Number.isNumber = function (ar0) {
 		return typeof ar0 === 'number' && isNaN(ar0) === false;
 	};
@@ -4045,6 +4120,121 @@
 
 	Number.isSafeInteger = Number.isSafeInteger || function (ar0) {
 		return Number.isNumber(ar0) && isFinite(ar0) && Math.floor(ar0) === ar0 && Math.abs(ar0) <= Number.MAX_SAFE_INTEGER;
+	};
+
+	var THOUSAND_GROUP_SEPARATOR = (1234).toLocaleString().match(/\d(\D)\d{3}/)[1];
+	var FLOATING_POINT_SEPARATOR = (0.1).toLocaleString().match(/\d(\D)\d/)[1];
+
+	Number.COUNTER = { minDecimalPlace: NaN, maxDecimalPlace: 2, addThousandSeparators: true };
+
+	Number.CURRENCY = { minDecimalPlace: NaN, maxDecimalPlace: 6, addThousandSeparators: true };
+
+	Number.PERCENT = { minDecimalPlace: NaN, maxDecimalPlace: 2, addThousandSeparators: false, largeNumberScale: null };
+
+	/**
+	 * <p>
+	 * minDecimalPlace
+	 * maxDecimalPlace
+	 * addThousandSeparators
+	 * largeNumberScale
+	 * spare
+	 * </p>
+	 */
+	Number.prototype.format = function (opt) {
+		var val = this.valueOf();
+		if (isNaN(val) || !isFinite(val)) {
+			return opt.spare === undefined ? '' : opt.spare;
+		}
+
+		var gmr = _resolve(String.GRAMMAR);
+
+		opt = opt || {};
+		var minDecimalPlace = opt.minDecimalPlace === undefined ? NaN : parseInt(opt.minDecimalPlace);
+		var maxDecimalPlace = opt.maxDecimalPlace === undefined ? 6 : parseInt(opt.maxDecimalPlace);
+		var addThousandSeparators = opt.addThousandSeparators === undefined ? true : opt.addThousandSeparators;
+		var largeNumberScale = opt.largeNumberScale === undefined ? gmr.largeNumberScales : opt.largeNumberScale;
+
+		var isNegativeNumber = val < 0;
+
+		var out = Math.abs(val);
+
+		// Normalizes the value according to the large number scale
+		var largeNumberEntry = Array.isArray(largeNumberScale) ? largeNumberScale.find(function (itm) { return out >= itm.startingValue; }) : null;
+		if (largeNumberEntry) {
+			out = out / largeNumberEntry.scalingFactor;
+		}
+
+		// Rounds the integral part
+		var integralPartNumber = Math.floor(out);
+
+		// Determines the decimal place number
+		var decimalPlaceNumber = 0;
+		if (!isNaN(minDecimalPlace)) {
+			decimalPlaceNumber = minDecimalPlace;
+
+		} else if (out.toString().indexOf('.') >= 0) {
+			decimalPlaceNumber = /\d+$/.exec(out.toString())[0].length;
+		}
+		if (!isNaN(maxDecimalPlace)) {
+			decimalPlaceNumber = Math.min(decimalPlaceNumber, maxDecimalPlace);
+		}
+
+		// Rounds the fraction part
+		var mantissaPartNumber;
+		if (out.toString().indexOf('.') >= 0) {
+			var mantissaPartString = /\d+$/.exec(out.toString())[0];
+			if (mantissaPartString.length > decimalPlaceNumber) {
+				// Use Math.round(...) instead of Number.toFixed(...) because the latter one sometimes return a wrong rounding floating number; take (0.345).toFixed(2) for example
+				mantissaPartNumber = Math.round(parseFloat(mantissaPartString.substring(0, decimalPlaceNumber) + '.' + mantissaPartString.substring(decimalPlaceNumber))) / Math.pow(10, decimalPlaceNumber);
+				if (mantissaPartNumber >= 1) {
+					integralPartNumber += 1;
+					mantissaPartNumber -= 1;
+				}
+
+			} else {
+				mantissaPartNumber = parseFloat('0.' + mantissaPartString);
+			}
+
+		} else {
+			mantissaPartNumber = 0;
+		}
+
+		// Inserts thousand separators to the integral part
+		var integralPartText;
+		if (addThousandSeparators) {
+			integralPartText = integralPartNumber.toString().replace(/\B(?=(\d{3})+(?!\d))/g, String.isString(gmr.thousandGroupSeparator) ? gmr.thousandGroupSeparator : THOUSAND_GROUP_SEPARATOR);
+
+		} else {
+			integralPartText = integralPartNumber.toString();
+		}
+
+		// Adds a decimal place sign before the mantissa part
+		var mantissaPartText = '';
+		if (decimalPlaceNumber > 0) {
+			mantissaPartText = (String.isString(gmr.floatingPointSeparator) ? gmr.floatingPointSeparator : FLOATING_POINT_SEPARATOR) + /\d+$/.exec(mantissaPartNumber.toFixed(decimalPlaceNumber))[0];
+		}
+
+		// Combines parts together
+		out = integralPartText + mantissaPartText;
+
+		// Converts to local digits
+		if (String.isString(gmr.digits)) {
+			out = out.split('').select(function (num) {
+				return (/\d/.test(num)) ? gmr.digits.charAt(num) : num;
+			}).join('');
+		}
+
+		// Adds a minus sign
+		if (isNegativeNumber && out !== '0') {
+			out = '-' + out;
+		}
+
+		// Adds the large number notation
+		if (largeNumberEntry) {
+			out = (largeNumberEntry.prefix || '') + out + (largeNumberEntry.suffix || '');
+		}
+
+		return out;
 	};
 
 	/**
@@ -4315,70 +4505,302 @@
 		return -1;
 	};
 
-	String.DICTIONARY = { 'en-US': {} };
-	String.DICTIONARY.add = function (loc, hsh) {
-		if (String.isString(loc) && /^\w\w-\w\w$/.test(loc) && Object.isObject(hsh)) {
-			Object.assign(String.DICTIONARY[loc] || {}, hsh);
-
-		} else {
-			throw new Error(ERR_INV);
-		}
+	/**
+	 * <p><b>Defines</b> the dictionary for <a>String.prototype.translate()</a>.</p>
+	 * <code><!--
+	 * Object.merge(String.DICTIONARY, {
+	 * 	'fr-FR': {
+	 * 		'apple': 'pomme',
+	 * 		'banana': 'banane'
+	 * 	},
+	 * 	'th-TH': {
+	 * 		'apple': 'แอปเปิล',
+	 * 		'banana': 'กล้วย'
+	 * 	}
+	 * });
+	 * --></code>
+	 * <p><b>See also</b> <a>String.LOCALE</a>, <a>String.prototype.translate()</a></p>
+	 * <meta keywords="language,culture,translation,localization,l10n,internationalization,i18n"/>
+	 */
+	String.DICTIONARY = {
+		'en-US': {}
 	};
 
+	/**
+	 * <p><b>Defines</b> the grammar rules for <a>Number.prototype.format()</a> and <a>String.prototype.format()</a>.</p>
+	 * <p>The default value is grammar rules for American English.</p>
+	 * <code><!--
+	 * Object.merge(String.GRAMMAR, {
+	 * 	'th-TH': {
+	 * 		series: function (items) { return items.length <= 1 ? items.join(' ') : items.take(items.length - 1).join(' ') + 'และ' + items.last(); },
+	 * 		digits: '๐๑๒๓๔๕๖๗๘๙'
+	 * 	}
+	 * });
+	 * --></code>
+	 * <p><b>See also</b> <a>String.LOCALE</a>, <a>String.prototype.format()</a></p>
+	 * <meta keywords="rules,language,culture,translation,localization,l10n,internationalization,i18n"/>
+	 */
+	String.GRAMMAR = {
+		'en-US': {
+			series: function (items) { return items.length <= 1 ? items.join('') : (items.take(items.length - 1).join(', ') + ' and ' + items.last()); },
+			plural: function (words, count) { return count === 1 || words.length === 1 ? words[0] : words[1]; },
+			digits: null,
+			thousandGroupSeparator: ',',
+			floatingPointSeparator: '.',
+			largeNumberScales: [
+				{ suffix: 'T', startingValue: 1e12, scalingFactor: 1e12 },
+				{ suffix: 'B', startingValue: 1e9, scalingFactor: 1e9 },
+				{ suffix: 'M', startingValue: 1e6, scalingFactor: 1e6 },
+				{ suffix: 'K', startingValue: 1e3, scalingFactor: 1e3 },
+			],
+		},
+		'es-ES': {
+			thousandGroupSeparator: '.',
+			floatingPointSeparator: ',',
+		},
+		'th-TH': {
+			series: function (items) { return items.length <= 1 ? items.join(' ') : items.take(items.length - 1).join(' ') + 'และ' + items.last(); },
+	  		plural: null,
+	  		digits: null,
+		},
+	};
+
+	var _resolve = function (obj, loc) {
+		if (arguments.length === 1) {
+			loc = String.LOCALE;
+		}
+		var tmp = obj[loc];
+		if (String.isString(tmp)) {
+			return _resolve(obj, tmp);
+		
+		} else if (tmp === undefined && loc.length > 2) {
+			loc = loc.split('-');
+			lot = loc[loc.length - 2];
+			tmp = Object.keys(obj).find(function (key) {
+				return key.split('-').has(loc);
+			});
+		}
+		return tmp === undefined ? obj['en-US'] : tmp;
+	};
+
+	/**
+	 * <p><b>Defines</b> the current language-culture code for <a>String.prototype.translate()</a> and <a>String.prototype.format()</a>.</p>
+	 * <p>The value should be a string based on <i>xx-YY</i> pattern, where <i>xx</i> is two-letter lower-case <a href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes" title="ISO 639-1">language code</a> and <i>YY</i> is two-letter upper-case <a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2" title="ISO 3166-1 alpha-2">country code</a>.</p>
+	 * <p>The default value is the same as <i>window.navigator.language</i>.</p>
+	 * <code>
+	 * String.LOCALE = 'th-TH';
+	 * 
+	 * String.LOCALE = 'ja-JP';
+	 * 
+	 * String.LOCALE = 'zh-CN';
+	 * </code>
+	 * <p><b>See also</b> <a>String.DICTIONARY</a></p>
+	 * <meta keywords="language,culture,translation,localization,l10n,internationalization,i18n"/>
+	 */
 	String.LOCALE = win.navigator && win.navigator.language || 'en-US';
 
+	/**
+	 * <p><b>Returns</b> the string that matched the given key and <a>String.LOCALE</a> in <a>String.DICTIONARY</a>, otherwise the original value.</p>
+	 * <p></p>
+	 * <code>
+	 * Object.merge(String.DICTIONARY, {
+	 * 	'th-TH': {
+	 * 		'apple': 'แอปเปิล',
+	 * 		'banana': 'กล้วย'
+	 * 	}
+	 * });
+	 * 
+	 * String.LOCALE = 'th-TH';
+	 * 
+	 * 'apple'.translate();
+	 * 
+	 * 'banana'.translate();
+	 * 
+	 * 'coconut'.translate();
+	 * </code>
+	 * <meta keywords="language,culture,translation,localization,l10n,internationalization,i18n"/>
+	 */
 	String.prototype.translate = function () {
-		var tmp = String.DICTIONARY[String.LOCALE];
-		return tmp !== undefined && tmp[this.toString()] || '';
+		var key = this.toString();
+		var tmp = _resolve(String.DICTIONARY) || String.DICTIONARY['en-US'];
+		return tmp !== undefined && tmp[key] || key;
 	};
 
-	var INTERPOLATION_TEXT = {};
+	var INTERPOLATION_HASH = {};
 	var INTERPOLATION_SIZE = 0;
-	var INTERPOLATION_SIGN = '${'
 
-	String.prototype.interpolate = function (hsh) {
+	var _pluralize = function (lst, $$t) {
+		var idx = $$t.length;
+		return function () {
+			var gmr = _resolve(String.GRAMMAR);
+			var out;
+			if (gmr !== undefined && gmr.plural) {
+				var dst = 1;
+				var tmp;
+				while (idx - dst >= 0 || idx + dst < $$t.length) {
+					if (Number.isNumber(tmp = $$t[idx - dst])) {
+						out = gmr.plural(lst, tmp);
+						break;
+
+					} else if (Array.isArray(tmp)) {
+						out = gmr.plural(lst, tmp.length);
+						break;
+
+					} else if (Number.isNumber(tmp = $$t[idx + dst])) {
+						out = gmr.plural(lst, tmp);
+						break;
+
+					} else if (Array.isArray(tmp)) {
+						out = gmr.plural(lst, tmp.length);
+						break;
+
+					} else {
+						dst += 1;
+					}
+				}
+			}
+			return out === undefined ? lst[0] : out;
+		};
+	};
+
+	var _serialize = function (lst) {
+		var gmr = _resolve(String.GRAMMAR);
+		return gmr !== undefined && gmr.series ? gmr.series(lst) : lst.join(', ');
+	};
+
+	/**
+	 * <p><b>Returns</b> the .</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>()</u><br>
+	 * <u>(options: <i>object</i>)</u>
+	 * </p>
+	 * <code>
+	 * template = '${members} $[is|are] alright';
+	 * template.format({ members: ['Alex'] });
+	 * 
+	 * template.format({ members: ['Alex', 'Brad', 'Cody'] });
+	 * 
+	 * template = 'There $[is|are] ${count} $[person|people] in this room';
+	 * template.format({ count: 1 });
+	 * 
+	 * template.format({ count: 5 });
+	 * </code>
+	 * <code>
+	 * Object.merge(String.GRAMMAR, {
+	 * 	'th-TH': {
+	 * 		series: function (items) { return items.length <= 1 ? items.join(' ') : items.take(items.length - 1).join(' ') + 'และ' + items.last(); },
+	 * 		digits: '๐๑๒๓๔๕๖๗๘๙'
+	 * 	}
+	 * });
+	 * 
+	 * String.LOCALE = 'th-TH';
+	 * 
+	 * '${subject}มีลูกแมวเหมียวรวมกันทั้งหมด ${count} ตัว'.format({ subject: ["มานะ", "มานี", "วินัย"], count: 12 });
+	 * </code>
+	 * <meta keywords="evaluate,insert,process,replace,interpolation,language,culture,translation,localization,l10n,internationalization,i18n"/>
+	 */
+	String.prototype.format = function (opt) {
+		var key = this.toString();
 		var pvt = 0;
 		var idx;
 		var jdx;
 		var bnd = this.length;
+		var $$i = opt;
+		var $$o = [];
+		var $$t = [];
+		var $$p = _pluralize;
+		var nam;
+		var vrs = ''
+		var exe = '';
 		var tmp;
-		var buf = '';
-		var $$i = hsh;
-		var $$o = ''; 
-		for (var nam in hsh) {
-			buf += 'var ' + nam + '=$$i.' + nam + ';';
+		var out = '';
+		if (Object.isObject(opt)) {
+			for (nam in opt) {
+				if (/\$\$\w/.test(nam)) {
+					throw new Error(ERR_IPR);
+
+				} else if (nam.startsWith('_') === false && opt.hasOwnProperty(nam)) {
+					vrs += ',' + nam + '=$$i.' + nam;
+				}
+			}
 		}
-		if (INTERPOLATION_TEXT[this.toString()]) {
-			buf = INTERPOLATION_TEXT[this.toString()];
+		if (vrs.length > 0) {
+			vrs = 'var ' + vrs.substring(1) + ';'
+		}
+		if (INTERPOLATION_HASH[key] !== undefined) {
+			exe = INTERPOLATION_HASH[key];
 
 		} else {
 			while (pvt < bnd) {
-				idx = this.indexOf(INTERPOLATION_SIGN, pvt); // }
+				idx = this.indexOf('$', pvt);
 				if (idx >= 0) {
-					jdx = this.substring(idx).latchOf('{', '}');
-					if (jdx >= 0) {
-						buf += '$$o+="' + this.substring(pvt, idx).replace(/"/g, '\\"') + '";'
-						buf += '$$o+=' + this.substring(idx + 2, idx + jdx) + ';'
-						pvt = idx + jdx + 1;
+					if (this.charAt(idx + 1) === '{') { // Do not remove "}" sign because of an issue with String.prototype.latchOf() in Gruntfile.js
+						jdx = this.substring(idx).latchOf('{', '}');
+						if (jdx >= 0) {
+							exe += '$$o.push(' + JSON.stringify(this.substring(pvt, idx)) + ');';
+							exe += '$$o.push($$t.length);';
+							exe += '$$t.push(' + this.substring(idx + 2, idx + jdx) + ');';
+							pvt = idx + jdx + 1;
+
+						} else {
+							exe += '$$o.push(' + JSON.stringify(this.substring(pvt, idx + 2)) + ');';
+							pvt = idx + 2;
+						}
+
+					} else if (this.charAt(idx + 1) === '[') {
+						jdx = this.substring(idx).latchOf('[', ']');
+						if (jdx >= 0) {
+							exe += '$$o.push(' + JSON.stringify(this.substring(pvt, idx)) + ');';
+							exe += '$$o.push($$t.length);';
+							exe += '$$t.push($$p(' + JSON.stringify(this.substring(idx + 2, idx + jdx).split('|')) + ',$$t));';
+							pvt = idx + jdx + 1;
+
+						} else {
+							exe += '$$o.push(' + JSON.stringify(this.substring(pvt, idx + 2)) + ');';
+							pvt = idx + 2;
+						}
 
 					} else {
-						buf += '$$o+="' + this.substring(pvt, idx + 2).replace(/"/g, '\\"') + '";'
+						exe += '$$o.push(' + JSON.stringify(this.substring(pvt, idx + 2)) + ');';
 						pvt = idx + 2;
 					}
 
 				} else {
-					buf += '$$o+="' + this.substring(pvt).replace(/"/g, '\\"') + '";'
+					exe += '$$o.push(' + JSON.stringify(this.substring(pvt)) + ');';
 					pvt = bnd;
 				}
 			}
-			INTERPOLATION_TEXT[this.toString()] = buf;
+			INTERPOLATION_HASH[key] = exe;
 			INTERPOLATION_SIZE += 1;
 			if (INTERPOLATION_SIZE > 1024) {
-				INTERPOLATION_TEXT = {};
+				INTERPOLATION_HASH = {};
 			}
 		}
-		eval('(function(){' + buf + '})();');
-		return $$o;
+		eval('(function(){' + vrs + exe + '})();');
+		idx = -1;
+		bnd = $$o.length;
+		while (++idx < bnd) {
+			tmp = $$o[idx];
+			if (Number.isNumber(tmp)) {
+				tmp = $$t[tmp];
+				if (Number.isNumber(tmp)) {
+					out += tmp.format();
+
+				} else if (Array.isArray(tmp)) {
+					out += _serialize(tmp);
+
+				} else if (Function.isFunction(tmp)) {
+					out += tmp();
+
+				} else {
+					out += tmp;
+				}
+
+			} else {
+				out += tmp;
+			}
+		}
+		return out;
 	};
 
 	/**

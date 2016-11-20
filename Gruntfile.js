@@ -83,7 +83,7 @@ module.exports = function (grunt) {
 					return line.substring(tabc);
 				}).toString('\n');
 
-				var name = code.match(/.*\s?=\s?function/)[0];
+				var name = code.match(/.*\s?=\s?/)[0];
 				name = name.substring(0, name.indexOf('=')).trim();
 
 				list.push({
@@ -97,6 +97,21 @@ module.exports = function (grunt) {
 			var $menu = $('nav ul').empty();
 			var $main = $('main').empty();
 
+			var funk = function (data) {
+				if (Object.isObject(data)) {
+					data = Object.clone(data);
+					for (var name in data) {
+						if (typeof data[name] === 'function' && data.hasOwnProperty(name)) {
+							data[name] = '@fx';
+
+						} else if (typeof data[name] === 'object') {
+							data[name] = funk(data[name]);
+						}
+					}
+				}
+				return data;
+			};
+
 			var tran = function (data) {
 				if (data === undefined) {
 					return 'undefined';
@@ -108,7 +123,7 @@ module.exports = function (grunt) {
 					return '\'' + data + '\'';
 
 				} else {
-					return JSON.stringify(data, null, ' ').replace(/\[(\n|\s)+/g, '[').replace(/(\n|\s)+\]/g, ']').replace(/\"([^"]+)\":/g, '$1:');
+					return JSON.stringify(funk(data), null, ' ').replace(/"@fx"/g, 'function').replace(/\[(\n|\s)+/g, '[').replace(/(\n|\s)+\]/g, ']').replace(/\"([^"]+)\":/g, '$1:');
 				}
 			};
 
