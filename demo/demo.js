@@ -1,4 +1,6 @@
 $(document).ready(function () {
+	var isOnMobile = window.devicePixelRatio >= 2;
+
 	// Stores a list of API elements
 	var list = $('nav ul > li').toArray().select(function (elem) {
 		return {
@@ -95,16 +97,18 @@ $(document).ready(function () {
 	});
 
 	// Focuses at the clicking API element
-	$('section').on('click', function (e) {
-		var $card = $(e.currentTarget);
-		var $main = $('main');
-		if ($card.attr('gaze') !== 'true') {
-			if ($main.attr('gaze') === 'true') {
-				$('section[gaze]').attr('gaze', null);
+	if (isOnMobile === false) {
+		$('section').on('click', function (e) {
+			var $card = $(e.currentTarget);
+			var $main = $('main');
+			if ($card.attr('gaze') !== 'true') {
+				if ($main.attr('gaze') === 'true') {
+					$('section[gaze]').attr('gaze', null);
+				}
+				$main.add($card).attr('gaze', true);
 			}
-			$main.add($card).attr('gaze', true);
-		}
-	});
+		});
+	}
 
 	// Defocuses at the clicking API element
 	$(document).on('click', function (e) {
@@ -119,6 +123,15 @@ $(document).ready(function () {
 		var name = $elem.text().trim().replace(/\(\)$/, '');
 		if ($elem.attr('href') === undefined && list.find('name', name) !== undefined) {
 			$elem.attr('href', '#' + name.toLowerCase());
+		}
+	});
+
+	// Adds white breaks
+	$('a').each(function () {
+		var $elem = $(this);
+		var text = $elem.html().split('.');
+		if (text.length > 2) {
+			$elem.html(text.join('.<wbr>'));
 		}
 	});
 
@@ -145,4 +158,13 @@ $(document).ready(function () {
 			});
 		}
 	}
+
+	// Adds peaking effect
+	$(document)
+	.on('scroll', function () {
+		$('main').addClass('scrolling');
+	}.immediate(600))
+	.on('scroll', function () {
+		$('main').removeClass('scrolling');
+	}.debounce(600));
 });
