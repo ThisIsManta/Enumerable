@@ -63,8 +63,25 @@ describe('Function', function () {
 			}, 260);
 		});
 
+		it('accepts zero arguments', function (done) {
+			c = 0;
+			f = function () {
+				c++;
+			}.debounce();
+
+			expect(c).toBe(0);
+			f();
+			expect(c).toBe(0);
+
+			setTimeout(function () {
+				expect(c).toBe(1);
+				done();
+			});
+		});
+
 		it('throws an error', function () {
-			expect(Function.prototype.debounce.bind(null, 0)).toThrowError();
+			expect(Function.prototype.debounce.bind(null, null)).toThrowError();
+			expect(Function.prototype.debounce.bind(null, NaN)).toThrowError();
 			expect(Function.prototype.debounce.bind(null, -1)).toThrowError();
 		});
 	});
@@ -105,8 +122,25 @@ describe('Function', function () {
 			}, 260);
 		});
 
+		it('accepts zero arguments', function (done) {
+			c = 0;
+			f = function () {
+				c++;
+			}.immediate();
+
+			expect(c).toBe(0);
+			f();
+			expect(c).toBe(1);
+
+			setTimeout(function () {
+				expect(c).toBe(1);
+				done();
+			});
+		});
+
 		it('throws an error', function () {
-			expect(Function.prototype.immediate.bind(null, 0)).toThrowError();
+			expect(Function.prototype.immediate.bind(null, null)).toThrowError();
+			expect(Function.prototype.immediate.bind(null, NaN)).toThrowError();
 			expect(Function.prototype.immediate.bind(null, -1)).toThrowError();
 		});
 	});

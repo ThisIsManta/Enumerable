@@ -55,12 +55,46 @@
 	 * <p><b>Returns</b> a new function; once it is called, it will be executed if the last call was at least the given duration ago.</p>
 	 * <p>The returned function has a special method called <i>cancel</i> that helps cancelling the defered execution.</p>
 	 * <p><b>Accepts</b><br>
+	 * <u>() – This returns a <i>setTimeout</i> function.</u><br>
 	 * <u>(duration: <i>number</i>) – This accepts the duration in milliseconds.</u><br>
 	 * </p>
+	 * <code><!--
+	 * clock = 0;
+	 * setInterval(function () {
+	 * 	clock += 100;
+	 * }, 100);
+	 * 
+	 * f = function (a) {
+	 * 	console.log('Called with ' + a + ' at ' + clock + ' ms');
+	 * }.debounce(300);
+	 * 
+	 * f(0);
+	 * 
+	 * f(1);
+	 * 
+	 * // Called with 1 at 300 ms
+	 * 
+	 * setTimeout(function () {
+	 * 	f(2);
+	 * }, 400);
+	 * 
+	 * setTimeout(function () {
+	 * 	f(3);
+	 * }, 500);
+	 * 
+	 * // Called with 3 at 800 ms
+	 * 
+	 * setTimeout(function () {
+	 * 	f(4);
+	 * 	f.cancel();
+	 * }, 900);
+	 * --></code>
+	 * <p><b>See also</b> <a>Function.prototype.immediate()</a></p>
+	 * <meta keywords="immediate"/>
 	 */
 	Function.prototype.debounce = function (dur) {
-		if (Number.isSafeInteger(dur) && dur > 0) {
-			var tid, ctx, arg, fnc = this;
+		var tid, ctx, arg, fnc = this;
+		if (arguments.length === 0 || Number.isSafeInteger(dur) && dur >= 0) {
 			var hdr = function () {
 				tid = undefined;
 				fnc.apply(ctx, arg);
@@ -71,7 +105,12 @@
 				if (tid !== undefined) {
 					clearTimeout(tid);
 				}
-				tid = setTimeout(hdr, dur);
+				if (dur > 0) {
+					tid = setTimeout(hdr, dur);
+
+				} else {
+					tid = setTimeout(hdr);
+				}
 			};
 			out.cancel = function () {
 				clearTimeout(tid);
@@ -85,17 +124,57 @@
 
 	/**
 	 * <p><b>Returns</b> a new function; once it is called, it will be executed immediately, and prevents the same function from being executed after the last call for the given duration.</p>
+	 * <p>The returned function has a special method called <i>cancel</i> that helps cancelling the barrier execution.</p>
 	 * <p><b>Accepts</b><br>
+	 * <u>() – This returns the function normally.</u><br>
 	 * <u>(duration: <i>number</i>) – This accepts the duration in milliseconds.</u><br>
 	 * </p>
+	 * <code><!--
+	 * clock = 0;
+	 * setInterval(function () {
+	 * 	clock += 100;
+	 * }, 100);
+	 * 
+	 * f = function (a) {
+	 * 	console.log('Called with ' + a + ' at ' + clock + ' ms');
+	 * }.immediate(300);
+	 * 
+	 * f(0);
+	 * 
+	 * // Called with 0 at 0 ms
+	 * 
+	 * f(1);
+	 * 
+	 * setTimeout(function () {
+	 * 	f(2);
+	 * }, 400);
+	 * 
+	 * // Called with 2 at 400 ms
+	 * 
+	 * setTimeout(function () {
+	 * 	f(3);
+	 * }, 500);
+	 * 
+	 * setTimeout(function () {
+	 * 	f.cancel();
+	 * 	f(4);
+	 * }, 900);
+	 * 
+	 * // Called with 4 at 900 ms
+	 * --></code>
+	 * <p><b>See also</b> <a>Function.prototype.debounce()</a></p>
+	 * <meta keywords="debounce"/>
 	 */
 	Function.prototype.immediate = function (dur) {
-		if (Number.isSafeInteger(dur) && dur > 0) {
+		if (arguments.length === 0 || dur === 0) {
+			return this;
+
+		} else if (Number.isSafeInteger(dur) && dur > 0) {
 			var tid, fnc = this;
 			var hdr = function () {
 				tid = undefined;
 			};
-			return function () {
+			var out = function () {
 				if (tid === undefined) {
 					fnc.apply(this, arguments);
 
@@ -104,6 +183,10 @@
 				}
 				tid = setTimeout(hdr, dur);
 			};
+			out.cancel = function () {
+				clearTimeout(tid);
+			};
+			return out;
 
 		} else {
 			throw new Error(ERR_INV);
