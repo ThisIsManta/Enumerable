@@ -4205,14 +4205,14 @@
 		return Number.isNumber(ar0) && isFinite(ar0) && Math.floor(ar0) === ar0 && Math.abs(ar0) <= Number.MAX_SAFE_INTEGER;
 	};
 
-	var THOUSAND_GROUP_SEPARATOR = (1234).toLocaleString().match(/\d(\D)\d{3}/)[1];
-	var FLOATING_POINT_SEPARATOR = (0.1).toLocaleString().match(/\d(\D)\d/)[1];
-
 	Number.COUNTER = { minDecimalPlace: NaN, maxDecimalPlace: 2, addThousandSeparators: true };
 
 	Number.CURRENCY = { minDecimalPlace: NaN, maxDecimalPlace: 6, addThousandSeparators: true };
 
 	Number.PERCENT = { minDecimalPlace: NaN, maxDecimalPlace: 2, addThousandSeparators: false, largeNumberScale: null };
+
+	var MACHINE_DECIMAL_GROUP = (1234).toLocaleString().match(/\d(\D)\d{3}/)[1];
+	var MACHINE_DECIMAL_POINT = (0.1).toLocaleString().match(/\d(\D)\d/)[1];
 
 	/**
 	 * <p>
@@ -4220,6 +4220,7 @@
 	 * maxDecimalPlace
 	 * addThousandSeparators
 	 * largeNumberScale
+	 * useLargeScale
 	 * spare
 	 * </p>
 	 */
@@ -4265,7 +4266,7 @@
 		// Rounds the fraction part
 		var mantissaPartNumber;
 		if (out.toString().indexOf('.') >= 0) {
-			var mantissaPartString = /\d+$/.exec(out.toString())[0];
+			var mantissaPartString = out.toString().match(/\d+$/)[0];
 			if (mantissaPartString.length > decimalPlaceNumber) {
 				// Use Math.round(...) instead of Number.toFixed(...) because the latter one sometimes return a wrong rounding floating number; take (0.345).toFixed(2) for example
 				mantissaPartNumber = Math.round(parseFloat(mantissaPartString.substring(0, decimalPlaceNumber) + '.' + mantissaPartString.substring(decimalPlaceNumber))) / Math.pow(10, decimalPlaceNumber);
@@ -4285,7 +4286,7 @@
 		// Inserts thousand separators to the integral part
 		var integralPartText;
 		if (addThousandSeparators) {
-			integralPartText = integralPartNumber.toString().replace(/\B(?=(\d{3})+(?!\d))/g, String.isString(gmr.thousandGroupSeparator) ? gmr.thousandGroupSeparator : THOUSAND_GROUP_SEPARATOR);
+			integralPartText = integralPartNumber.toString().replace(/\B(?=(\d{3})+(?!\d))/g, String.isString(gmr.thousandGroupSeparator) ? gmr.thousandGroupSeparator : MACHINE_DECIMAL_GROUP);
 
 		} else {
 			integralPartText = integralPartNumber.toString();
@@ -4294,7 +4295,7 @@
 		// Adds a decimal place sign before the mantissa part
 		var mantissaPartText = '';
 		if (decimalPlaceNumber > 0) {
-			mantissaPartText = (String.isString(gmr.floatingPointSeparator) ? gmr.floatingPointSeparator : FLOATING_POINT_SEPARATOR) + /\d+$/.exec(mantissaPartNumber.toFixed(decimalPlaceNumber))[0];
+			mantissaPartText = (String.isString(gmr.floatingPointSeparator) ? gmr.floatingPointSeparator : MACHINE_DECIMAL_POINT) + /\d+$/.exec(mantissaPartNumber.toFixed(decimalPlaceNumber))[0];
 		}
 
 		// Combines parts together
@@ -4628,6 +4629,9 @@
 			series: function (items) { return items.length <= 1 ? items.join('') : (items.take(items.length - 1).join(', ') + ' and ' + items.last()); },
 			plural: function (words, count) { return count === 1 || words.length === 1 ? words[0] : words[1]; },
 			digits: null,
+			decimalGroup: function () { },
+			decimalPoint: '.',
+
 			thousandGroupSeparator: ',',
 			floatingPointSeparator: '.',
 			largeNumberScales: [
