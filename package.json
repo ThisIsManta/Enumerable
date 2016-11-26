@@ -29,7 +29,9 @@
     "uglyfly-js": "^3.2.2"
   },
   "scripts": {
-    "preversion": "uglifyjs --mangle --compress --comments --output Enumerable-min.js --verbose Enumerable.js",
+    "build": "uglifyjs --mangle --compress --comments --output Enumerable-min.js --verbose Enumerable.js && grunt compose && grunt less",
+    "watch": "grunt watch",
+    "preversion": "npm run build",
     "version": "grunt license:Enumerable*.* && grunt version && git add --all",
     "postversion": "git checkout gh-pages && git rebase master && git checkout master && git push --all && git push --tags"
   }
