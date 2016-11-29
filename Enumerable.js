@@ -114,6 +114,62 @@
 			};
 			out.cancel = function () {
 				clearTimeout(tid);
+				tid = undefined;
+			};
+			return out;
+
+		} else {
+			throw new Error(ERR_INV);
+		}
+	};
+
+	Function.prototype.barrier = function (dur) {
+		var tib, tid, ctx, arg, fnc = this;
+		if (arguments.length === 0 || Number.isSafeInteger(dur) && dur >= 0) {
+			var cls = function () {
+				tib = undefined;
+			};
+			var hdr = function () {
+				tid = undefined;
+				fnc.apply(ctx, arg);
+				if (dur > 0) {
+					tib = setTimeout(cls, dur);
+
+				} else {
+					tib = setTimeout(cls);
+				}
+			};
+			var out = function () {
+				ctx = this;
+				arg = Array.from(arguments);
+				if (tib !== undefined) {
+					// Back barrier
+					clearTimeout(tib);
+					if (dur > 0) {
+						tib = setTimeout(cls, dur);
+
+					} else {
+						tib = setTimeout(cls);
+					}
+
+				} else {
+					// Front barrier
+					if (tid !== undefined) {
+						clearTimeout(tid);
+					}
+					if (dur > 0) {
+						tid = setTimeout(hdr, dur);
+
+					} else {
+						tid = setTimeout(hdr);
+					}
+				}
+			};
+			out.cancel = function () {
+				clearTimeout(tid);
+				tid = undefined;
+				clearTimeout(tib);
+				tib = undefined;
 			};
 			return out;
 
@@ -185,6 +241,7 @@
 			};
 			out.cancel = function () {
 				clearTimeout(tid);
+				tid = undefined;
 			};
 			return out;
 

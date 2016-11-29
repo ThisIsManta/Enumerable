@@ -57,10 +57,15 @@ describe('Function', function () {
 			}, 240);
 
 			setTimeout(function () {
-				// Because the function has been cancelled, the counter must be the same
 				expect(c).toBe(1);
-				done();
+				f();
+				expect(c).toBe(1);
 			}, 260);
+
+			setTimeout(function () {
+				expect(c).toBe(2);
+				done();
+			}, 370);
 		});
 
 		it('accepts zero arguments', function (done) {
@@ -83,6 +88,89 @@ describe('Function', function () {
 			expect(Function.prototype.debounce.bind(null, null)).toThrowError();
 			expect(Function.prototype.debounce.bind(null, NaN)).toThrowError();
 			expect(Function.prototype.debounce.bind(null, -1)).toThrowError();
+		});
+	});
+
+	describe('barrier()', function () {
+		it('returns the new function', function (done) {
+			c = 0;
+			f = function () {
+				c++;
+			}.barrier(100);
+
+			expect(c).toBe(0);
+			f();
+			expect(c).toBe(0);
+
+			setTimeout(function () {
+				f();
+				expect(c).toBe(0);
+			}, 20);
+
+			setTimeout(function () {
+				f();
+				expect(c).toBe(0);
+			}, 40);
+
+			setTimeout(function () {
+				expect(c).toBe(0);
+			}, 130);
+
+			setTimeout(function () {
+				expect(c).toBe(1);
+				f();
+				expect(c).toBe(1);
+			}, 150);
+
+			setTimeout(function () {
+				expect(c).toBe(1);
+				f.cancel();
+			}, 240);
+
+			setTimeout(function () {
+				expect(c).toBe(1);
+				f();
+				expect(c).toBe(1);
+			}, 260);
+
+			setTimeout(function () {
+				expect(c).toBe(1);
+				f();
+				expect(c).toBe(1);
+			}, 300);
+
+			setTimeout(function () {
+				expect(c).toBe(2);
+				f();
+				expect(c).toBe(2);
+			}, 410);
+
+			setTimeout(function () {
+				expect(c).toBe(2);
+				done();
+			}, 520);
+		});
+
+		it('accepts zero arguments', function (done) {
+			c = 0;
+			f = function () {
+				c++;
+			}.barrier();
+
+			expect(c).toBe(0);
+			f();
+			expect(c).toBe(0);
+
+			setTimeout(function () {
+				expect(c).toBe(1);
+				done();
+			});
+		});
+
+		it('throws an error', function () {
+			expect(Function.prototype.barrier.bind(null, null)).toThrowError();
+			expect(Function.prototype.barrier.bind(null, NaN)).toThrowError();
+			expect(Function.prototype.barrier.bind(null, -1)).toThrowError();
 		});
 	});
 
