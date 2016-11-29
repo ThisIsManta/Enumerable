@@ -1771,18 +1771,6 @@ describe('String', function () {
 			expect('((()))'.latchOf('(', ')')).toBe(5);
 		});
 	});
-
-	describe('from()', function () {
-		it('returns the RegExp object', function () {
-			var a = RegExp.from('($-100.00)*', 'img');
-			expect(a.source).toBe('\\(\\$\\-100\\.00\\)\\*');
-			expect(a.flags).toBe('gim');
-			expect(a.test('($-100.00)*')).toBe(true);
-
-			a = RegExp.from('a');
-			expect(a.flags).toBe('');
-		});
-	});
 });
 
 describe('Map', function () {
