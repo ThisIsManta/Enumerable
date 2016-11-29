@@ -137,7 +137,9 @@ module.exports = function (grunt) {
 			}).groupBy(function (item) {
 				return item.name.split('.').first();
 			}).invoke(function (fami) {
+				$('<hr data-fami="' + fami.name + '">').appendTo($menu);
 				$('<h1><a name="' + fami.name.toLowerCase() + '"/>' + fami.name + '</h1>').appendTo($main);
+
 				fami.invoke(function (item) {
 					var keys = item.name.split('.').select(function (keyx) {
 						return (keyx + '-' + keyx.toTrainCase()).toLowerCase().split('-');

@@ -30,7 +30,7 @@ $(document).ready(function () {
 
 		var text = $srch.val().trim();
 		if (text.length > 0) {
-			var fami = {};
+			var famiHash = {};
 			var tags = text.toLowerCase().replace(/\./g, ' ').split(' ').norm().distinct();
 			list.invoke(function (item) {
 				if (tags.all(function (tagx) {
@@ -40,7 +40,7 @@ $(document).ready(function () {
 				})) {
 					item.link.css('display', '');
 					item.card.css('display', '');
-					fami[item.fami] = true;
+					famiHash[item.fami] = true;
 
 				} else {
 					item.link.hide();
@@ -48,10 +48,17 @@ $(document).ready(function () {
 				}
 			});
 
+			// Hides the unseen family separators
+			$('nav ul > hr[data-fami]').each(function () {
+				var $sept = $(this);
+				var famiName = $sept.data('fami');
+				$sept.css('display', famiHash[famiName] && famiName !== Object.keys(famiHash).firstOrNull() ? '' : 'none');
+			});
+
 			// Hides the unseen family captions
 			$('main > h1').each(function () {
 				var $head = $(this);
-				if (fami[$head.text().trim()] === true) {
+				if (famiHash[$head.text().trim()] === true) {
 					$head.css('display', '');
 
 				} else {
@@ -62,7 +69,7 @@ $(document).ready(function () {
 			$('#search button').prop('disabled', false).text('close');
 
 		} else {
-			$('nav ul > li, main > section, main > h1').css('display', '');
+			$('nav ul > *, main > section, main > h1').css('display', '');
 
 			$('#search button').prop('disabled', true).text('search');
 		}
@@ -168,11 +175,20 @@ $(document).ready(function () {
 	}
 
 	// Adds peaking effect
-	$(document)
-	.on('scroll', function () {
-		$('main').addClass('scrolling');
-	}.immediate(600))
-	.on('scroll', function () {
+	var lastPeak = null;
+	var havePeak = false;
+	var stopPeak = function () {
+		lastPeak = null;
+		havePeak = false;
 		$('main').removeClass('scrolling');
-	}.debounce(600));
+	}.debounce(600);
+	$(window).on('scroll', function () {
+		if (lastPeak === null) {
+			lastPeak = Date.now();
+		} else if (havePeak === false && Date.now() - lastPeak > 600) {
+			havePeak = true;
+			$('main').addClass('scrolling');
+		}
+		stopPeak();
+	})
 });
