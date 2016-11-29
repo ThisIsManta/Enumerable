@@ -1671,6 +1671,14 @@ describe('Number', function () {
 	});
 });
 
+describe('RegExp', function () {
+	describe('escape()', function () {
+		it('returns the string', function () {
+			expect(RegExp.escape('($-100.00)*')).toBe('\\(\\$\\-100\\.00\\)\\*');
+		});
+	});
+});
+
 describe('String', function () {
 	describe('isString()', function () {
 		it('returns a boolean', function () {
@@ -1761,6 +1769,18 @@ describe('String', function () {
 		it('returns the index', function () {
 			expect('(()())'.latchOf('(', ')')).toBe(5);
 			expect('((()))'.latchOf('(', ')')).toBe(5);
+		});
+	});
+
+	describe('from()', function () {
+		it('returns the RegExp object', function () {
+			var a = RegExp.from('($-100.00)*', 'img');
+			expect(a.source).toBe('\\(\\$\\-100\\.00\\)\\*');
+			expect(a.flags).toBe('gim');
+			expect(a.test('($-100.00)*')).toBe(true);
+
+			a = RegExp.from('a');
+			expect(a.flags).toBe('');
 		});
 	});
 });

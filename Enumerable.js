@@ -4943,6 +4943,22 @@
 		return out;
 	};
 
+	var REG_CHR = /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g;
+
+	/**
+	 * <p><b>Returns</b> the string that have the <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/RegExp#Special_characters_meaning_in_regular_expressions">regular expression special characters</a> escaped.</p>
+	 * <p><b>Accepts</b><br>
+	 * <u>(text: <i>string</i>)</u><br>
+	 * </p>
+	 * <code>
+	 * RegExp.escape('($-100)*');
+	 * </code>
+	 * <meta keywords="string"/>
+	 */
+	RegExp.escape = function (txt) {
+		return txt.replace(REG_CHR, '\\$&');
+	};
+
 	/**
 	 * <p><b>Returns</b> a new array with name-value paris that are copied from the current map.</p>
 	 * <code>
