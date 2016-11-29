@@ -81,6 +81,14 @@ $(document).ready(function () {
 		}
 	});
 
+	// Focuses at the search box when pressed Ctrl+F
+	$(window).on('keydown', function (e) {
+		if (e.ctrlKey && e.which === 70 /* Ctrl+F */ || e.which === 114 /* F3 */) {
+			$srch.focus();
+			e.preventDefault();
+		}
+	});
+
 	// Binds the search clear button event
 	$('#search button').on('click', function (e) {
 		$srch.val('');
