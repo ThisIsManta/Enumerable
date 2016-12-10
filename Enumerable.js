@@ -276,8 +276,8 @@
 	 * f(a);
 	 * </code>
 	 */
-	Function.prototype.cache = function () {
-		var bnd = arguments.length > 0 ? arguments[0] : 8;
+	Function.prototype.cache = function (ar0) {
+		var bnd = arguments.length > 0 ? ar0 : 8;
 		var fnc = this;
 		var key = [];
 		var val = [];
@@ -373,10 +373,7 @@
 	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from">Array.from()</a></p>
 	 * <meta keywords="from"/>
 	 */
-	Array.create = function () {
-		var ar0 = arguments[0];
-		var ar1 = arguments[1];
-		var ar2 = arguments[2];
+	Array.create = function (ar0, ar1, ar2) {
 		var idx = -1;
 		var nam;
 		var tmp;
@@ -538,10 +535,9 @@
 	 * </code>
 	 * <meta keywords="copy,slice,duplicate"/>
 	 */
-	Array.prototype.clone = function () {
-		var ar0 = !!arguments[0];
+	Array.prototype.clone = function (ar0) {
 		var out;
-		if (ar0 === true) {
+		if (ar0) {
 			out = _clone(this);
 
 		} else {
@@ -586,9 +582,7 @@
 	 * </code>
 	 * <meta keywords="hash,dictionary,map"/>
 	 */
-	Array.prototype.toObject = function () {
-		var ar0 = arguments[0];
-		var ar1 = arguments[1];
+	Array.prototype.toObject = function (ar0, ar1) {
 		var idx = -1;
 		var bnd = this.length;
 		var nam;
@@ -722,9 +716,7 @@
 	 * --></code>
 	 * <meta keywords="hash,dictionary,map"/>
 	 */
-	Array.prototype.toMap = function () {
-		var ar0 = arguments[0];
-		var ar1 = arguments[1];
+	Array.prototype.toMap = function (ar0, ar1) {
 		var idx = -1;
 		var bnd = this.length;
 		var out = new Map();
@@ -801,8 +793,7 @@
 	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join">Array.prototype.join()</a></p>
 	 * <meta keywords="text,join,concat"/>
 	 */
-	Array.prototype.toString = function () {
-		var ar0 = arguments[0];
+	Array.prototype.toString = function (ar0) {
 		if (arguments.length === 0) {
 			return _toString.call(this);
 
@@ -837,9 +828,7 @@
 	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter">Array.prototype.filter()</a>, <a>Array.prototype.norm()</a></p>
 	 * <meta keywords="filter"/>
 	 */
-	Array.prototype.where = function () {
-		var ar0 = arguments[0];
-		var ar1 = arguments[1];
+	Array.prototype.where = function (ar0, ar1) {
 		var idx = -1;
 		var jdx = -1;
 		var bnd = this.length;
@@ -906,8 +895,7 @@
 	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map">Array.prototype.map()</a></p>
 	 * <meta keywords="map"/>
 	 */
-	Array.prototype.select = function () {
-		var ar0 = arguments[0];
+	Array.prototype.select = function (ar0) {
 		var idx = -1;
 		var jdx;
 		var bnd = this.length;
@@ -983,11 +971,11 @@
 	 * </code>
 	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach">Array.prototype.forEach()</a></p>
 	 */
-	Array.prototype.invoke = function () {
+	Array.prototype.invoke = function (ar0, ar1, ar2) {
 		var fni = Array.from(arguments).indexOf(Function.isFunction);
-		var idx = fni >= 1 ? arguments[0] : 0;
-		var bnd = fni >= 2 ? arguments[1] : this.length;
-		var stp = fni >= 3 ? arguments[2] : (idx < bnd ? 1 : -1);
+		var idx = fni >= 1 ? ar0 : 0;
+		var bnd = fni >= 2 ? ar1 : this.length;
+		var stp = fni >= 3 ? ar2 : (idx < bnd ? 1 : -1);
 		var fnc = arguments[fni];
 		var brk;
 		var ctx = this._s;
@@ -1066,11 +1054,11 @@
 	 * // 3
 	 * --></code>
 	 */
-	Array.prototype.invokeAsync = function () {
+	Array.prototype.invokeAsync = function (ar0, ar1, ar2) {
 		var fni = Array.from(arguments).indexOf(Function.isFunction);
-		var idx = fni >= 1 ? arguments[0] : 0;
-		var bnd = fni >= 2 ? arguments[1] : this.length;
-		var stp = fni >= 3 ? arguments[2] : (idx < bnd ? 1 : -1);
+		var idx = fni >= 1 ? ar0 : 0;
+		var bnd = fni >= 2 ? ar1 : this.length;
+		var stp = fni >= 3 ? ar2 : (idx < bnd ? 1 : -1);
 		var fnc = arguments[fni];
 		var btc = arguments[fni + 1] !== undefined ? arguments[fni + 1] : 1;
 		var hdr;
@@ -1154,9 +1142,7 @@
 	 * </code>
 	 * <p><b>See also</b> <a>Array.prototype.groupBy()</a></p>
 	 */
-	Array.prototype.invokeWhich = function () {
-		var ar0 = arguments[0];
-		var ar1 = arguments[1];
+	Array.prototype.invokeWhich = function (ar0, ar1) {
 		if (this._g === undefined) {
 			throw new Error(ERR_IWG);
 
@@ -1201,9 +1187,7 @@
 	 * <p><b>See also</b> <a>Array.prototype.where()</a></p>
 	 * <meta keywords="head,skip,where,filter"/>
 	 */
-	Array.prototype.take = function () {
-		var ar0 = arguments[0];
-		var ar1 = arguments[1];
+	Array.prototype.take = function (ar0, ar1) {
 		var idx = -1;
 		var bnd = this.length;
 		var out;
@@ -1268,9 +1252,7 @@
 	 * <p><b>See also</b> <a>Array.prototype.where()</a></p>
 	 * <meta keywords="take,where,filter"/>
 	 */
-	Array.prototype.skip = function () {
-		var ar0 = arguments[0];
-		var ar1 = arguments[1];
+	Array.prototype.skip = function (ar0, ar1) {
 		var idx = -1;
 		var bnd = this.length;
 		var tmp;
@@ -1335,8 +1317,7 @@
 	 * <p><b>See also</b> <a>Array.prototype.where()</a></p>
 	 * <meta keywords="where,filter"/>
 	 */
-	Array.prototype.trim = function () {
-		var ar0 = arguments[0];
+	Array.prototype.trim = function (ar0) {
 		var idx = -1;
 		var bnd = this.length;
 		var out = this.toImmutable();
@@ -1384,8 +1365,7 @@
 	 * a.flatten(true);
 	 * </code>
 	 */
-	Array.prototype.flatten = function () {
-		var ar0 = !!arguments[0];
+	Array.prototype.flatten = function (ar0) {
 		var idx = -1;
 		var jdx;
 		var kdx = -1;
@@ -1397,7 +1377,7 @@
 			tmp = this[idx];
 			if (Array.isArray(tmp)) {
 				if (tmp.length > 0) {
-					if (ar0 === true) {
+					if (ar0) {
 						tmp = tmp.flatten(ar0);
 					}
 					jdx = -1;
@@ -1449,9 +1429,7 @@
 	 * <p><b>See also</b> <a>Array.prototype.all()</a>, <a>Array.prototype.where()</a></p>
 	 * <meta keywords="some"/>
 	 */
-	Array.prototype.any = function () {
-		var ar0 = arguments[0];
-		var ar1 = arguments[1];
+	Array.prototype.any = function (ar0, ar1) {
 		var idx = -1;
 		var bnd = this.length;
 		if (bnd === 0) {
@@ -1513,9 +1491,7 @@
 	 * <p><b>See also</b> <a>Array.prototype.any()</a>, <a>Array.prototype.where()</a></p>
 	 * <meta keywords="every"/>
 	 */
-	Array.prototype.all = function () {
-		var ar0 = arguments[0];
-		var ar1 = arguments[1];
+	Array.prototype.all = function (ar0, ar1) {
 		var idx = -1;
 		var bnd = this.length;
 		if (bnd === 0) {
@@ -1599,9 +1575,8 @@
 	 * </code>
 	 * <p><b>See also</b> <a>Object.isEqual()</a></p>
 	 */
-	Array.prototype.isEqual = function () {
-		var ar0 = Array.create(arguments[0]);
-		var ar1 = arguments[1];
+	Array.prototype.isEqual = function (ar0, ar1) {
+		ar0 = Array.create(ar0);
 		var idx = -1;
 		var bnd = this.length;
 		if (bnd !== ar0.length) {
@@ -1650,9 +1625,8 @@
 	 * <p><b>See also</b> <a>Array.prototype.isEqual()</a></p>
 	 * <meta keywords="equal"/>
 	 */
-	Array.prototype.isAlike = function () {
-		var ar0 = Array.create(arguments[0]).toImmutable();
-		var ar1 = arguments[1];
+	Array.prototype.isAlike = function (ar0, ar1) {
+		ar0 = Array.create(ar0).toImmutable();
 		var idx = -1;
 		var jdx;
 		var bnd = this.length;
@@ -1717,10 +1691,9 @@
 	 * [1, 2, {}].isSubset([1, {}, 2], function (x, y) { return Object.isEqual(x, y); });
 	 * </code>
 	 */
-	Array.prototype.isSubset = function () {
+	Array.prototype.isSubset = function (ar0, ar1) {
+		ar0 = Array.create(ar0);
 		var arr = this;
-		var ar0 = Array.create(arguments[0]);
-		var ar1 = arguments[1];
 		var idx = -1;
 		var bnd = this.length;
 		var ctx = ar0._s;
@@ -1773,9 +1746,7 @@
 	 * [1, 2, 3, 2].indexOf(function (x) { return x === 2; }, 2);
 	 * </code>
 	 */
-	Array.prototype.indexOf = function () {
-		var ar0 = arguments[0];
-		var ar1 = arguments[1];
+	Array.prototype.indexOf = function (ar0, ar1) {
 		var idx = -1;
 		var bnd = this.length;
 		if (arguments.length >= 1) {
@@ -1828,9 +1799,7 @@
 	 * [1, 2, 3, 2].lastIndexOf(function (x) { return x === 2; }, 2);
 	 * </code>
 	 */
-	Array.prototype.lastIndexOf = function () {
-		var ar0 = arguments[0];
-		var ar1 = arguments[1];
+	Array.prototype.lastIndexOf = function (ar0, ar1) {
 		var idx = this.length;
 		if (arguments.length >= 1) {
 			if (Function.isFunction(ar0)) {
@@ -1885,9 +1854,7 @@
 	 * <p><b>See also</b> <a>Array.prototype.first()</a>, <a>Array.prototype.firstOrNull()</a></p>
 	 * <meta keywords="first,search"/>
 	 */
-	Array.prototype.find = function () {
-		var ar0 = arguments[0];
-		var ar1 = arguments[1];
+	Array.prototype.find = function (ar0, ar1) {
 		var idx;
 		if (Function.isFunction(ar0)) {
 			return _find.apply(this, arguments);
@@ -1904,6 +1871,26 @@
 		} else {
 			throw new Error(ERR_INV);
 		}
+	};
+
+	var _createFirstOrLast = function (ins, dfi, emp, nof) {
+		return function () {
+			if (this.length === 0) {
+				return emp.call(this);
+
+			} else if (arguments.length === 0) {
+				return dfi.call(this);
+
+			} else {
+				var idx = this[ins].apply(this, arguments);
+				if (idx >= 0) {
+					return this[idx];
+
+				} else {
+					return nof.call(this);
+				}
+			}
+		};
 	};
 
 	/**
@@ -1929,23 +1916,12 @@
 	 * <p><b>See also</b> <a>Array.prototype.find()</a>, <a>Array.prototype.firstOrNull()</a></p>
 	 * <meta keywords="find"/>
 	 */
-	Array.prototype.first = function () {
-		if (this.length === 0) {
-			throw new Error(ERR_AEA);
-
-		} else if (arguments.length === 0) {
-			return this[0];
-
-		} else {
-			var idx = this.indexOf.apply(this, arguments);
-			if (idx >= 0) {
-				return this[idx];
-
-			} else {
-				throw new Error(ERR_MZM);
-			}
-		}
-	};
+	Array.prototype.first = _createFirstOrLast(
+		'indexOf',
+		function () { return this[0]; },
+		function () { throw new Error(ERR_AEA); },
+		function () { throw new Error(ERR_MZM); }
+	);
 
 	/**
 	 * <p><b>Returns</b> the first member that meets the given condition, otherwise null.</p>
@@ -1969,23 +1945,12 @@
 	 * <p><b>See also</b> <a>Array.prototype.find()</a>, <a>Array.prototype.first()</a></p>
 	 * <meta keywords="find"/>
 	 */
-	Array.prototype.firstOrNull = function () {
-		if (this.length === 0) {
-			return null;
-
-		} else if (arguments.length === 0) {
-			return this[0];
-
-		} else {
-			var idx = this.indexOf.apply(this, arguments);
-			if (idx >= 0) {
-				return this[idx];
-
-			} else {
-				return null;
-			}
-		}
-	};
+	Array.prototype.firstOrNull = _createFirstOrLast(
+		'indexOf',
+		function () { return this[0]; },
+		function () { return null; },
+		function () { return null; }
+	);
 
 	/**
 	 * <p><b>Returns</b> the last member that meets the given condition, otherwise throws an exception.</p>
@@ -2010,23 +1975,12 @@
 	 * <p><b>See also</b> <a>Array.prototype.find()</a>, <a>Array.prototype.lastOrNull()</a></p>
 	 * <meta keywords="find"/>
 	 */
-	Array.prototype.last = function () {
-		if (this.length === 0) {
-			throw new Error(ERR_AEA);
-
-		} else if (arguments.length === 0) {
-			return this[this.length - 1];
-
-		} else {
-			var idx = this.lastIndexOf.apply(this, arguments);
-			if (idx >= 0) {
-				return this[idx];
-
-			} else {
-				throw new Error(ERR_MZM);
-			}
-		}
-	};
+	Array.prototype.last = _createFirstOrLast(
+		'lastIndexOf',
+		function () { return this[this.length - 1]; },
+		function () { throw new Error(ERR_AEA); },
+		function () { throw new Error(ERR_MZM); }
+	);
 
 	/**
 	 * <p><b>Returns</b> the last member that meets the given condition, otherwise null.</p>
@@ -2050,23 +2004,12 @@
 	 * <p><b>See also</b> <a>Array.prototype.find()</a>, <a>Array.prototype.last()</a></p>
 	 * <meta keywords="find"/>
 	 */
-	Array.prototype.lastOrNull = function () {
-		if (this.length === 0) {
-			return null;
-
-		} else if (arguments.length === 0) {
-			return this[this.length - 1];
-
-		} else {
-			var idx = this.lastIndexOf.apply(this, arguments);
-			if (idx >= 0) {
-				return this[idx];
-
-			} else {
-				return null;
-			}
-		}
-	};
+	Array.prototype.lastOrNull = _createFirstOrLast(
+		'lastIndexOf',
+		function () { return this[this.length - 1]; },
+		function () { return null; },
+		function () { return null; }
+	);
 
 	/**
 	 * <p><b>Returns</b> the one and only member that meets the given condition, otherwise throws an exception.</p>
@@ -2093,7 +2036,7 @@
 	 * <p><b>See also</b> <a>Array.prototype.find()</a>, <a>Array.prototype.singleOrNull()</a></p>
 	 * <meta keywords="find"/>
 	 */
-	Array.prototype.single = function () {
+	Array.prototype.single = function (ar0) {
 		if (this.length === 0) {
 			throw new Error(ERR_AEA);
 
@@ -2106,7 +2049,6 @@
 			}
 
 		} else if (arguments.length === 1) {
-			var ar0 = arguments[0];
 			var idx = this.indexOf.call(this, ar0);
 			if (idx >= 0) {
 				if (idx === this.lastIndexOf.call(this, ar0)) {
@@ -2149,7 +2091,7 @@
 	 * <p><b>See also</b> <a>Array.prototype.find()</a>, <a>Array.prototype.single()</a></p>
 	 * <meta keywords="find"/>
 	 */
-	Array.prototype.singleOrNull = function () {
+	Array.prototype.singleOrNull = function (ar0) {
 		if (this.length === 0) {
 			return null;
 
@@ -2162,9 +2104,9 @@
 			}
 
 		} else if (arguments.length === 1) {
-			var idx = this.indexOf.call(this, arguments[0]);
+			var idx = this.indexOf.call(this, ar0);
 			if (idx >= 0) {
-				if (idx === this.lastIndexOf.call(this, arguments[0])) {
+				if (idx === this.lastIndexOf.call(this, ar0)) {
 					return this[idx];
 
 				} else {
@@ -2201,8 +2143,7 @@
 	 * </code>
 	 * <meta keywords="unique"/>
 	 */
-	Array.prototype.distinct = function () {
-		var ar0 = arguments[0];
+	Array.prototype.distinct = function (ar0) {
 		var hsh = {};
 		var idx = -1;
 		var jdx = -1;
@@ -2302,9 +2243,7 @@
 	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push">Array.prototype.push()</a>, <a>Array.prototype.addRange()</a></p>
 	 * <meta keywords="push,append,insert,splice"/>
 	 */
-	Array.prototype.add = function () {
-		var ar0 = arguments[0];
-		var ar1 = arguments[1];
+	Array.prototype.add = function (ar0, ar1) {
 		if (arguments.length === 1 || ar1 === this.length) {
 			this.push(ar0);
 
@@ -2341,9 +2280,8 @@
 	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push">Array.prototype.push()</a>, <a>Array.prototype.add()</a></p>
 	 * <meta keywords="push,append,insert,splice"/>
 	 */
-	Array.prototype.addRange = function () {
-		var ar0 = Array.create(arguments[0]);
-		var ar1 = arguments[1];
+	Array.prototype.addRange = function (ar0, ar1) {
+		ar0 = Array.create(ar0);
 		if (arguments.length === 1 || ar1 === this.length) {
 			Array.prototype.splice.apply(this, [this.length, 0].concat(ar0));
 
@@ -2387,9 +2325,7 @@
 	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice">Array.prototype.splice()</a>, <a>Array.prototype.removeAll()</a>, <a>Array.prototype.removeAt()</a>, <a>Array.prototype.removeRange()</a></p>
 	 * <meta keywords="splice"/>
 	 */
-	Array.prototype.remove = function () {
-		var ar0 = arguments[0];
-		var ar1 = arguments[1];
+	Array.prototype.remove = function (ar0, ar1) {
 		var idx;
 		if (arguments.length <= 2) {
 			idx = this.indexOf(ar0);
@@ -2421,8 +2357,7 @@
 	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice">Array.prototype.splice()</a>, <a>Array.prototype.remove()</a>, <a>Array.prototype.removeAll()</a>, <a>Array.prototype.removeRange()</a></p>
 	 * <meta keywords="splice"/>
 	 */
-	Array.prototype.removeAt = function () {
-		var ar0 = arguments[0];
+	Array.prototype.removeAt = function (ar0) {
 		if (arguments.length === 1) {
 			if (Number.isSafeInteger(ar0) && ar0 >= 0 && ar0 <= this.length) {
 				this.splice(ar0, 1);
@@ -2455,8 +2390,8 @@
 	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice">Array.prototype.splice()</a>, <a>Array.prototype.remove()</a>, <a>Array.prototype.removeAll()</a>, <a>Array.prototype.removeAt()</a></p>
 	 * <meta keywords="splice"/>
 	 */
-	Array.prototype.removeRange = function () {
-		var ar0 = Array.create(arguments[0]);
+	Array.prototype.removeRange = function (ar0) {
+		ar0 = Array.create(ar0);
 		var idx = -1;
 		var bnd = ar0.length;
 		if (arguments.length === 1) {
@@ -2488,8 +2423,7 @@
 	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice">Array.prototype.splice()</a>, <a>Array.prototype.remove()</a>, <a>Array.prototype.removeAt()</a>, <a>Array.prototype.removeRange()</a></p>
 	 * <meta keywords="splice"/>
 	 */
-	Array.prototype.removeAll = function () {
-		var ar0 = arguments[0];
+	Array.prototype.removeAll = function (ar0) {
 		if (arguments.length === 0) {
 			this.splice(0, this.length);
 
@@ -2522,9 +2456,7 @@
 	 * </code>
 	 * <p><b>See also</b> <a>Array.prototype.splitAt()</a>, <a>Array.prototype.groupOf()</a></p>
 	 */
-	Array.prototype.split = function () {
-		var ar0 = arguments[0];
-		var ar1 = arguments[1];
+	Array.prototype.split = function (ar0, ar1) {
 		var idx = -1;
 		var pvt = 0;
 		var bnd = this.length;
@@ -2579,8 +2511,7 @@
 	 * </code>
 	 * <p><b>See also</b> <a>Array.prototype.split()</a></p>
 	 */
-	Array.prototype.splitAt = function () {
-		var ar0 = arguments[0];
+	Array.prototype.splitAt = function (ar0) {
 		var out = [];
 		if (Number.isSafeInteger(ar0) && arguments.length === 1) {
 			if (ar0 >= 0 && ar0 < this.length) {
@@ -2619,10 +2550,7 @@
 	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice">Array.prototype.splice()</a>, <a>Array.prototype.replaceAt()</a></p>
 	 * <meta keywords="splice"/>
 	 */
-	Array.prototype.replace = function () {
-		var ar0 = arguments[0];
-		var ar1 = arguments[1];
-		var ar2 = arguments[2];
+	Array.prototype.replace = function (ar0, ar1, ar2) {
 		var idx = -1;
 		var bnd = this.length;
 		if (arguments.length >= 2) {
@@ -2668,9 +2596,7 @@
 	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice">Array.prototype.splice()</a>, <a>Array.prototype.replace()</a></p>
 	 * <meta keywords="splice"/>
 	 */
-	Array.prototype.replaceAt = function () {
-		var ar0 = arguments[0];
-		var ar1 = arguments[1];
+	Array.prototype.replaceAt = function (ar0, ar1) {
 		if (arguments.length !== 2) {
 			throw new Error(ERR_INV);
 
@@ -2693,8 +2619,8 @@
 	 * </code>
 	 * <meta keywords="set"/>
 	 */
-	Array.prototype.union = function () {
-		var ar0 = Array.create(arguments[0]);
+	Array.prototype.union = function (ar0) {
+		ar0 = Array.create(ar0);
 		var idx = -1;
 		var jdx = this.length - 1;
 		var bnd = ar0.length;
@@ -2722,8 +2648,8 @@
 	 * </code>
 	 * <meta keywords="set"/>
 	 */
-	Array.prototype.intersect = function () {
-		var ar0 = Array.create(arguments[0]);
+	Array.prototype.intersect = function (ar0) {
+		ar0 = Array.create(ar0);
 		var idx = -1;
 		var jdx = -1;
 		var bnd = this.length;
@@ -2755,8 +2681,8 @@
 	 * </code>
 	 * <meta keywords="set"/>
 	 */
-	Array.prototype.difference = function () {
-		var ar0 = Array.create(arguments[0]);
+	Array.prototype.difference = function (ar0) {
+		ar0 = Array.create(ar0);
 		var idx = -1;
 		var jdx = -1;
 		var bnd = this.length;
@@ -2813,9 +2739,7 @@
 	 * </code>
 	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort">Array.prototype.sort()</a></p>
 	 */
-	Array.prototype.sortBy = function () {
-		var ar0 = arguments[0];
-		var ar1 = arguments[1];
+	Array.prototype.sortBy = function (ar0, ar1) {
 		var out;
 		var ctx = this._s;
 		if (arguments.length <= 2) {
@@ -2972,8 +2896,7 @@
 	 * </code>
 	 * <p><b>See also</b> <a>Array.prototype.invokeWhich()</a></p>
 	 */
-	Array.prototype.groupBy = function () {
-		var ar0 = arguments[0];
+	Array.prototype.groupBy = function (ar0) {
 		var idx = -1;
 		var bnd = this.length;
 		var tmp;
@@ -3045,8 +2968,7 @@
 	 * </code>
 	 * <p><b>See also</b> <a>Array.prototype.split()</a></p>
 	 */
-	Array.prototype.groupOf = function () {
-		var ar0 = arguments[0];
+	Array.prototype.groupOf = function (ar0) {
 		var idx = -1;
 		var bnd = this.length;
 		var tmp;
@@ -3093,10 +3015,8 @@
 	 * </code>
 	 * <p><b>See also</b> <a>Array.prototype.split()</a></p>
 	 */
-	Array.prototype.joinBy = function () {
-		var ar0 = Array.create(arguments[0]);
-		var ar1 = arguments[1];
-		var ar2 = arguments[2];
+	Array.prototype.joinBy = function (ar0, ar1, ar2) {
+		ar0 = Array.create(ar0);
 		var idx = -1;
 		var jdx;
 		var bnd = this.length;
@@ -3185,9 +3105,7 @@
 	 * a.countBy('work', 'Singer');
 	 * </code>
 	 */
-	Array.prototype.countBy = function () {
-		var ar0 = arguments[0];
-		var ar1 = arguments[1];
+	Array.prototype.countBy = function (ar0, ar1) {
 		var idx = -1;
 		var bnd = this.length;
 		var out = 0;
@@ -3241,8 +3159,7 @@
 	 * </code>
 	 * <p><b>See also</b> <a>Array.prototype.max()</a>, <a>Array.prototype.mod()</a></p>
 	 */
-	Array.prototype.min = function () {
-		var ar0 = arguments[0];
+	Array.prototype.min = function (ar0) {
 		var idx = 0;
 		var jdx = 0;
 		var bnd = this.length;
@@ -3325,8 +3242,7 @@
 	 * <p><b>See also</b> <a>Array.prototype.min()</a>, <a>Array.prototype.mod()</a></p>
 	 * <p><b>See also</b> <a>Array.prototype.split()</a></p>
 	 */
-	Array.prototype.max = function () {
-		var ar0 = arguments[0];
+	Array.prototype.max = function (ar0) {
 		var idx = 0;
 		var jdx = 0;
 		var bnd = this.length;
@@ -3409,8 +3325,7 @@
 	 * <p><b>See also</b> <a>Array.prototype.min()</a>, <a>Array.prototype.max()</a></p>
 	 * <meta keywords="mode"/>
 	 */
-	Array.prototype.mod = function () {
-		var ar0 = arguments[0];
+	Array.prototype.mod = function (ar0) {
 		var hsh = {};
 		var idx = -1;
 		var bnd = this.length;
@@ -3489,8 +3404,7 @@
 	 * <p><b>See also</b> <a>Array.prototype.avg()</a></p>
 	 * <meta keywords="total"/>
 	 */
-	Array.prototype.sum = function () {
-		var ar0 = arguments[0];
+	Array.prototype.sum = function (ar0) {
 		var idx = 0;
 		var bnd = this.length;
 		var tmp;
@@ -3577,8 +3491,7 @@
 	 * <p><b>See also</b> <a>Array.prototype.where()</a></p>
 	 * <meta keywords="where,filter,compact,clean"/>
 	 */
-	Array.prototype.norm = function () {
-		var ar0 = arguments[0];
+	Array.prototype.norm = function (ar0) {
 		var idx = -1;
 		var jdx = -1;
 		var bnd = this.length;
@@ -3644,8 +3557,7 @@
 	 * <p><b>See also</b> <a>Array.prototype.where()</a></p>
 	 * <meta keywords="select"/>
 	 */
-	Array.prototype.cast = function () {
-		var ar0 = arguments[0];
+	Array.prototype.cast = function (ar0) {
 		var nam = Function.isFunction(ar0) ? ar0.name : ar0;
 		var idx = -1;
 		var jdx = -1;
@@ -3756,8 +3668,8 @@
 	 * </code>
 	 * <meta keywords="product,set,tuple"/>
 	 */
-	Array.prototype.cross = function () {
-		var ar0 = Array.create(arguments[0]);
+	Array.prototype.cross = function (ar0) {
+		ar0 = Array.create(ar0);
 		var idx = -1;
 		var jdx;
 		var kdx = -1;
@@ -3801,8 +3713,8 @@
 	 * [[1, 2], [3]].zip(['a', 'b']);
 	 * </code>
 	 */
-	Array.prototype.zip = function () {
-		var ar0 = Array.create(arguments[0]);
+	Array.prototype.zip = function (ar0) {
+		ar0 = Array.create(ar0);
 		var idx = -1;
 		var jdx;
 		var bnd = this.length;
@@ -3866,10 +3778,7 @@
 	 * </code>
 	 * <meta keywords="find,search,tree"/>
 	 */
-	Array.prototype.seek = function () {
-		var ar0 = arguments[0];
-		var ar1 = arguments[1];
-		var ar2 = arguments[2];
+	Array.prototype.seek = function (ar0, ar1, ar2) {
 		var ctx = this._s;
 		if (arguments.length >= 2 && typeof ar0 === 'string' && ar0.length > 0 && (typeof ar1 === 'string' && ar1.length > 0 || Function.isFunction(ar1))) {
 			return (function (lst) {
@@ -4048,9 +3957,8 @@
 	 * <p><b>See also</b> <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Object/assign">Object.assign()</a>, <a>Object.clone()</a></p>
 	 * <meta keywords="assign,extend"/>
 	 */
-	Object.merge = function () {
-		var out = arguments[0];
-		if (Object.isObject(out) === false) {
+	Object.merge = function (ar0) {
+		if (Object.isObject(ar0) === false) {
 			throw new Error(ERR_INV);
 		}
 		var arr = Array.from(arguments).slice(1);
@@ -4058,10 +3966,10 @@
 		var bnd = arr.length;
 		while (++idx < bnd) {
 			if (Object.isObject(arr[idx])) {
-				_extend(out, arr[idx]);
+				_extend(ar0, arr[idx]);
 			}
 		}
-		return out;
+		return ar0;
 	};
 
 	/**
