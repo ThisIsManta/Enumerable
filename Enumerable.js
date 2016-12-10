@@ -6,19 +6,20 @@
  * https://github.com/ThisIsManta/Enumerable.git
 */
 (function () {
-	var ERR_INV = 'one or more parameters were not valid';
-	var ERR_OOR = 'an index was out-of-range';
-	var ERR_LEN = 'a length was not valid';
-	var ERR_AES = 'a string cannot be empty';
-	var ERR_AEA = 'an array cannot be empty';
-	var ERR_MZM = 'an array had no matching members';
-	var ERR_AMM = 'an array had more than one matching member';
-	var ERR_MMM = 'an array had too many matching members';
-	var ERR_NOB = 'one or more array members were not an object';
-	var ERR_NST = 'one or more array members were not a string';
-	var ERR_IWG = '[invokeWhich] must be called after [groupBy]';
-	var ERR_BID = 'a non-object type was not allowed';
-	var ERR_IPR = 'a variable name was not allowed';
+	var ERR_INV = new Error('one or more parameters were not valid');
+	var ERR_OOR = new RangeError('an index was out-of-range');
+	var ERR_SGS = new RangeError('a start index was greater than a stop index');
+	var ERR_LEN = new Error('a length was not valid');
+	var ERR_EST = new Error('a string cannot be empty');
+	var ERR_AEA = new Error('an array cannot be empty');
+	var ERR_MZM = new Error('an array had no matching members');
+	var ERR_MZM = new Error('an array had more than one matching member');
+	var ERR_MMM = new Error('an array had too many matching members');
+	var ERR_NOB = new TypeError('one or more array members were not an object');
+	var ERR_NST = new TypeError('one or more array members were not a string');
+	var ERR_IWG = new Error('[invokeWhich] must be called after [groupBy]');
+	var ERR_BID = new TypeError('a non-object type was not allowed');
+	var ERR_IPR = new Error('a variable name was not allowed');
 
 	var win;
 	try {
@@ -119,7 +120,7 @@
 			return out;
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 	};
 
@@ -174,7 +175,7 @@
 			return out;
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 	};
 
@@ -246,7 +247,7 @@
 			return out;
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 	};
 
@@ -318,7 +319,7 @@
 			return out;
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 	};
 
@@ -400,7 +401,7 @@
 					out._m = false;
 
 				} else {
-					throw new Error(ERR_LEN);
+					throw ERR_LEN;
 				}
 
 			} else {
@@ -453,7 +454,7 @@
 			out._m = false;
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 		return out;
 	};
@@ -474,7 +475,7 @@
 	 */
 	Array.prototype.bind = function (ctx) {
 		if (arguments.length === 0) {
-			throw new TypeError(ERR_BID);
+			throw ERR_BID;
 
 		} else if (ctx === undefined || ctx === null) {
 			delete this._s;
@@ -687,7 +688,7 @@
 			}
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 		return out;
 	};
@@ -771,7 +772,7 @@
 			}
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 		return out;
 	};
@@ -801,7 +802,7 @@
 			return this.join(ar0);
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 	};
 
@@ -863,7 +864,7 @@
 			}
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 		if (this._s !== undefined) {
 			out._s = this._s;
@@ -903,7 +904,7 @@
 		var tmp;
 		var out;
 		if (arguments.length !== 1) {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 		if (Function.isFunction(ar0)) {
 			out = new Array(bnd);
@@ -914,7 +915,7 @@
 		} else if (typeof ar0 === 'string' || Number.isSafeInteger(ar0) && (ar0 = ar0.toString())) {
 			out = new Array(bnd);
 			if (ar0.length === 0) {
-				throw new Error(ERR_AES);
+				throw ERR_EST;
 			}
 			while (++idx < bnd) {
 				out[idx] = this[idx][ar0];
@@ -933,7 +934,7 @@
 			}
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 		if (this._s !== undefined) {
 			out._s = this._s;
@@ -1011,11 +1012,11 @@
 				}
 
 			} else {
-				throw new RangeError(ERR_OOR);
+				throw ERR_OOR;
 			}
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 		return this;
 	};
@@ -1113,11 +1114,11 @@
 				setTimeout(hdr);
 
 			} else {
-				throw new RangeError(ERR_OOR);
+				throw ERR_OOR;
 			}
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 		return pwn;
 	};
@@ -1144,7 +1145,7 @@
 	 */
 	Array.prototype.invokeWhich = function (ar0, ar1) {
 		if (this._g === undefined) {
-			throw new Error(ERR_IWG);
+			throw ERR_IWG;
 
 		} else if (Function.isFunction(ar1) && arguments.length === 2) {
 			if (ar0 === undefined) {
@@ -1159,7 +1160,7 @@
 			this._g[ar0].invoke(ar1);
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 		return this;
 	};
@@ -1204,14 +1205,14 @@
 
 		} else if (Number.isSafeInteger(ar0)) {
 			if (ar0 < 0 || ar0 > bnd) {
-				throw new RangeError(ERR_OOR);
+				throw ERR_OOR;
 			}
 			if (Number.isSafeInteger(ar1)) {
 				if (ar1 < 0 || ar1 > bnd) {
-					throw new RangeError(ERR_OOR);
+					throw ERR_OOR;
 
 				} else if (ar0 > ar1) {
-					throw new RangeError(ERR_SGS);
+					throw ERR_SGS;
 				}
 				out = this.slice(ar0, ar1);
 
@@ -1220,7 +1221,7 @@
 			}
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 		if (this._s !== undefined) {
 			out._s = this._s;
@@ -1272,14 +1273,14 @@
 
 		} else if (Number.isSafeInteger(ar0)) {
 			if (ar0 < 0 || ar0 > bnd) {
-				throw new RangeError(ERR_OOR);
+				throw ERR_OOR;
 			}
 			if (Number.isSafeInteger(ar1)) {
 				if (ar1 < 0 || ar1 > bnd) {
-					throw new RangeError(ERR_OOR);
+					throw ERR_OOR;
 
 				} else if (ar0 > ar1) {
-					throw new RangeError(ERR_SGS);
+					throw ERR_SGS;
 				}
 				out = this.toImmutable();
 				out.splice(ar0, ar1 - ar0);
@@ -1289,7 +1290,7 @@
 			}
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 		if (this._s !== undefined) {
 			out._s = this._s;
@@ -1498,7 +1499,7 @@
 			return true;
 
 		} else if (arguments.length === 0) {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 
 		} else if (Function.isFunction(ar0)) {
 			while (++idx < bnd) {
@@ -1602,7 +1603,7 @@
 			return true;
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 	};
 
@@ -1667,7 +1668,7 @@
 			return ar0.length === 0;
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 	};
 
@@ -1714,7 +1715,7 @@
 			}
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 		if (ctx === undefined) {
 			delete ar0._s;
@@ -1774,7 +1775,7 @@
 			}
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 	};
 
@@ -1826,7 +1827,7 @@
 			}
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 	};
 
@@ -1869,7 +1870,7 @@
 			}
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 	};
 
@@ -1919,8 +1920,8 @@
 	Array.prototype.first = _createFirstOrLast(
 		'indexOf',
 		function () { return this[0]; },
-		function () { throw new Error(ERR_AEA); },
-		function () { throw new Error(ERR_MZM); }
+		function () { throw ERR_EAR; },
+		function () { throw ERR_MZM; }
 	);
 
 	/**
@@ -1978,8 +1979,8 @@
 	Array.prototype.last = _createFirstOrLast(
 		'lastIndexOf',
 		function () { return this[this.length - 1]; },
-		function () { throw new Error(ERR_AEA); },
-		function () { throw new Error(ERR_MZM); }
+		function () { throw ERR_EAR; },
+		function () { throw ERR_MZM; }
 	);
 
 	/**
@@ -2038,14 +2039,14 @@
 	 */
 	Array.prototype.single = function (ar0) {
 		if (this.length === 0) {
-			throw new Error(ERR_AEA);
+			throw ERR_EAR;
 
 		} else if (arguments.length === 0) {
 			if (this.length === 1) {
 				return this[0];
 
 			} else {
-				throw new Error(ERR_AMM);
+				throw ERR_AMM;
 			}
 
 		} else if (arguments.length === 1) {
@@ -2055,15 +2056,15 @@
 					return this[idx];
 
 				} else {
-					throw new Error(ERR_MMM);
+					throw ERR_MMM;
 				}
 
 			} else {
-				throw new Error(ERR_MZM);
+				throw ERR_MZM;
 			}
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 	};
 
@@ -2118,7 +2119,7 @@
 			}
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 	};
 
@@ -2216,7 +2217,7 @@
 			}
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 		if (this._s !== undefined) {
 			out._s = this._s;
@@ -2252,11 +2253,11 @@
 				this.splice(ar1, 0, ar0);
 
 			} else {
-				throw new RangeError(ERR_OOR);
+				throw ERR_OOR;
 			}
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 		return this;
 	};
@@ -2295,11 +2296,11 @@
 				}
 
 			} else {
-				throw new RangeError(ERR_OOR);
+				throw ERR_OOR;
 			}
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 		return this;
 	};
@@ -2337,7 +2338,7 @@
 			}
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 	};
 
@@ -2363,11 +2364,11 @@
 				this.splice(ar0, 1);
 
 			} else {
-				throw new RangeError(ERR_OOR);
+				throw ERR_OOR;
 			}
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 		return this;
 	};
@@ -2400,7 +2401,7 @@
 			}
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 		return this;
 	};
@@ -2436,7 +2437,7 @@
 			}
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 		return this;
 	};
@@ -2489,7 +2490,7 @@
 			}
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 		if (this.length > 0 && pvt <= bnd) {
 			out.push(this.slice(pvt));
@@ -2523,11 +2524,11 @@
 				return out;
 
 			} else {
-				throw new RangeError(ERR_OOR);
+				throw ERR_OOR;
 			}
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 	};
 
@@ -2575,7 +2576,7 @@
 			}
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 		return this;
 	};
@@ -2598,10 +2599,10 @@
 	 */
 	Array.prototype.replaceAt = function (ar0, ar1) {
 		if (arguments.length !== 2) {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 
 		} else if (!Number.isSafeInteger(ar0) || ar0 < 0 || ar0 >= this.length) {
-			throw new RangeError(ERR_OOR);
+			throw ERR_OOR;
 
 		} else {
 			this[ar0] = ar1;
@@ -2634,7 +2635,7 @@
 			return out;
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 	};
 
@@ -2667,7 +2668,7 @@
 			return out;
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 	};
 
@@ -2700,7 +2701,7 @@
 			return out;
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 	};
 
@@ -2764,7 +2765,7 @@
 					});
 
 				} else {
-					throw new Error(ERR_INV);
+					throw ERR_INV;
 				}
 				ar0 = undefined;
 
@@ -2775,14 +2776,14 @@
 
 			} else if (typeof ar0 === 'string') {
 				if (ar0.length === 0) {
-					throw new Error(ERR_AES);
+					throw ERR_EST;
 				}
 				out = this.select(function (itm) {
 					return { v: itm, r: itm[ar0] };
 				});
 
 			} else {
-				throw new Error(ERR_INV);
+				throw ERR_INV;
 			}
 			if (this.length <= 0) {
 				return this;
@@ -2831,7 +2832,7 @@
 						return val;
 
 					} else {
-						throw new Error(ERR_INV);
+						throw ERR_INV;
 					}
 
 				} else {
@@ -2907,7 +2908,7 @@
 		var out = [];
 		if (typeof ar0 === 'string') {
 			if (ar0.length === 0) {
-				throw new Error(ERR_AES);
+				throw ERR_EST;
 
 			} else {
 				att = ar0;
@@ -2943,7 +2944,7 @@
 			}
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 		out._g = hsh;
 		if (this._s !== undefined) {
@@ -2988,7 +2989,7 @@
 			return out;
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 	};
 
@@ -3025,11 +3026,11 @@
 		var nam;
 		var ctx = this._s;
 		if (this.any(function (obj) { return typeof obj !== 'object'; }) || ar0.any(function (obj) { return typeof obj !== 'object'; })) {
-			throw new Error(ERR_NOB);
+			throw ERR_NOB;
 
 		} else if (typeof ar1 === 'string') {
 			if (ar1.length === 0) {
-				throw new Error(ERR_AES);
+				throw ERR_EST;
 
 			} else {
 				while (++idx < bnd) {
@@ -3077,7 +3078,7 @@
 			}
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 		return this;
 	};
@@ -3111,7 +3112,7 @@
 		var out = 0;
 		var ctx = this._s;
 		if (arguments.length < 1 || arguments.length > 2) {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 
 		} else if (typeof ar0 === 'string') {
 			while (++idx < bnd) {
@@ -3185,7 +3186,7 @@
 
 			} else if (typeof ar0 === 'string') {
 				if (ar0.length === 0) {
-					throw new Error(ERR_AES);
+					throw ERR_EST;
 				}
 				val = this[0][ar0];
 				while (++idx < bnd) {
@@ -3207,7 +3208,7 @@
 				}
 
 			} else {
-				throw new Error(ERR_INV);
+				throw ERR_INV;
 			}
 
 			if (jdx >= 0) {
@@ -3268,7 +3269,7 @@
 
 			} else if (typeof ar0 === 'string') {
 				if (ar0.length === 0) {
-					throw new Error(ERR_AES);
+					throw ERR_EST;
 				}
 				val = this[0][ar0];
 				while (++idx < bnd) {
@@ -3290,7 +3291,7 @@
 				}
 
 			} else {
-				throw new Error(ERR_INV);
+				throw ERR_INV;
 			}
 
 			if (jdx >= 0) {
@@ -3351,7 +3352,7 @@
 
 			} else if (typeof ar0 === 'string') {
 				if (ar0.length === 0) {
-					throw new Error(ERR_AES);
+					throw ERR_EST;
 				}
 				while (++idx < bnd) {
 					tmp = this[idx][ar0].toString();
@@ -3375,7 +3376,7 @@
 				}
 
 			} else {
-				throw new Error(ERR_INV);
+				throw ERR_INV;
 			}
 			return this[Array.create(hsh).max(function (obj) { return obj.value.c; }).value.i];
 		}
@@ -3425,7 +3426,7 @@
 
 			} else if (typeof ar0 === 'string') {
 				if (ar0.length === 0) {
-					throw new Error(ERR_AES);
+					throw ERR_EST;
 				}
 				val = this[0][ar0];
 				while (++idx < bnd) {
@@ -3445,7 +3446,7 @@
 				}
 
 			} else {
-				throw new Error(ERR_INV);
+				throw ERR_INV;
 			}
 			return val;
 		}
@@ -3523,7 +3524,7 @@
 			}
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 		if (this._s !== undefined) {
 			out._s = this._s;
@@ -3646,7 +3647,7 @@
 				}
 
 			} else {
-				throw new Error(ERR_INV);
+				throw ERR_INV;
 			}
 			if (this._s !== undefined) {
 				out._s = this._s;
@@ -3654,7 +3655,7 @@
 			return out;
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 	};
 
@@ -3695,7 +3696,7 @@
 			}
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 		out._x = true;
 		if (this._s !== undefined) {
@@ -3735,11 +3736,11 @@
 				}
 
 			} else {
-				throw new TypeError(ERR_NST);
+				throw ERR_NST;
 			}
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 		if (this._s !== undefined) {
 			out._s = this._s;
@@ -3796,8 +3797,12 @@
 			})(this);
 
 		} else {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
+	};
+
+	Array.prototype.whereAs = function () {
+		
 	};
 
 	/**
@@ -3891,7 +3896,7 @@
 	 */
 	Object.isEqual = function (ar0, ar1) {
 		if (arguments.length !== 2) {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 
 		} else if (ar0 === ar1) {
 			return true;
@@ -3959,7 +3964,7 @@
 	 */
 	Object.merge = function (ar0) {
 		if (Object.isObject(ar0) === false) {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 		var arr = Array.from(arguments).slice(1);
 		var idx = -1;
@@ -4061,7 +4066,7 @@
 	 */
 	Math.percent = function (ar0) {
 		if (Array.isArray(ar0) === false || ar0.length > 0 && ar0.any(function (val) { return Number.isNumber(val) === false || isFinite(val) === false; })) {
-			throw new Error(ERR_INV);
+			throw ERR_INV;
 		}
 
 		var sum = ar0.sum();
@@ -4765,7 +4770,7 @@
 		if (Object.isObject(opt)) {
 			for (nam in opt) {
 				if (/\$\$\w/.test(nam)) {
-					throw new Error(ERR_IPR);
+					throw ERR_IPR;
 
 				} else if (nam.startsWith('_') === false && opt.hasOwnProperty(nam)) {
 					vrs += ',' + nam + '=$$i.' + nam;
