@@ -551,13 +551,8 @@
 		return out;
 	};
 
-	Array.prototype.toImmutable = function () {
-		if (this._m === undefined || this._m === true) {
-			return this.clone();
-
-		} else {
-			return this;
-		}
+	var _createImmutable = function (ar0) {
+		return ar0._m === false ? ar0 : ar0.clone();
 	};
 
 	/**
@@ -1201,7 +1196,7 @@
 			out = this.slice(0, idx);
 
 		} else if (!isFinite(ar0) || ar0 >= Number.MAX_SAFE_INTEGER) {
-			out = this.toImmutable();
+			out = _createImmutable(this);
 
 		} else if (Number.isSafeInteger(ar0)) {
 			if (ar0 < 0 || ar0 > bnd) {
@@ -1282,7 +1277,7 @@
 				} else if (ar0 > ar1) {
 					throw ERR_SGS;
 				}
-				out = this.toImmutable();
+				out = _createImmutable(this);
 				out.splice(ar0, ar1 - ar0);
 
 			} else {
@@ -1321,7 +1316,7 @@
 	Array.prototype.trim = function (ar0) {
 		var idx = -1;
 		var bnd = this.length;
-		var out = this.toImmutable();
+		var out = _createImmutable(this);
 		if (Function.isFunction(ar0)) {
 			while (--bnd >= 0) {
 				if (!ar0.call(this._s, this[bnd], bnd, this)) {
@@ -1627,7 +1622,8 @@
 	 * <meta keywords="equal"/>
 	 */
 	Array.prototype.isAlike = function (ar0, ar1) {
-		ar0 = Array.create(ar0).toImmutable();
+		ar0 = Array.create(ar0);
+		ar0 = _createImmutable(ar0);
 		var idx = -1;
 		var jdx;
 		var bnd = this.length;
@@ -2625,7 +2621,7 @@
 		var idx = -1;
 		var jdx = this.length - 1;
 		var bnd = ar0.length;
-		var out = this.toImmutable();
+		var out = _createImmutable(this);
 		if (arguments.length === 1) {
 			while (++idx < bnd) {
 				if (!this.has(ar0[idx])) {
