@@ -381,25 +381,25 @@ describe('Array', function () {
 		});
 	});
 
-	describe('toImmutable()', function () {
+	describe('asImmutable()', function () {
 		it('returns an immutable array', function () {
 			a = [1, 2, 3];
-			expect(a.toImmutable()).not.toBe(a);
+			expect(a.asImmutable()).not.toBe(a);
 
 			a = Array.create([]);
-			expect(a.toImmutable().length).toBe(0);
+			expect(a.asImmutable().length).toBe(0);
 
 			a = Array.create({ length: 0 });
-			expect(a.toImmutable()).toBe(a);
+			expect(a.asImmutable()).toBe(a);
 
 			a = Array.create({});
-			expect(a.toImmutable()).toBe(a);
+			expect(a.asImmutable()).toBe(a);
 
 			a = Array.create('abc');
-			expect(a.toImmutable()).toBe(a);
+			expect(a.asImmutable()).toBe(a);
 
 			a = Array.create(1, null);
-			expect(a.toImmutable()).toBe(a);
+			expect(a.asImmutable()).toBe(a);
 		});
 	});
 
@@ -1532,7 +1532,35 @@ describe('Array', function () {
 			expect(a.seek('v', function (x) { return x.i === 3; }).i).toBe(3);
 			expect(a.seek('v', function (x) { return x.i === 4; }).i).toBe(4);
 			expect(a.seek('v', function (x) { return x.i === 5; })).toBeUndefined();
+		});
+	});
 
+	describe('search()', function () {
+		it('returns the new array', function () {
+			a = ['Alex Johnson', 'Brad Simpson', 'Cody Simpson'];
+			expect(a.search(undefined)).toEqual(a);
+			expect(a.search(null)).toEqual(a);
+			expect(a.search('')).toEqual(a);
+			expect(a.search('  ')).toEqual(a);
+
+			expect(a.search('alex')).toEqual(['Alex Johnson']);
+			expect(a.search('simp')).toEqual(['Brad Simpson', 'Cody Simpson']);
+			expect(a.search('cody simp')).toEqual(['Cody Simpson']);
+
+			a = [{ name: 'Alex Johnson' }, { name: 'Brad Simpson' }, { name: 'Cody Simpson' }];
+			expect(a.search('alex', 'name')).toEqual([{ name: 'Alex Johnson' }]);
+			expect(a.search('simp', 'name')).toEqual([{ name: 'Brad Simpson' }, { name: 'Cody Simpson' }]);
+			expect(a.search('cody simp', 'name')).toEqual([{ name: 'Cody Simpson' }]);
+
+			f = function (x, i, k) {
+				expect(Object.isObject(x)).toBe(true);
+				expect(Number.isNumber(i)).toBe(true);
+				expect(k).toBe(a);
+				return x.name;
+			};
+			expect(a.search('alex', f)).toEqual([{ name: 'Alex Johnson' }]);
+			expect(a.search('simp', f)).toEqual([{ name: 'Brad Simpson' }, { name: 'Cody Simpson' }]);
+			expect(a.search('cody simp', f)).toEqual([{ name: 'Cody Simpson' }]);
 		});
 	});
 });
@@ -1650,6 +1678,7 @@ describe('Number', function () {
 			expect(Number.isNumber(undefined)).toBe(false);
 			expect(Number.isNumber(null)).toBe(false);
 			expect(Number.isNumber('')).toBe(false);
+			expect(Number.isNumber('0')).toBe(false);
 			expect(Number.isNumber('1')).toBe(false);
 			expect(Number.isNumber({})).toBe(false);
 			expect(Number.isNumber([])).toBe(false);
@@ -1674,7 +1703,7 @@ describe('Number', function () {
 describe('RegExp', function () {
 	describe('escape()', function () {
 		it('returns the string', function () {
-			expect(RegExp.escape('($-100.00)*')).toBe('\\(\\$\\-100\\.00\\)\\*');
+			expect(RegExp.escape('($-100.00)[*]')).toBe('\\(\\$\\-100\\.00\\)\\[\\*\\]');
 		});
 	});
 });
