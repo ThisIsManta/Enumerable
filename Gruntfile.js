@@ -47,9 +47,9 @@ module.exports = function (grunt) {
 		if (repo.endsWith('.git')) {
 			repo = repo.substring(0, repo.length - 4);
 		}
-		repo += '/blob/master/Enumerable.js';
+		repo += '/blob/master/Enumerable-src.js';
 
-		require('./Enumerable.js');
+		require('./Enumerable-src.js');
 		require('jsdom').env(grunt.file.read('demo/index.html'), function (errx, wind) {
 			if (errx) {
 				grunt.fail.fatal(errx);
@@ -57,7 +57,7 @@ module.exports = function (grunt) {
 
 			var $ = require('jquery')(wind);
 
-			var srcx = grunt.file.read('./Enumerable.js');
+			var srcx = grunt.file.read('./Enumerable-src.js');
 
 			var list = [];
 

@@ -2,7 +2,7 @@
   "name": "Enumerable",
   "version": "4.1.0",
   "description": "A JavaScript library that provides useful and handy query functions.",
-  "main": "Enumerable.js",
+  "main": "Enumerable-min.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/ThisIsManta/Enumerable.git"
@@ -29,7 +29,7 @@
     "uglyfly-js": "^3.2.2"
   },
   "scripts": {
-    "build": "uglifyjs --mangle --compress --comments --output Enumerable-min.js --verbose Enumerable.js && grunt compose && grunt less",
+    "build": "uglifyjs --mangle --compress --comments --output Enumerable-min.js --source-map Enumerable-min.map --verbose Enumerable-src.js && grunt compose && grunt less",
     "watch": "grunt watch",
     "preversion": "npm run build",
     "version": "grunt license:Enumerable*.* && grunt version && git add --all",
