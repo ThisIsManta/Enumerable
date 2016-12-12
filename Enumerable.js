@@ -20,11 +20,11 @@
 	var ERR_BID = new TypeError('a non-object type was not allowed');
 	var ERR_IPR = new Error('a variable name was not allowed');
 
-	var win;
+	var _window;
 	try {
-		win = eval('window');
+		_window = eval('window');
 	} catch (err) {
-		win = {};
+		_window = {};
 	}
 
 	var _isFunction = function (ar0) {
@@ -3636,11 +3636,11 @@
 					}
 				}
 
-			} else if (win.jQuery !== undefined && (nam === 'jquery' || ar0 === win.jQuery)) {
+			} else if (_window.jQuery !== undefined && (nam === 'jquery' || ar0 === _window.jQuery)) {
 				while (++idx < bnd) {
 					tmp = this[idx];
 					if (_isString(tmp) || typeof tmp === 'object' && (tmp instanceof HTMLElement || tmp instanceof jQuery)) {
-						out[++jdx] = win.jQuery(tmp);
+						out[++jdx] = _window.jQuery(tmp);
 					}
 				}
 
@@ -4714,7 +4714,7 @@
 	 * <p><b>See also</b> <a>String.DICTIONARY</a></p>
 	 * <meta keywords="language,culture,translation,localization,l10n,internationalization,i18n"/>
 	 */
-	String.LOCALE = win.navigator && win.navigator.language || 'en-US';
+	String.LOCALE = _window.navigator && _window.navigator.language || 'en-US';
 
 	/**
 	 * <p><b>Returns</b> the string that matched the given key and <a>String.LOCALE</a> in <a>String.DICTIONARY</a>, otherwise the original value.</p>
