@@ -185,7 +185,7 @@ $(document).ready(function () {
 	$(window).on('scroll', function () {
 		if (lastPeak === null) {
 			lastPeak = Date.now();
-		} else if (havePeak === false && Date.now() - lastPeak > 600) {
+		} else if (havePeak === false && Date.now() - lastPeak > 900) {
 			havePeak = true;
 			$('main').addClass('scrolling');
 		}

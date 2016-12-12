@@ -4784,26 +4784,49 @@
 	var FMT_VRN = /\$\$\w/;
 
 	/**
-	 * <p><b>Returns</b> the .</p>
+	 * <p><b>Returns</b> the interpolated string using the current string as a template and the argument containing the corresponding values.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>()</u><br>
-	 * <u>(options: <i>object</i>)</u>
+	 * <u>()</u> – This means the template string does not have any variables.<br>
+	 * <u>(values: <i>object</i>)</u>
 	 * </p>
+	 * <p>Writing <i>${variable}</i> will be replaced by the value of the same name in the argument.</p>
 	 * <code>
-	 * template = '${members} $[is|are] alright';
-	 * template.format({ members: ['Alex'] });
-	 * 
-	 * template.format({ members: ['Alex', 'Brad', 'Cody'] });
-	 * 
-	 * template = 'There $[is|are] ${count} $[person|people] in this room';
-	 * template.format({ count: 1 });
-	 * 
-	 * template.format({ count: 5 });
+	 * template1 = 'My name is ${name}.';
+	 * template1.format({ name: 'Alex' });
 	 * </code>
+	 * <p>Giving the value of array will be grammatically concatenated according to <i><a>String.GRAMMAR</a></i>.</p>
+	 * <code>
+	 * template2 = '${members} will go to see the movie tomorrow.';
+	 * template2.format({ members: ['Alex'] });
+	 * 
+	 * template2.format({ members: ['Alex', 'Brad', 'Cody'] });
+	 * </code>
+	 * <p>Giving the value of number will be formatted using <i><a>Number.prototype.format()</a></i> with the default option.</p>
+	 * <code>
+	 * template3 = 'Total population of ${country} in 2015 is ${population}.';
+	 * template3.format({ country: 'the U.S.A.', population: 321418820 });
+	 * 
+	 * template3.format({ country: 'China', population: 1371220000 });
+	 * </code>
+	 * <p>To avoid array concatenating and/or number formatting, please convert the value to string.</p>
+	 * <p>Some languages have the plural nouns, which you can provide the forms by writing <i>$[singular|plural]</i>. The form will be chosen according to <i><a>String.GRAMMAR</a>.plural</i> the nearest number or the nearest array.</p>
+	 * <code>
+	 * template4 = '${members} $[is|are] alright.';
+	 * template4.format({ members: ['Alex'] });
+	 * 
+	 * template4.format({ members: ['Alex', 'Brad', 'Cody'] });
+	 * 
+	 * template5 = 'There $[is|are] ${count} $[person|people] in this room.';
+	 * template5.format({ count: 1 });
+	 * 
+	 * template5.format({ count: 5 });
+	 * </code>
+	 * <p>In order to make the plural selection works perfectly with a new langauge, you must define the function in <i><a>String.GRAMMAR</a></i>.</p>
 	 * <code>
 	 * Object.merge(String.GRAMMAR, {
 	 * 	'th-TH': {
 	 * 		series: function (items) { return items.length <= 1 ? items.join(' ') : items.take(items.length - 1).join(' ') + 'และ' + items.last(); },
+	 * 		plural: null,
 	 * 		digits: '๐๑๒๓๔๕๖๗๘๙'
 	 * 	}
 	 * });
@@ -4838,9 +4861,9 @@
 					vrs += ',' + nam + '=$$i.' + nam;
 				}
 			}
-		}
-		if (vrs.length > 0) {
-			vrs = 'var ' + vrs.substring(1) + ';'
+			if (vrs.length > 0) {
+				vrs = 'var ' + vrs.substring(1) + ';';
+			}
 		}
 		if (FMT_HSH[key] !== undefined) {
 			exe = FMT_HSH[key];
