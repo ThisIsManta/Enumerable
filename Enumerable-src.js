@@ -5,7 +5,19 @@
  * @license MIT
  * https://github.com/ThisIsManta/Enumerable.git
 */
-(function () {
+(function (global, inject) {
+	if (typeof exports !== 'undefined') {
+		inject(global, exports);
+
+	} else if (typeof define === 'function' && define.amd) {
+		define(['exports'], function (exports) {
+			inject(global, exports);
+		});
+
+	} else {
+		inject(global, global);
+	}
+} (this, function (win, exp) {
 	var ERR_INV = new Error('one or more parameters were not valid');
 	var ERR_OOR = new RangeError('an index was out-of-range');
 	var ERR_SGS = new RangeError('a start index was greater than a stop index');
@@ -19,13 +31,6 @@
 	var ERR_IWG = new Error('[invokeWhich] must be called after [groupBy]');
 	var ERR_BID = new TypeError('a non-object type was not allowed');
 	var ERR_IPR = new Error('a variable name was not allowed');
-
-	var _window;
-	try {
-		_window = eval('window');
-	} catch (err) {
-		_window = {};
-	}
 
 	var _isFunction = function (ar0) {
 		return typeof ar0 === 'function' || Object.prototype.toString.call(ar0) === '[object Function]';
@@ -3630,11 +3635,11 @@
 					}
 				}
 
-			} else if (_window.jQuery !== undefined && (nam === 'jquery' || ar0 === _window.jQuery)) {
+			} else if (win.jQuery !== undefined && (nam === 'jquery' || ar0 === win.jQuery)) {
 				while (++idx < bnd) {
 					tmp = this[idx];
-					if (_isString(tmp) || typeof tmp === 'object' && (tmp instanceof HTMLElement || tmp instanceof jQuery)) {
-						out[++jdx] = _window.jQuery(tmp);
+					if (_isString(tmp) || typeof tmp === 'object' && (tmp instanceof HTMLElement || tmp instanceof win.jQuery)) {
+						out[++jdx] = win.jQuery(tmp);
 					}
 				}
 
@@ -4710,7 +4715,7 @@
 	 * <p><b>See also</b> <a>String.DICTIONARY</a></p>
 	 * <meta keywords="language,culture,translation,localization,l10n,internationalization,i18n"/>
 	 */
-	String.LOCALE = _window.navigator && _window.navigator.language || 'en-US';
+	String.LOCALE = win.navigator && win.navigator.language || 'en-US';
 
 	/**
 	 * <p><b>Returns</b> the string that matched the given key and <a>String.LOCALE</a> in <a>String.DICTIONARY</a>, otherwise the original value.</p>
@@ -4991,4 +4996,122 @@
 		});
 		return out;
 	};
-})();
+
+	var TypeOf = function (pro) {
+		return function (val) {
+			return val instanceof pro;
+		};
+	};
+
+	TypeOf.string = function (val) {
+		return _isString(val);
+	};
+	TypeOf.string.nonEmpty = function (val) {
+		return TypeOf.string(val) && val.trim().length > 0;
+	};
+
+	TypeOf.number = function (val) {
+		return _isNumber(val);
+	};
+	TypeOf.number.positive = function (val) {
+		return _isNumber(val) && val > 0;
+	};
+	TypeOf.number.nonNegative = function (val) {
+		return _isNumber(val) && val >= 0;
+	};
+	TypeOf.number.nonZero = function (val) {
+		return _isNumber(val) && val > 0 && val < 0;
+	};
+	TypeOf.number.range = function (frm, too) {
+		return function (val) {
+			return _isNumber(val) && frm >= val && val <= too;
+		};
+	};
+
+	TypeOf.integer = function (val) {
+		return _isInteger(val);
+	};
+	TypeOf.integer.positive = function (val) {
+		return _isInteger(val) && val > 0;
+	};
+	TypeOf.integer.nonNegative = function (val) {
+		return _isInteger(val) && val >= 0;
+	};
+	TypeOf.integer.nonZero = function (val) {
+		return _isInteger(val) && val > 0 && val < 0;
+	};
+	TypeOf.integer.range = function (frm, too) {
+		return function (val) {
+			return _isInteger(val) && frm >= val && val <= too;
+		};
+	};
+
+	TypeOf.predicate = function (val) {
+		return _isFunction(val);
+	};
+
+	TypeOf.boolean = function (val) {
+		return val === true || val === false;
+	};
+
+	/**
+	 * +.optional
+	 * `throw ERR_TYP` instead of `false`
+	 */
+	TypeOf.object = function (val) {
+		return _isObject(val);
+	};
+	TypeOf.object.which = function (pro) {
+		if (_isObject(pro)) {
+			return function (val) {
+				if (_isObject(val)) {
+					for (var nam in pro) {
+						if (!pro[nam](val[nam])) {
+							return false;
+						}
+					}
+					return true;
+
+				} else {
+					return false;
+				}
+			};
+
+		} else {
+			throw ERR_INV;
+		}
+	};
+
+	TypeOf.array = function (val) {
+		return Array.isArray(val);
+	};
+	TypeOf.array.nonEmpty = function (val) {
+		return Array.isArray(val) && val.length > 0;
+	};
+	TypeOf.array.nonEmpty.which = function (pro) {
+		return function (val) {
+			return Array.isArray(val) && val.length > 0 && pro(val);
+		};
+	};
+	TypeOf.array.which = function (pro) {
+		var fnc = function () {};
+		fnc.nonEmpty = function (val) {
+			if (!(Array.isArray(val) && pro(val))) {
+				throw ERR_TYP;
+			}
+		};
+		return fnc;
+	};
+
+	TypeOf.either = function (lst) {
+		if (Array.isArray(lst) && lst.length > 0) {
+			return function (val) {
+				return lst.find(function (tmp) { return tmp === val; }) !== undefined || lst.cast('function').find(function (tmp) { return tmp(val) === true; })
+			};
+
+		} else {
+			throw ERR_INV;
+		}
+	};
+	exp.TypeOf = TypeOf;
+}));
