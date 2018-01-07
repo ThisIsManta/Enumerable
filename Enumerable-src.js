@@ -20,12 +20,7 @@
 	var ERR_BID = new TypeError('a non-object type was not allowed');
 	var ERR_IPR = new Error('a variable name was not allowed');
 
-	var _window;
-	try {
-		_window = eval('window');
-	} catch (err) {
-		_window = {};
-	}
+	var _window = typeof window ? window : global;
 
 	var _isFunction = function (ar0) {
 		return typeof ar0 === 'function' || Object.prototype.toString.call(ar0) === '[object Function]';
@@ -55,7 +50,7 @@
 
 	/**
 	 * <p><b>Returns</b> a new function; once it is called, it will be executed if the last call was at least the given duration ago.</p>
-	 * <p>The returned function has a special method called <i>cancel</i> that helps cancelling the defered execution.</p>
+	 * <p>The returned function has a special method called <i>cancel</i> that helps cancelling the deferred execution.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>() – This returns a <i>setTimeout</i> function.</u><br>
 	 * <u>(duration: <i>number</i>) – This accepts the duration in milliseconds.</u><br>
@@ -559,14 +554,14 @@
 	 * <p>The members must implement <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toString">toString()</a> method.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u><br>
-	 * <u>(nameProjector: <i>string</i>)</u><br>
-	 * <u>(nameProjector: <i>string</i>, valueProjector: <i>string</i>)</u><br>
-	 * <u>(nameProjector: <i>string</i>, valueProjector: <i>function&lt;anything&gt;</i>)</u><br>
-	 * <u>(nameProjector: <i>string</i>, value: <i>anything</i>)</u><br>
-	 * <u>(nameProjector: <i>function&lt;string&gt;</i>)</u><br>
-	 * <u>(nameProjector: <i>function&lt;string&gt;</i>, valueProjector: <i>function&lt;anything&gt;</i>)</u><br>
-	 * <u>(nameProjector: <i>function&lt;string&gt;</i>, valueProjector: <i>string</i>)</u><br>
-	 * <u>(nameProjector: <i>function&lt;string&gt;</i>, value: <i>anything</i>)</u><br>
+	 * <u>(memberNameForOutputName: <i>string</i>)</u><br>
+	 * <u>(memberNameForOutputName: <i>string</i>, memberNameForOutputValue: <i>string</i>)</u><br>
+	 * <u>(memberNameForOutputName: <i>string</i>, outputValueGenerator: <i>function&lt;anything&gt;</i>)</u><br>
+	 * <u>(memberNameForOutputName: <i>string</i>, value: <i>anything</i>)</u><br>
+	 * <u>(memberNameProjectorForOutputName: <i>function&lt;string&gt;</i>)</u><br>
+	 * <u>(memberNameProjectorForOutputName: <i>function&lt;string&gt;</i>, memberNameForOutputValue: <i>string</i>)</u><br>
+	 * <u>(memberNameProjectorForOutputName: <i>function&lt;string&gt;</i>, outputValueGenerator: <i>function&lt;anything&gt;</i>)</u><br>
+	 * <u>(memberNameProjectorForOutputName: <i>function&lt;string&gt;</i>, value: <i>anything</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * ['a', 'b', 'c'].toObject();
@@ -691,14 +686,14 @@
 	 * <p><b>Returns</b> an ES6 Map object with key-value pairs that are derived from all members.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u><br>
-	 * <u>(nameProjector: <i>string</i>)</u><br>
-	 * <u>(nameProjector: <i>string</i>, valueProjector: <i>string</i>)</u><br>
-	 * <u>(nameProjector: <i>string</i>, valueProjector: <i>function&lt;anything&gt;</i>)</u><br>
-	 * <u>(nameProjector: <i>string</i>, value: <i>anything</i>)</u><br>
-	 * <u>(nameProjector: <i>function&lt;string&gt;</i>)</u><br>
-	 * <u>(nameProjector: <i>function&lt;string&gt;</i>, valueProjector: <i>function&lt;anything&gt;</i>)</u><br>
-	 * <u>(nameProjector: <i>function&lt;string&gt;</i>, valueProjector: <i>string</i>)</u><br>
-	 * <u>(nameProjector: <i>function&lt;string&gt;</i>, value: <i>anything</i>)</u><br>
+	 * <u>(memberNameForOutputName: <i>string</i>)</u><br>
+	 * <u>(memberNameForOutputName: <i>string</i>, memberNameForOutputValue: <i>string</i>)</u><br>
+	 * <u>(memberNameForOutputName: <i>string</i>, outputValueGenerator: <i>function&lt;anything&gt;</i>)</u><br>
+	 * <u>(memberNameForOutputName: <i>string</i>, value: <i>anything</i>)</u><br>
+	 * <u>(memberNameProjectorForOutputName: <i>function&lt;string&gt;</i>)</u><br>
+	 * <u>(memberNameProjectorForOutputName: <i>function&lt;string&gt;</i>, memberNameForOutputValue: <i>string</i>)</u><br>
+	 * <u>(memberNameProjectorForOutputName: <i>function&lt;string&gt;</i>, outputValueGenerator: <i>function&lt;anything&gt;</i>)</u><br>
+	 * <u>(memberNameProjectorForOutputName: <i>function&lt;string&gt;</i>, value: <i>anything</i>)</u><br>
 	 * </p>
 	 * <code><!--
 	 * ['a', 'b', 'c'].toMap();
@@ -801,11 +796,11 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> a new array with only members that meet the given condition.</p>
+	 * <p><b>Returns</b> a new array with the only members that meet the given condition.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
 	 * <u>(condition: <i>object</i>)</u><br>
-	 * <u>(nameProjector: <i>string</i>, expectedValue: <i>anything</i>)</u><br>
+	 * <u>(memberName: <i>string</i>, memberValue: <i>anything</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * var a = [
@@ -869,10 +864,10 @@
 	/**
 	 * <p><b>Returns</b> a new array with members that is the results of running the given argument.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>(valueProjector: <i>function&lt;anything&gt;</i>)</u><br>
-	 * <u>(nameProjector: <i>string</i>)</u><br>
-	 * <u>(nameProjector: <i>number</i>)</u><br>
-	 * <u>(nameProjector: <i>array&lt;string&gt;</i>)</u> – This creates an object containing the given property name(s).<br>
+	 * <u>(outputValueGenerator: <i>function&lt;anything&gt;</i>)</u><br>
+	 * <u>(memberName: <i>string</i>)</u><br>
+	 * <u>(memberName: <i>number</i>)</u><br>
+	 * <u>(memberNames: <i>array&lt;string&gt;</i>)</u> – This creates an object containing the given property name(s).<br>
 	 * </p>
 	 * <code>
 	 * var a = [
@@ -1296,7 +1291,7 @@
 	 * <p><b>Returns</b> a new array without first and last members that match the value or the given condition.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
-	 * <u>(value: <i>anything</i>)</u><br>
+	 * <u>(member: <i>anything</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * var a = [
@@ -1396,9 +1391,9 @@
 	 * <p><b>Returns</b> <i>true</i> if and only if one or more members match the given condition.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u> – This returns <i>true</i> if the current array is not empty.<br>
-	 * <u>(value: <i>anything</i>)</u> – This is similar to <a>Array.prototype.has()</a>.<br>
+	 * <u>(member: <i>anything</i>)</u> – This is similar to <a>Array.prototype.has()</a>.<br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
-	 * <u>(nameProjector: <i>string</i>, value: <i>anything</i>)</u><br>
+	 * <u>(memberName: <i>string</i>, memberValue: <i>anything</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * var a = [
@@ -1462,9 +1457,9 @@
 	/**
 	 * <p><b>Returns</b> <i>true</i> if and only if all members match the given condition.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>(value: <i>anything</i>)</u><br>
+	 * <u>(member: <i>anything</i>)</u><br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
-	 * <u>(nameProjector: <i>string</i>, value: <i>anything</i>)</u><br>
+	 * <u>(memberName: <i>string</i>, memberValue: <i>anything</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * var a = [
@@ -1525,8 +1520,8 @@
 	 * <p><b>Returns</b> <i>true</i> if and only if all members match the value or the given condition.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
-	 * <u>(value: <i>anything</i>)</u><br>
-	 * <u>(value: <i>anything</i>, startIndex: <i>number</i>)</u><br>
+	 * <u>(member: <i>anything</i>)</u><br>
+	 * <u>(member: <i>anything</i>, startIndex: <i>number</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * var a = [
@@ -1729,8 +1724,8 @@
 	 * <p><b>Accepts</b><br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>, startIndex: <i>number</i>)</u><br>
-	 * <u>(expectedValue: <i>anything</i>)</u><br>
-	 * <u>(expectedValue: <i>anything</i>, startIndex: <i>number</i>)</u><br>
+	 * <u>(member: <i>anything</i>)</u><br>
+	 * <u>(member: <i>anything</i>, startIndex: <i>number</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * [1, 2, 3, 2].indexOf(2);
@@ -1782,8 +1777,8 @@
 	 * <p><b>Accepts</b><br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>, startIndex: <i>number</i>)</u><br>
-	 * <u>(expectedValue: <i>anything</i>)</u><br>
-	 * <u>(expectedValue: <i>anything</i>, startIndex: <i>number</i>)</u><br>
+	 * <u>(member: <i>anything</i>)</u><br>
+	 * <u>(member: <i>anything</i>, startIndex: <i>number</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * [1, 2, 3, 2].lastIndexOf(2);
@@ -1833,7 +1828,7 @@
 	 * <p>This extends the native find method.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
-	 * <u>(nameProjector: <i>string</i>, expectedValue: <i>anything</i>)</u>
+	 * <u>(memberName: <i>string</i>, memberValue: <i>anything</i>)</u>
 	 * </p>
 	 * <code>
 	 * var a = [
@@ -2122,8 +2117,8 @@
 	 * <p><b>Returns</b> the unique members.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u><br>
-	 * <u>(nameProjector: <i>string</i>)</u><br>
-	 * <u>(valueProjector: <i>function</i>)</u> – This treats <i>undefined</i> and <i>null</i> like the same.<br>
+	 * <u>(memberName: <i>string</i>)</u><br>
+	 * <u>(memberProjector: <i>function</i>)</u> – This treats <i>undefined</i> and <i>null</i> like the same.<br>
 	 * </p>
 	 * <code>
 	 * [1, 2, 3, 2].distinct();
@@ -2224,8 +2219,8 @@
 	 * <p><b>Returns</b> the current array that has the given member added.</p>
 	 * <p>This mutates the current array.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>(value: <i>anything</i>)</u> – This appends the given value to the current array.<br>
-	 * <u>(value: <i>anything</i>, targetIndex: <i>number</i>)</u><br>
+	 * <u>(member: <i>anything</i>)</u> – This appends the given value to the current array.<br>
+	 * <u>(member: <i>anything</i>, targetIndex: <i>number</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * a = [1, 2, 3];
@@ -2261,8 +2256,8 @@
 	 * <p><b>Returns</b> the current array that has the given members added.</p>
 	 * <p>This mutates the current array.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>(values: <i>array&lt;anything&gt;</i>)</u> – This appends the given members to the current array.<br>
-	 * <u>(values: <i>array&lt;anything&gt;</i>, targetIndex: <i>number</i>)</u><br>
+	 * <u>(members: <i>array&lt;anything&gt;</i>)</u> – This appends the given members to the current array.<br>
+	 * <u>(members: <i>array&lt;anything&gt;</i>, targetIndex: <i>number</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * a = [1, 2, 3];
@@ -2304,8 +2299,8 @@
 	 * <p><b>Returns</b> the current array that has the given member of the first occurrence removed.</p>
 	 * <p>This mutates the current array.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>(value: <i>anything</i>)</u><br>
-	 * <u>(value: <i>anything</i>, startIndex: <i>number</i>)</u><br>
+	 * <u>(member: <i>anything</i>)</u><br>
+	 * <u>(member: <i>anything</i>, startIndex: <i>number</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * a = [1, 2, 3, 2];
@@ -2338,10 +2333,10 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> the current array that has the given index removed.</p>
+	 * <p><b>Returns</b> the current array that has the member at the given index removed.</p>
 	 * <p>This mutates the current array.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>(targetIndex: <i>number</i>)</u><br>
+	 * <u>(index: <i>number</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * a = [1, 2, 3, 2];
@@ -2372,7 +2367,7 @@
 	 * <p><b>Returns</b> the current array that has the given members removed.</p>
 	 * <p>This mutates the current array.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>(values: <i>array&lt;anything&gt;</i>)</u><br>
+	 * <u>(members: <i>array&lt;anything&gt;</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * a = [1, 2, 3, 2];
@@ -2402,12 +2397,11 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> the current array that has the given member of all occurrences removed.</p>
+	 * <p><b>Returns</b> the current array that has the given members of all occurrences removed.</p>
 	 * <p>This mutates the current array.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u> – This removes all members.<br>
-	 * <u>(value: <i>anything</i>)</u><br>
-	 * <u>(value: <i>anything</i>, startIndex: <i>number</i>)</u><br>
+	 * <u>(members: <i>array&lt;anything&gt;</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * a = [1, 2, 3, 2];
@@ -2441,9 +2435,9 @@
 	 * <p><b>Returns</b> a new nested array that have the current array split at the given member.</p>
 	 * <p>This excludes the given member of all occurrences.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>(value: <i>anything</i>)</u><br>
-	 * <u>(valueProjector: <i>function&lt;boolean&gt;</i>)</u><br>
-	 * <u>(nameProjector: <i>string</i>, valueProperty: <i>anything</i>)</u><br>
+	 * <u>(member: <i>anything</i>)</u><br>
+	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
+	 * <u>(memberName: <i>string</i>, memberValue: <i>anything</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * [1, 2, 3, 2, 3, 4].split(3);
@@ -2500,7 +2494,7 @@
 	 * <p><b>Returns</b> a new nested array with members have the current array split at the given index.</p>
 	 * <p>This always creates two nested arrays without removing any members.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>(targetIndex: <i>number</i>)</u><br>
+	 * <u>(index: <i>number</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * [1, 2, 3, 2].splitAt(2);
@@ -2531,8 +2525,8 @@
 	 * <p><b>Returns</b> the current array with members have the given member replaced.</p>
 	 * <p>This mutates the current array.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>(targetValue: <i>anything</i>, replacement: <i>anything</i>)</u> – This replaces the given value of all occurrences.<br>
-	 * <u>(targetValue: <i>anything</i>, replacement: <i>anything</i>, operationCount: <i>number</i>)</u><br>
+	 * <u>(member: <i>anything</i>, replacement: <i>anything</i>)</u> – This replaces the given value of all occurrences.<br>
+	 * <u>(member: <i>anything</i>, replacement: <i>anything</i>, replacementCount: <i>number</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * a = [1, 2, 3, 2];
@@ -2580,7 +2574,7 @@
 	 * <p><b>Returns</b> the current array with members have the given index replaced.</p>
 	 * <p>This mutates the current array.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>(targetIndex: <i>number</i>, replacement: <i>anything</i>)</u> – This replaces the given value of all occurrences.<br>
+	 * <u>(index: <i>number</i>, replacement: <i>anything</i>)</u> – This replaces the given value of all occurrences.<br>
 	 * </p>
 	 * <code>
 	 * a = [1, 2, 3, 2];
@@ -2608,7 +2602,7 @@
 	/**
 	 * <p><b>Returns</b> a new array with members appear in the current array and members appear exclusively in the given array.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>(values: <i>array&lt;anything&gt;</i>)</u><br>
+	 * <u>(members: <i>array&lt;anything&gt;</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * [1, 2, 3, 2].union([1, 4, 5]);
@@ -2637,7 +2631,7 @@
 	/**
 	 * <p><b>Returns</b> a new array with members appear in both the current array and the given members.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>(values: <i>array&lt;anything&gt;</i>)</u><br>
+	 * <u>(members: <i>array&lt;anything&gt;</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * [1, 2, 3, 2].intersect([1, 4, 5]);
@@ -2670,7 +2664,7 @@
 	/**
 	 * <p><b>Returns</b> a new array with members appear in the current array but not the given members.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>(values: <i>array&lt;anything&gt;</i>)</u><br>
+	 * <u>(members: <i>array&lt;anything&gt;</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * [1, 2, 3, 2].difference([1, 4, 5]);
@@ -2706,13 +2700,13 @@
 	 * <p><b>Returns</b> a new array with members that have been sorted by the given condition.</p>
 	 * <p>The default sorting order is according to the string Unicode points.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>(nameProjector: <i>string</i>)</u><br>
-	 * <u>(nameProjector: <i>string</i>, reverse: <i>boolean</i>, ...)</u><br>
-	 * <u>(nameProjector: <i>function&lt;string&gt;</i>)</u><br>
-	 * <u>(nameProjector: <i>function&lt;string&gt;</i>, reverse: <i>boolean</i>, ...)</u><br>
+	 * <u>(memberName: <i>string</i>)</u><br>
+	 * <u>(memberName: <i>string</i>, reverse: <i>boolean</i>, ...)</u><br>
+	 * <u>(memberNameProjector: <i>function&lt;string&gt;</i>)</u><br>
+	 * <u>(memberNameProjector: <i>function&lt;string&gt;</i>, reverse: <i>boolean</i>, ...)</u><br>
 	 * <u>(orderSpecifiers: <i>array&lt;anything&gt;</i>)</u><br>
-	 * <u>(nameProjector: <i>string</i>, orderSpecifiers: <i>array&lt;anything&gt;</i>)</u><br>
-	 * <u>(nameProjector: <i>function&lt;string&gt;</i>, orderSpecifiers: <i>array&lt;anything&gt;</i>)</u><br>
+	 * <u>(memberName: <i>string</i>, orderSpecifiers: <i>array&lt;anything&gt;</i>)</u><br>
+	 * <u>(memberNameProjector: <i>function&lt;string&gt;</i>, orderSpecifiers: <i>array&lt;anything&gt;</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * var a = [
@@ -2874,10 +2868,10 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> a new nested array with members groupped by the given condition.</p>
+	 * <p><b>Returns</b> a new nested array with members grouped by the given condition.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>(nameProjector: <i>string</i>)</u><br>
-	 * <u>(nameProjector: <i>function&lt;string&gt;</i>)</u><br>
+	 * <u>(memberName: <i>string</i>)</u><br>
+	 * <u>(memberNameProjector: <i>function&lt;string&gt;</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * var a = [
@@ -2949,9 +2943,9 @@
 	};
 
 	/**
-	 * <p><b>Returns</b> a new nested array with members groupped into the given number.</p>
+	 * <p><b>Returns</b> a new nested array with members grouped into the given number.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>(count: <i>number</i>)</u><br>
+	 * <u>(maxGroupMemberCount: <i>number</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * var a = [
@@ -2992,8 +2986,8 @@
 	 * <p><b>Returns</b> a new array with members merged with the given values.</p>
 	 * <p>All members must be an object. Although this does not mutate the current array, the members of the current array may be mutated.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>(values: <i>array&lt;anything&gt;</i>, nameProjector: <i>string</i></u><br>
-	 * <u>(values: <i>array&lt;anything&gt;</i>, nameProjector: <i>string</i>, overwrite: <i>boolean</i>)</u><br>
+	 * <u>(members: <i>array&lt;anything&gt;</i>, memberName: <i>string</i></u><br>
+	 * <u>(members: <i>array&lt;anything&gt;</i>, memberName: <i>string</i>, overwrite: <i>boolean</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * var a = [
@@ -3078,9 +3072,9 @@
 	/**
 	 * <p><b>Returns</b> a number of members that match the given condition.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>(value: <i>anything</i>)</u><br>
+	 * <u>(member: <i>anything</i>)</u><br>
+	 * <u>(memberName: <i>string</i>, value: <i>anything</i>)</u><br>
 	 * <u>(condition: <i>function&lt;boolean&gt;</i>)</u><br>
-	 * <u>(nameProjector: <i>string</i>, value: <i>anything</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * [1, 2, 3, 2].countBy(2);
@@ -3134,8 +3128,8 @@
 	 * <p><b>Returns</b> the member that has the smallest according to the given condition.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u><br>
-	 * <u>(nameProjector: <i>string</i>)</u><br>
-	 * <u>(valueProjector: <i>function&lt;number&gt;</i>)</u><br>
+	 * <u>(memberName: <i>string</i>)</u><br>
+	 * <u>(evaluator: <i>function&lt;number&gt;</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * [1, 2, 3, 2].min();
@@ -3216,8 +3210,8 @@
 	 * <p><b>Returns</b> the member that has the largest according to the given condition.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u><br>
-	 * <u>(nameProjector: <i>string</i>)</u><br>
-	 * <u>(valueProjector: <i>function&lt;number&gt;</i>)</u><br>
+	 * <u>(memberName: <i>string</i>)</u><br>
+	 * <u>(evaluator: <i>function&lt;number&gt;</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * [1, 2, 3, 2].max();
@@ -3233,7 +3227,6 @@
 	 * a.max(function (x) { return x.year; });
 	 * </code>
 	 * <p><b>See also</b> <a>Array.prototype.min()</a>, <a>Array.prototype.mod()</a></p>
-	 * <p><b>See also</b> <a>Array.prototype.split()</a></p>
 	 */
 	Array.prototype.max = function (ar0) {
 		var idx = 0;
@@ -3299,8 +3292,8 @@
 	 * <p><b>Returns</b> the member that appears most often according to the given condition.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u><br>
-	 * <u>(nameProjector: <i>string</i>)</u><br>
-	 * <u>(valueProjector: <i>function&lt;number&gt;</i>)</u><br>
+	 * <u>(memberName: <i>string</i>)</u><br>
+	 * <u>(evaluator: <i>function&lt;number&gt;</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * [1, 2, 3, 2].mod();
@@ -3378,8 +3371,8 @@
 	 * <p><b>Returns</b> a total number that represents all the members.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u><br>
-	 * <u>(nameProjector: <i>string</i>)</u><br>
-	 * <u>(valueProjector: <i>function&lt;number&gt;</i>)</u><br>
+	 * <u>(memberName: <i>string</i>)</u><br>
+	 * <u>(evaluator: <i>function&lt;number&gt;</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * [1, 2, 3, 2].sum();
@@ -3448,8 +3441,8 @@
 	 * <p><b>Returns</b> an average number that represents all the members.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u><br>
-	 * <u>(nameProjector: <i>string</i>)</u><br>
-	 * <u>(valueProjector: <i>function&lt;number&gt;</i>)</u><br>
+	 * <u>(memberName: <i>string</i>)</u><br>
+	 * <u>(evaluator: <i>function&lt;number&gt;</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * [1, 2, 3, 2].avg();
@@ -3475,8 +3468,8 @@
 	 * <p><b>Returns</b> a new array with members that have <i>undefined</i>, <i>null</i>, <i>false</i>, <i>0</i>, empty string, white-space-only string and non-finite numbers removed.</p>
 	 * <p><b>Accepts</b><br>
 	 * <u>()</u><br>
-	 * <u>(nameProjector: <i>string</i>)</u><br>
-	 * <u>(valueProjector: <i>function&lt;number&gt;</i>)</u><br>
+	 * <u>(memberName: <i>string</i>)</u><br>
+	 * <u>(evaluator: <i>function&lt;anything&gt;</i>)</u><br>
 	 * </p>
 	 * <code>
 	 * [undefined, null, false, 0, 1, '', ' ', Infinity].norm();
@@ -3528,7 +3521,6 @@
 	 * <p><b>Returns</b> a new array with members that have been converted to the target type.</p>
 	 * <p>If a member cannot be converted to the given type, the member will be excluded from the new array.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>()</u><br>
 	 * <u>(typeName: <i>string</i>)</u> – The possible values are <i>string</i>, <i>number</i>, <i>boolean</i>, <i>array</i>, <i>object</i>, <i>function</i> and <a href="http://jquery.com/"><i>jQuery</i></a>.<br>
 	 * <u>(typeClass: <i>anything</i>)</u> – The possible values are <i>String</i>, <i>Number</i>, <i>Boolean</i>, <i>Array</i>, <i>Object</i>, <i>Function</i> and <a href="http://jquery.com/"><i>jQuery</i></a>.<br>
 	 * </p>
@@ -3744,7 +3736,7 @@
 	 * <p><b>Returns</b> the member that matches the given condition.</p>
 	 * <p>This searches through a nested-tree-structured array.</p>
 	 * <p><b>Accepts</b><br>
-	 * <u>(treeProjector: <i>string</i>, nameProjector: <i>string</i>, expectedValue: <i>anything</i>)</u><br>
+	 * <u>(memberNameForTreeTraversal: <i>string</i>, memberName: <i>string</i>, innerValue: <i>anything</i>)</u><br>
 	 * <u>(treeProjector: <i>string</i>, condition: <i>function&lt;boolean&gt;</i>)</u><br>
 	 * </p>
 	 * <code>
@@ -4248,13 +4240,13 @@
 	 * maxDecimalPlace
 	 * addThousandSeparators
 	 * largeNumberScale
-	 * spare
+	 * fallbackValue
 	 * </p>
 	 */
 	Number.prototype.format = function (opt) {
 		var val = this.valueOf();
 		if (isNaN(val) || isFinite(val) === false) {
-			return opt.spare === undefined ? '' : opt.spare;
+			return opt.fallbackValue === undefined ? '' : opt.fallbackValue;
 		}
 
 		var gmr = _resolve(String.GRAMMAR);
@@ -4411,7 +4403,7 @@
 
 	/**
 	 * <p><b>Returns</b> a number that is the result of hashing.</p>
-	 * <p>The result is always an interger that can be a negative integer.</p>
+	 * <p>The result is always an integer that can be a negative integer.</p>
 	 * <code>
 	 * 'this is what you came for'.toHashCode();
 	 * </code>
