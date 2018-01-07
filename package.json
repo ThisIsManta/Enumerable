@@ -3,6 +3,7 @@
   "version": "4.1.0",
   "description": "A JavaScript library that provides useful and handy query functions.",
   "main": "Enumerable-min.js",
+  "types": "Enumerable-def.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/ThisIsManta/Enumerable.git"
